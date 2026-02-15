@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('branding_settings', function (Blueprint $table) {
+            $table->string('email_bg_color')->nullable();
+            $table->string('email_text_color')->nullable();
+            $table->string('email_link_color')->nullable();
+            $table->string('email_border_color')->nullable();
+            $table->string('email_footer')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('branding_settings', function (Blueprint $table) {
+            $table->dropColumn('email_bg_color');
+            $table->dropColumn('email_text_color');
+            $table->dropColumn('email_link_color');
+            $table->dropColumn('email_border_color');
+            $table->dropColumn('email_footer');
+        });
+    }
+};

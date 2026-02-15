@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'settings' => 'إعدادات نفاذ SSO',
+    'enable_nafath_sso' => 'تفعيل نفاذ SSO',
+    'application_id' => 'معرف التطبيق (نفاذ)',
+    'application_key' => 'مفتاح التطبيق (نفاذ)',
+    'enter_app_id' => 'أدخل معرف التطبيق',
+    'enter_app_key' => 'أدخل مفتاح التطبيق',
+    'invalid_app_id' => 'معرف التطبيق غير صالح',
+    'invalid_app_key' => 'مفتاح التطبيق غير صالح',
+    'credentials_required' => 'معرف التطبيق ومفتاح التطبيق مطلوبان عند تفعيل نفاذ SSO.',
+    'validation_failed' => 'فشل التحقق',
+    'connection_successful' => 'تم الاتصال بنجاح',
+    'connection_failed' => 'فشل الاتصال',
+    'settings_saved' => 'تم حفظ الإعدادات بنجاح!',
+    'test_connection' => 'اختبار الاتصال',
+    'save_settings' => 'حفظ الإعدادات',
+    'nafath_sso_toggle' => 'مفتاح تبديل نفاذ',
+    'login_with_nafath' => 'تسجيل الدخول عبر نفاذ',
+    'nafath_unavailable' => 'خدمة نفاذ غير متاحة حالياً. يرجى المحاولة لاحقاً.',
+    'nafath_login_failed' => 'فشل تسجيل الدخول عبر نفاذ. يرجى المحاولة مرة أخرى.',
+    'nafath_validation_error' => 'غير قادر على التحقق من بيانات نفاذ. يرجى التحقق من إعداداتك.',
+    'nafath_disabled' => 'نفاذ SSO معطل حالياً.',
+    'important_notes' => 'ملاحظات مهمة',
+    'nafath_notes' => [
+        'login_option' => 'عند تفعيل نفاذ SSO، سيرى المستخدمون خيار "تسجيل الدخول عبر نفاذ" في صفحة تسجيل الدخول.',
+        'credentials_required' => 'معرف التطبيق ومفتاح التطبيق صالحان مطلوبان لتفعيل نفاذ SSO.',
+        'validation' => 'سيتم التحقق من البيانات مع خدمة نفاذ قبل الحفظ.',
+        'disable_effect' => 'إلغاء تفعيل نفاذ SSO سيخفي خيار تسجيل الدخول ولكن لن يؤثر على الجلسات الموجودة.',
+    ],
+];

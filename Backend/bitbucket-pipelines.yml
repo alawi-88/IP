@@ -1,0 +1,202 @@
+image: php:7.4  # Use the PHP version that matches your application
+
+pipelines:
+  branches:
+    platform/filmathon-prod:
+      - step:
+          name: Deploy to filmathon production
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.166.79.228 << 'EOF'
+              cd /var/www/filmathon-platform-laravel
+              sudo git checkout platform/filmathon-prod
+              sudo git pull origin platform/filmathon-prod
+              echo "Running optimize:clear"
+              sudo php artisan optimize:clear
+              echo "Running migrate"
+              sudo php artisan migrate --force
+              echo "Restarting queues"
+              sudo supervisorctl stop all
+              sudo php artisan queue:clear --force
+              sudo supervisorctl start all
+              echo "Clearing logs"
+              sudo php artisan logs:clear
+              echo "Deployment completed successfully!"
+              EOF
+
+    platform/filmathon:
+      - step:
+          name: Deploy to filmathon staging
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@35.242.237.87 << 'EOF'
+              cd /var/www/filmathon-platform-laravel
+              sudo git checkout platform/filmathon
+              sudo git pull origin platform/filmathon
+              echo "Running optimize:clear"
+              sudo php artisan optimize:clear
+              echo "Running migrate"
+              sudo php artisan migrate --force
+              echo "Restarting queues"
+              sudo supervisorctl stop all
+              sudo php artisan queue:clear --force
+              sudo supervisorctl start all
+              echo "Clearing logs"
+              sudo php artisan logs:clear
+              echo "Deployment completed successfully!"
+              EOF
+
+    staging:  # Staging branch
+      - step:
+          name: Deploy to innovation staging
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.89.251.176 << 'EOF'
+              cd /var/www/innovation-platform-laravel  # Update this path for staging
+              sudo git checkout staging
+              sudo git pull origin staging
+              echo "Running optimize:clear"
+              sudo php artisan optimize:clear
+              echo "Running migrate"
+              sudo php artisan migrate --force
+              echo "Restarting queues"
+              sudo supervisorctl stop all
+              sudo php artisan queue:clear --force
+              sudo supervisorctl start all
+              echo "Clearing logs"
+              sudo php artisan logs:clear
+              echo "Deployment completed successfully!"
+              EOF
+
+    dev:  # dev branch
+      - step:
+          name: Deploy to innovation dev
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.40.10.247 << 'EOF'
+              cd /var/www/innovation-platform-laravel  # Update this path for staging
+              sudo git checkout dev
+              sudo git pull origin dev
+              echo "Running optimize:clear"
+              sudo php artisan optimize:clear
+              echo "Running migrate"
+              sudo php artisan migrate --force
+              echo "Restarting queues"
+              sudo supervisorctl stop all
+              sudo php artisan queue:clear --force
+              sudo supervisorctl start all
+              echo "Clearing logs"
+              sudo php artisan logs:clear
+              echo "Deployment completed successfully!"
+              EOF
+
+    staging-tga:
+      - step:
+          name: Deploy to innovation staging TGA
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.140.136.46 << 'EOF'
+              cd /var/www/innovation-platform-laravel  # Update this path for staging-tga
+              sudo git checkout staging-tga
+              sudo git pull origin staging-tga
+              echo "Running optimize:clear"
+              sudo php artisan optimize:clear
+              echo "Running migrate"
+              sudo php artisan migrate --force
+              echo "Restarting queues"
+              sudo supervisorctl stop all
+              sudo php artisan queue:clear --force
+              sudo supervisorctl start all
+              echo "Clearing logs"
+              sudo php artisan logs:clear
+              echo "Deployment completed successfully!"
+              EOF      
+
+    production-tga:
+      - step:
+          name: Deploy to innovation production TGA
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.166.22.231 << 'EOF'
+              cd /var/www/innovation-platform-laravel  # Update this path for production-tga
+              sudo git checkout production-tga
+              sudo git pull origin production-tga
+              echo "Running optimize:clear"
+              sudo php artisan optimize:clear
+              echo "Running migrate"
+              sudo php artisan migrate --force
+              echo "Restarting queues"
+              sudo supervisorctl stop all
+              sudo php artisan queue:clear --force
+              sudo supervisorctl start all
+              echo "Clearing logs"
+              sudo php artisan logs:clear
+              echo "Deployment completed successfully!"
+              EOF          
+              
+    platform/judging:  # Judging branch
+      - step:
+          name: Deploy to judging staging
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.141.78.226 << 'EOF'
+              cd /var/www/innovation-platform-laravel  # Update this path for judging
+              sudo git checkout platform/judging
+              sudo git pull origin platform/judging
+              echo "Running optimize:clear"
+              sudo php artisan optimize:clear
+              echo "Running migrate"
+              sudo php artisan migrate --force
+              echo "Restarting queues"
+              sudo supervisorctl stop all
+              sudo php artisan queue:clear --force
+              sudo supervisorctl start all
+              echo "Clearing logs"
+              sudo php artisan logs:clear
+              echo "Deployment completed successfully!"
+              EOF
+    production-foundry:  # Staging branch ----*
+      - step:
+          name: Deploy to innovation production-foundry
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.166.170.249 << 'EOF'
+              cd /var/www/innovation-platform-laravel  # Update this path for staging
+              git checkout production-foundry
+              git pull origin production-foundry
+              echo "Running migrate"
+              sudo php artisan migrate --force
+              echo "Running optimize:clear"
+              sudo php artisan optimize:clear
+              echo "Restarting queues"
+              sudo supervisorctl stop all
+              sudo php artisan queue:clear --force
+              sudo supervisorctl start all
+              echo "Clearing logs"
+              sudo php artisan logs:clear
+              echo "Deployment completed successfully!"
+              EOF

@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('competition_applications', function (Blueprint $table) {
+            $table->foreignId('track_id')->nullable()->after('has_idea')->constrained('paths')->cascadeOnDelete();
+            $table->foreignId('idea_challenge_id')->nullable()->after('track_id')->constrained('challenges')->cascadeOnDelete();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('competition_applications', function (Blueprint $table) {
+            $table->dropForeign(['track_id']);
+            $table->dropColumn('track_id');
+            $table->dropForeign(['idea_challenge_id']);
+            $table->dropColumn('idea_challenge_id');
+        });
+    }
+};

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "innovation-demo-staging",
+  "private_key_id": "36bf1b62e5036d4b7f35adf02e5a79a98029182c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDC5EwvKQIHKPqD\nKCcQrswkN0SG0jIgrFJa7of1Eonpto6dTZsFPFkBoLLKyiW2QZQE5dj4rfwr6F1x\nxHbTvJg3wKGSabMioxvaQJSJ6lZPgCTWBevTn90rTWWZbsOiwXEstUCs6ULRnr9y\ns02mBb4aImFCIsLPo/Qr8cbp1DiuwDfp+OZELYMW+V0Ixmrg3hf7qAbXPBLqojMm\ngbpl77mpFigqmi3dZi3Ed6GmojOoAV2OKKVFdjlLEMOndSSgaRSyVs9ig27qJ2N2\nxIyAO9KhLYffvta8VPJvfC3j9Sc6mbtWMe8M/0mocehp2ouxx7V9walnc5RPCule\n5LFMVaVfAgMBAAECggEAVQlPEo7Gk0A2mk7FSNq0OSMiU99YPvhhkMqeaPj3UxI0\nRP+tIco0neizypcMgGs5vi9aDhvAOZpQV4kdPgL+uejjtuJG5tibmQ3vogOtOFAW\nAoqf3P1WgAPrzlhNpXDZRGQrvaaj4JnvOAlzWnsL+RRCMpy/OuFzc08x9yoBt4Fl\nXQVPRXG1EjvL5tTLPC9qDI4z8RZmhGTwgDKwbjOGznO5xx/K1ndhuGrIqi0jJ9Xn\nmfsI0uEayWskNnful5niKC715sNi5lJPIB9n2ReU+jNKApu2ZEMwfqQ7ttEcS9jW\ne9r3fqNiHZQ0qKkDMC3Etk0FyaEPUj8as1Bx5FnO6QKBgQDqeW1qZvO84ieiOrb8\ndVNV5WeWK4tEp5h3oIPIRLYMAFlEGY2nHfbx5Fp5EGzZVAEpNScX+selwDH0n+CY\nV3ua+h5Ijs6ZdCgwBKIszVPovS9jAi5qW/3OgoBlaaX0yZe3Gh9GNhKFQ19r99sY\nqb4gOaHnLmgSEz3hGbyNcDmByQKBgQDUyJvPfcQMnjDcngGXGalYuu4PQ+yTa1DF\nbZX7+DJS5150LhzJ8U+oKopFNmxhcOvR/zvsd1CnlROoisE+Gk7UxR2jH6pYNa9e\nLlZHypTQ+S9wVxCeOU1u/luzd0WF3F54V4IVSecCKsemgCwrELsMcfDNYFD3gOof\nsMS9NVHB5wKBgGm3DanneQU0QgJWzqHMlCIqKCYAw+3UUl29NS1aLWoDzjtx+ffa\n/rfY6SGkUi86PLvDhzi8jL8ihGNyoeSNrOEW3AiCuotdX7Empafle2t3wKG3Hg4+\nI5S0KgePNo/DRG/9ixQw1PDYi3E2csYP4fTNhz2gIrPjkQaof+aVLphhAoGABSY9\nrw3KGswRPqWMQE3crUsIy9HG/eJQ+BYo1QoynZL/1CvxgmmWlelBo18nzEvhSRm2\nJ4jTqNqQuTlyZ8BXPArxJqtzgeL6tXrFl8MtSslc/oj82/djClaZfYRbaFvm5V6o\nxT8emgzS/BKJ/xjOjgSL4Ux9aR/zioTKnhGWQu0CgYEAise8tcgpflurlQh31VnG\n7fi/sZ0RVkEy12Mc8770LBUFh8Lso/vtHYxE9oMq6xTvKu7Ue0EwPTjqn2pV/Px3\nCkSGgseZSO224IA78xCA6s3FGqdinbdA+QEy5f655Q52t4Tk1bYfi4aSI6D1MvyW\nzOMsnFQjw89Erf3xcFXuZPI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@innovation-demo-staging.iam.gserviceaccount.com",
+  "client_id": "101810275506223619659",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40innovation-demo-staging.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -1,0 +1,32 @@
+<?php
+
+return [
+    'settings' => 'Nafath SSO Settings',
+    'enable_nafath_sso' => 'Enable Nafath SSO',
+    'application_id' => 'Application ID (Nafath)',
+    'application_key' => 'Application Key (Nafath)',
+    'enter_app_id' => 'Enter App ID',
+    'enter_app_key' => 'Enter App Key',
+    'invalid_app_id' => 'Invalid App ID',
+    'invalid_app_key' => 'Invalid App Key',
+    'credentials_required' => 'Application ID and Application Key are required when Nafath SSO is enabled.',
+    'validation_failed' => 'Validation Failed',
+    'connection_successful' => 'Connection Successful',
+    'connection_failed' => 'Connection Failed',
+    'settings_saved' => 'Settings saved successfully!',
+    'test_connection' => 'Test Connection',
+    'save_settings' => 'Save Settings',
+    'nafath_sso_toggle' => 'Nafath SSO Toggle',
+    'login_with_nafath' => 'Login with Nafath',
+    'nafath_unavailable' => 'Nafath service is currently unavailable. Please try again later.',
+    'nafath_login_failed' => 'Nafath login failed. Please try again.',
+    'nafath_validation_error' => 'Unable to validate Nafath credentials. Please check your settings.',
+    'nafath_disabled' => 'Nafath SSO is currently disabled.',
+    'important_notes' => 'Important Notes',
+    'nafath_notes' => [
+        'login_option' => 'When Nafath SSO is enabled, users will see a "Login with Nafath" option on the login page.',
+        'credentials_required' => 'Valid Application ID and Application Key are required to enable Nafath SSO.',
+        'validation' => 'Credentials will be validated with the Nafath service before saving.',
+        'disable_effect' => 'Disabling Nafath SSO will hide the login option but won\'t affect existing sessions.',
+    ],
+];

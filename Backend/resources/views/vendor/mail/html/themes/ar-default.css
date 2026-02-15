@@ -1,0 +1,57 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+.main-table {
+    width: 100%;
+    border-collapse: collapse;
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+}
+.header-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.logo-cell {
+    padding: 20px;
+    vertical-align: top;
+}
+.logo {
+    width: 200px;
+    height: auto;
+}
+.geometric-cell {
+    width: 250px;
+    height: auto;
+}
+.geometric-img {
+    width: 250px;
+    display: block;
+}
+.content-cell {
+    padding: 40px 0px;
+}
+.footer-cell {
+    padding: 200px 0;
+}
+.footer-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.footer-logo-cell {
+    text-align: right;
+}
+.footer-logo {
+    width: 100%;
+    height: auto;
+}
+.footer-text-cell {
+    text-align: left;
+}
+.footer-text {
+    margin: 0;
+    font-size: 14px;
+    color: #666666;
+}
