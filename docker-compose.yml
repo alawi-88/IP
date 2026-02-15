@@ -1,0 +1,131 @@
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: ip-mysql
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_DATABASE:-innovation_platform}
+      MYSQL_USER: ${DB_USERNAME:-ip_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-ip_password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./innovation_db_schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Redis (for caching/queues)
+  redis:
+    image: redis:7-alpine
+    container_name: ip-redis
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Laravel Backend API
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: ip-backend
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      APP_NAME: "Innovation Platform"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_TIMEZONE: UTC
+      APP_URL: http://localhost:8000
+      APP_LOCALE: en
+      APP_FALLBACK_LOCALE: en
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3306"
+      DB_DATABASE: ${DB_DATABASE:-innovation_platform}
+      DB_USERNAME: ${DB_USERNAME:-ip_user}
+      DB_PASSWORD: ${DB_PASSWORD:-ip_password}
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: "6379"
+      REDIS_CLIENT: phpredis
+      MAIL_MAILER: log
+      FILESYSTEM_DISK: local
+      APACHE_PORT: 8000
+    volumes:
+      - backend_storage:/var/www/html/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Laravel Queue Worker
+  queue:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: ip-queue
+    restart: unless-stopped
+    network_mode: host
+    entrypoint: []
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3"]
+    environment:
+      APP_NAME: "Innovation Platform"
+      APP_ENV: local
+      APP_DEBUG: "true"
+      APP_TIMEZONE: UTC
+      APP_URL: http://localhost:8000
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3306"
+      DB_DATABASE: ${DB_DATABASE:-innovation_platform}
+      DB_USERNAME: ${DB_USERNAME:-ip_user}
+      DB_PASSWORD: ${DB_PASSWORD:-ip_password}
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: "6379"
+      REDIS_CLIENT: phpredis
+      MAIL_MAILER: log
+      FILESYSTEM_DISK: local
+    volumes:
+      - backend_storage:/var/www/html/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_ENDPOINT: http://localhost:8000/api
+        NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:-}
+    container_name: ip-frontend
+    restart: unless-stopped
+    network_mode: host
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
+  redis_data:
+  backend_storage:
