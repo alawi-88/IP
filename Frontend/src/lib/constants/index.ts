@@ -1,0 +1,1 @@
+export const programsTypes = ["hackathon" , "sandbox"]; //idea_bank

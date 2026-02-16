@@ -61,12 +61,20 @@ class ProjectStepResource extends Resource
                                 }),
                         ])->columns(12),
 
-                        Forms\Components\TextInput::make('name')
-                            ->label('Step Name')
-                            ->required()
-                            ->maxLength(255)
-                            ->placeholder('Enter step name')
-                            ->columnSpanFull(),
+                        Forms\Components\Group::make([
+                            Forms\Components\TextInput::make('name.en')
+                                ->label('Step Name (English)')
+                                ->required()
+                                ->maxLength(255)
+                                ->placeholder('Enter step name in English')
+                                ->columnSpan(6),
+                            Forms\Components\TextInput::make('name.ar')
+                                ->label('Step Name (Arabic)')
+                                ->required()
+                                ->maxLength(255)
+                                ->placeholder('أدخل اسم الخطوة بالعربية')
+                                ->columnSpan(6),
+                        ])->columns(12),
 
                         Forms\Components\MultiSelect::make('field_ids')
                             ->label('Fields')

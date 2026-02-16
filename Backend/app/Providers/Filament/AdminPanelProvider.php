@@ -73,6 +73,7 @@ class AdminPanelProvider extends PanelProvider
                         to   { transform: rotate(360deg); }
                     }
                 </style>
+                <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
                 HTML;
             })
             ->renderHook('panels::topbar.start', function () {
