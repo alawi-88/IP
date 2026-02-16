@@ -34,7 +34,7 @@ class ViewCustomDashboard extends Page
     public ?string $filterDateTo = null;
 
     public array $widgetData = [];
-    public bool $isLoading = true;
+    public bool $isLoading = false;
     public ?string $errorMessage = null;
 
     public function mount(int|string $record): void
@@ -88,7 +88,6 @@ class ViewCustomDashboard extends Page
 
     public function loadDashboardData(): void
     {
-        $this->isLoading = true;
         $this->errorMessage = null;
 
         try {

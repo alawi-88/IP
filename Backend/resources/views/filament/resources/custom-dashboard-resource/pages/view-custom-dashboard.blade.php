@@ -161,19 +161,40 @@
                                 <div
                                     x-data="{
                                         chart: null,
+                                        chartType: '{{ $widget['visualization_type'] }}',
+                                        chartLabels: {{ json_encode($widget['data']['labels']) }},
+                                        chartSeries: {{ json_encode($widget['data']['series']) }},
+                                        chartLabel: '{{ addslashes($widget['label']) }}',
+                                        isPercentage: {{ !empty($widget['data']['is_percentage']) ? 'true' : 'false' }},
                                         init() {
+                                            this.$nextTick(() => {
+                                                this.tryRenderChart();
+                                            });
+                                        },
+                                        tryRenderChart() {
+                                            if (typeof ApexCharts === 'undefined') {
+                                                setTimeout(() => this.tryRenderChart(), 200);
+                                                return;
+                                            }
                                             this.renderChart();
                                         },
                                         renderChart() {
+                                            if (this.chart) {
+                                                this.chart.destroy();
+                                                this.chart = null;
+                                            }
+                                            const el = this.$refs.chartContainer;
+                                            if (!el) return;
                                             const options = this.getChartOptions();
-                                            this.chart = new ApexCharts(this.$refs.chartContainer, options);
+                                            this.chart = new ApexCharts(el, options);
                                             this.chart.render();
                                         },
                                         getChartOptions() {
-                                            const type = '{{ $widget['visualization_type'] }}';
-                                            const labels = @js($widget['data']['labels']);
-                                            const series = @js($widget['data']['series']);
-                                            const isPercentage = {{ !empty($widget['data']['is_percentage']) ? 'true' : 'false' }};
+                                            const type = this.chartType;
+                                            const labels = this.chartLabels;
+                                            const series = this.chartSeries;
+                                            const isPercentage = this.isPercentage;
+                                            const chartLabel = this.chartLabel;
 
                                             const colors = ['#6366f1', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#a855f7'];
 
@@ -198,7 +219,7 @@
                                             if (type === 'line') {
                                                 return {
                                                     chart: { type: 'line', height: 300, toolbar: { show: true } },
-                                                    series: [{ name: '{{ $widget['label'] }}', data: series }],
+                                                    series: [{ name: chartLabel, data: series }],
                                                     xaxis: { categories: labels },
                                                     colors: colors,
                                                     stroke: { curve: 'smooth', width: 3 },
@@ -216,7 +237,7 @@
                                             // Default: bar chart
                                             return {
                                                 chart: { type: 'bar', height: 300, toolbar: { show: true } },
-                                                series: [{ name: '{{ $widget['label'] }}', data: series }],
+                                                series: [{ name: chartLabel, data: series }],
                                                 xaxis: { categories: labels },
                                                 colors: colors,
                                                 plotOptions: {
@@ -231,9 +252,16 @@
                                                     }
                                                 }
                                             };
+                                        },
+                                        destroy() {
+                                            if (this.chart) {
+                                                this.chart.destroy();
+                                                this.chart = null;
+                                            }
                                         }
                                     }"
-                                    wire:key="chart-{{ $widget['widget_id'] }}-{{ md5(json_encode($widget['data'])) }}"
+                                    wire:key="chart-{{ $widget['widget_id'] }}"
+                                    wire:ignore
                                 >
                                     <div x-ref="chartContainer"></div>
                                 </div>
@@ -299,5 +327,20 @@
             @endif
         @endif
     @endif
+
+    @script
+    <script>
+        // Re-initialize charts when Livewire updates the page
+        Livewire.hook('morphed', ({ el, component }) => {
+            setTimeout(() => {
+                el.querySelectorAll('[x-data]').forEach(alpineEl => {
+                    if (alpineEl.__x && alpineEl.__x.$data && typeof alpineEl.__x.$data.tryRenderChart === 'function') {
+                        alpineEl.__x.$data.tryRenderChart();
+                    }
+                });
+            }, 100);
+        });
+    </script>
+    @endscript
 
 </x-filament-panels::page>
