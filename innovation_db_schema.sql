@@ -2322,3 +2322,91 @@ CREATE TABLE `winners` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-02-15  8:22:50
+-- MySQL dump 10.13  Distrib 8.0.45, for Linux (aarch64)
+--
+-- Host: localhost    Database: innovation
+-- ------------------------------------------------------
+-- Server version	8.0.45
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `dashboards`
+--
+
+DROP TABLE IF EXISTS `dashboards`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dashboards` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `competition_id` bigint unsigned DEFAULT NULL,
+  `name` json NOT NULL,
+  `description` json DEFAULT NULL,
+  `data_sources` json NOT NULL,
+  `filters` json DEFAULT NULL,
+  `group_by` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `sort_order` int NOT NULL DEFAULT '0',
+  `created_by` bigint unsigned NOT NULL,
+  `updated_by` bigint unsigned DEFAULT NULL,
+  `is_archived` tinyint(1) NOT NULL DEFAULT '0',
+  `archived_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_dashboards_competition` (`competition_id`),
+  KEY `idx_dashboards_sort` (`sort_order`),
+  KEY `idx_dashboards_archived` (`is_archived`),
+  KEY `fk_dashboards_created_by` (`created_by`),
+  KEY `fk_dashboards_updated_by` (`updated_by`),
+  CONSTRAINT `fk_dashboards_competition` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_dashboards_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_dashboards_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `dashboard_widgets`
+--
+
+DROP TABLE IF EXISTS `dashboard_widgets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dashboard_widgets` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `dashboard_id` bigint unsigned NOT NULL,
+  `form_field_id` bigint unsigned DEFAULT NULL,
+  `parameter_key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `aggregation_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `visualization_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `configuration` json DEFAULT NULL,
+  `sort_order` int NOT NULL DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_widgets_dashboard` (`dashboard_id`),
+  KEY `idx_widgets_field` (`form_field_id`),
+  KEY `idx_widgets_sort` (`sort_order`),
+  CONSTRAINT `fk_widgets_dashboard` FOREIGN KEY (`dashboard_id`) REFERENCES `dashboards` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_widgets_field` FOREIGN KEY (`form_field_id`) REFERENCES `form_fields` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-02-16 11:13:22
