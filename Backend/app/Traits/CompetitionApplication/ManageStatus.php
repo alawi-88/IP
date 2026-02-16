@@ -55,6 +55,16 @@ trait ManageStatus
         return $this->status === 'rejected';
     }
 
+    public function isEditRequested(): bool
+    {
+        return $this->status === 'edit_requested';
+    }
+
+    public function scopeEditRequested(Builder $query): Builder
+    {
+        return $query->where('status', 'edit_requested');
+    }
+
     public function scopeGroupedByMonth(Builder $query): array
     {
         return $query->get()

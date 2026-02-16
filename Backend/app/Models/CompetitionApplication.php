@@ -61,6 +61,16 @@ class CompetitionApplication extends Model
         'total_score',
         'ai_evaluation_response',
         'ai_evaluated_at',
+        // Registration evaluation & review fields (Release 2.10)
+        'final_evaluation_score',
+        'minimum_score_threshold',
+        'decision_reason',
+        'editable_fields',
+        'edit_notes',
+        'edit_requested_at',
+        'resubmitted_at',
+        'reviewed_by',
+        'reviewed_at',
     ];
 
     protected $casts = [
@@ -74,6 +84,13 @@ class CompetitionApplication extends Model
         'total_score' => 'integer',
         'ai_evaluation_response' => 'array',
         'ai_evaluated_at' => 'datetime',
+        // Registration evaluation & review fields (Release 2.10)
+        'final_evaluation_score' => 'float',
+        'editable_fields' => 'array',
+        'edit_notes' => 'array',
+        'edit_requested_at' => 'datetime',
+        'resubmitted_at' => 'datetime',
+        'reviewed_at' => 'datetime',
     ];
 
     protected array $logFields = [
@@ -457,6 +474,22 @@ class CompetitionApplication extends Model
     public function projects()
     {
         return $this->hasMany(Project::class, 'application_id');
+    }
+
+    /**
+     * Registration evaluations for this application (Release 2.10)
+     */
+    public function registrationEvaluations()
+    {
+        return $this->hasMany(RegistrationEvaluation::class, 'competition_application_id');
+    }
+
+    /**
+     * The admin user who reviewed this application (Release 2.10)
+     */
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
     }
 
     public static function columns(): array

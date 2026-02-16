@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\NafathIamController;
+use App\Http\Controllers\Api\Participant\TaskController as ParticipantTaskController;
+use App\Http\Controllers\Api\Participant\ApplicationEditController;
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\CompetitionApplicationController;
 use App\Http\Controllers\CompetitionController;
@@ -147,6 +149,23 @@ Route::prefix('participants')->group(function () {
                 Route::apiResource('guidelines', GuidelineController::class)->only(['index', 'show']);
                 Route::get('winners', [WinnerController::class, 'index'])->name('winners.index');
                 Route::get('leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+
+                // Task Management Routes (IN-2028)
+                Route::prefix('tasks')->name('tasks.')->group(function () {
+                    Route::get('/', [ParticipantTaskController::class, 'index'])->name('index');
+                    Route::get('{task}', [ParticipantTaskController::class, 'show'])->name('show');
+                    Route::get('{task}/status', [ParticipantTaskController::class, 'status'])->name('status');
+                    Route::post('{task}/submit', [ParticipantTaskController::class, 'submit'])->name('submit');
+                    Route::get('{task}/comments', [ParticipantTaskController::class, 'comments'])->name('comments');
+                    Route::post('{task}/comments', [ParticipantTaskController::class, 'addComment'])->name('comments.store');
+                });
+            });
+
+            // Application Edit Routes (IN-2025 - available without approved_competition_application middleware)
+            Route::prefix('applications/{application}')->name('applications.')->group(function () {
+                Route::get('decision', [ApplicationEditController::class, 'getDecisionDetails'])->name('decision');
+                Route::get('edit-request', [ApplicationEditController::class, 'checkEditRequest'])->name('edit-request');
+                Route::post('submit-edit', [ApplicationEditController::class, 'submitEdit'])->name('submit-edit');
             });
         });
 
