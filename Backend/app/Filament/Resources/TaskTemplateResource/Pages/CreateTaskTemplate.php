@@ -30,9 +30,9 @@ class CreateTaskTemplate extends CreateRecord
                         ->label('Form Template / نموذج التسليم')
                         ->options(function (callable $get) {
                             $competitionId = $get('competition_id');
-                            if (!$competitionId) return Form::pluck('title', 'id')->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t);
+                            if (!$competitionId) return Form::pluck('name', 'id')->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t);
                             return Form::where('competition_id', $competitionId)
-                                ->pluck('title', 'id')
+                                ->pluck('name', 'id')
                                 ->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t);
                         })
                         ->searchable()

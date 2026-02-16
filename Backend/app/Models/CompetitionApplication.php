@@ -746,6 +746,8 @@ class CompetitionApplication extends Model
                     'pending' => 'warning',
                     'approved' => 'success',
                     'rejected' => 'danger',
+                    'edit_requested' => 'info',
+                    default => 'gray',
                 })->searchable()
                 ->sortable(),
             Tables\Columns\TextColumn::make('created_at')
