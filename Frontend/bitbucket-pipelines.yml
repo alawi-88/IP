@@ -1,0 +1,148 @@
+image: node:16  # Use a Node.js image (e.g., node:16, node:18, or node:20)
+
+pipelines:
+  branches:
+    filmathon-prod:
+      - step:
+          name: Deploy to filmathon production
+          caches:
+            - node  # Cache node_modules for faster builds
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.166.104.215 << 'EOF'
+              cd /var/www/filmathon-platform-website
+              sudo git checkout filmathon-prod
+              sudo git pull origin
+              echo "Installing dependencies"
+              sudo npm install
+              echo "Running build"
+              sudo npm run build
+              echo "Restarting PM2"
+              sudo pm2 restart all
+              EOF
+
+    filmathon:  # Staging branch
+      - step:
+          name: Deploy to filmathon staging
+          caches:
+            - node  # Cache node_modules for faster builds
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@35.242.238.238 << 'EOF'
+              cd /var/www/filmathon-platform-website
+              sudo git checkout filmathon  # Checkout the staging branch
+              sudo git pull origin
+              echo "Installing dependencies"
+              sudo npm install
+              echo "Running build"
+              sudo npm run build
+              echo "Restarting PM2"
+              sudo pm2 restart all
+              EOF
+
+    innovation:  # Innovation branch
+      - step:
+          name: Deploy to innovation staging
+          caches:
+            - node  # Cache node_modules for faster builds
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY_MOHAMED | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem mohamed_olwan@34.141.23.91 << 'EOF'
+              cd /var/www/innovation-platform-website  # Path for innovation branch
+              echo "Fixing permissions..."
+              sudo chown -R mohamed_olwan:mohamed_olwan /var/www/innovation-platform-website
+              git checkout innovation  # Checkout the innovation branch
+              git reset --hard
+              git pull origin
+              echo "Installing dependencies"
+              npm install
+              echo "Running build"
+              npm run build
+              echo "Restarting PM2"
+              pm2 restart all
+              EOF
+
+    innovation-judging:  # Innovation innovation-judging branch
+      - step:
+          name: Deploy to innovation-judging staging
+          caches:
+            - node
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            # Decode SSH key from Bitbucket env var
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            # SSH into VM and deploy
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.52.139.138 << 'EOF'
+              cd /var/www/innovation-platform-website
+              sudo git fetch --all
+              sudo git checkout innovation-judging
+              sudo git pull origin innovation-judging
+              echo "Installing dependencies"
+              sudo npm install --legacy-peer-deps
+              echo "Running build"
+              sudo npm run build
+              echo "Restarting PM2"
+              sudo pm2 restart all
+              EOF
+
+    staging-foundry:  # Innovation-tga branch
+      - step:
+          name: Deploy to staging foundry
+          caches:
+            - node  # Cache node_modules for faster builds
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.38.248.159 << 'EOF'
+              cd /var/www/
+              cd innovation-platform-website  # Path for innovation branch
+              git checkout staging-foundry  # Checkout the innovation branch
+              git pull origin staging-foundry
+              echo "Installing dependencies"
+              npm install
+              echo "Running build"
+              npm run build
+              echo "Restarting PM2"
+              pm2 stop all
+              pm2 delete all
+              pm2 start npm --name "staging-foundry" -- run start
+              EOF
+
+    production-foundry:  # Innovation-tga branch
+      - step:
+          name: Deploy to staging foundry
+          caches:
+            - node  # Cache node_modules for faster builds
+          script:
+            - apt-get update && apt-get install -y openssh-client git && rm -rf /var/lib/apt/lists/*
+            - echo $GCP_SSH_KEY | base64 --decode > /tmp/gcp_key.pem
+            - chmod 600 /tmp/gcp_key.pem
+            - |
+              ssh -o StrictHostKeyChecking=no -i /tmp/gcp_key.pem ahmedsayed@34.166.227.198 << 'EOF'
+              cd /var/www/
+              cd innovation-platform-website  # Path for innovation branch
+              git checkout production-foundry  # Checkout the innovation branch
+              git pull origin production-foundry
+              echo "Installing dependencies"
+              npm install
+              echo "Running build"
+              npm run build
+              echo "Restarting PM2"
+              pm2 stop all
+              pm2 delete all
+              pm2 start npm --name "production-foundry" -- run start
+              EOF
+    
