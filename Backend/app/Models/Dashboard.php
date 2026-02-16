@@ -117,7 +117,7 @@ class Dashboard extends Model
 
     public function duplicate(): self
     {
-        $clone = $this->replicate(['created_at', 'updated_at']);
+        $clone = $this->replicate(['created_at', 'updated_at', 'widgets_count']);
         $clone->name = [
             'en' => ($this->getTranslation('name', 'en') ?? '') . ' - Copy',
             'ar' => ($this->getTranslation('name', 'ar') ?? '') . ' - نسخة',

@@ -7,19 +7,15 @@ use App\Models\Competition;
 use App\Models\Dashboard;
 use App\Services\DashboardAggregationService;
 use Filament\Actions;
-use Filament\Forms;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\Page;
-use Illuminate\Contracts\View\View;
+use Filament\Resources\Pages\ViewRecord;
 use Livewire\Attributes\Url;
 
-class ViewCustomDashboard extends Page
+class ViewCustomDashboard extends ViewRecord
 {
     protected static string $resource = CustomDashboardResource::class;
 
     protected static string $view = 'filament.resources.custom-dashboard-resource.pages.view-custom-dashboard';
-
-    public Dashboard $record;
 
     #[Url]
     public ?string $filterCompetition = null;
@@ -39,7 +35,7 @@ class ViewCustomDashboard extends Page
 
     public function mount(int|string $record): void
     {
-        $this->record = Dashboard::with('widgets.formField', 'creator')->findOrFail($record);
+        parent::mount($record);
         $this->loadDashboardData();
     }
 
@@ -164,7 +160,7 @@ class ViewCustomDashboard extends Page
 
     public function exportExcel()
     {
-        return $this->exportCsv(); // Simplified - uses same CSV format
+        return $this->exportCsv();
     }
 
     public function getCompetitionOptions(): array
