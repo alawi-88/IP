@@ -6,7 +6,11 @@ use App\Filament\Resources\CompetitionApplicationResource;
 use App\Models\CompetitionApplication;
 use App\Models\RegistrationFormConfig;
 use App\Services\AiEvaluationService;
+use App\Models\FormField;
+use App\Services\RegistrationEvaluationService;
 use Filament\Actions\DeleteAction;
+use Filament\Infolists\Components\Section as InfoSection;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Actions\Action;
@@ -276,8 +280,23 @@ class ViewCompetitionApplication extends ViewRecord
                         $this->record->setAssessmentScores($scores);
                     }
 
+                    // Record reviewer info
+                    $this->record->update([
+                        'reviewed_by' => auth()->id(),
+                        'reviewed_at' => now(),
+                    ]);
+
                     // Approve the application (only after successful scoring if required)
                     $this->record->approve();
+
+                    // Send decision notification
+                    try {
+                        $this->record->participant?->notify(
+                            new \App\Notifications\Participant\RegistrationDecisionNotification($this->record, 'approved')
+                        );
+                    } catch (\Exception $e) {
+                        \Log::warning('Decision notification failed: ' . $e->getMessage());
+                    }
 
                     Notification::make()
                         ->title('Application Approved / تم الموافقة على التطبيق')
@@ -288,21 +307,127 @@ class ViewCompetitionApplication extends ViewRecord
                         ->send();
                 }),
 
+            // IN-2060: Reject with mandatory reason
             Action::make('reject')
                 ->label('Reject / رفض')
                 ->color('danger')
                 ->icon('heroicon-o-x-circle')
-                ->requiresConfirmation()
                 ->visible(fn () => !$this->record->isArchived() && $this->record->isPending())
-                ->action(function () {
+                ->modalHeading('Reject Application / رفض الطلب')
+                ->form([
+                    Forms\Components\Textarea::make('decision_reason')
+                        ->label('Rejection Reason / سبب الرفض')
+                        ->required()
+                        ->rows(4)
+                        ->helperText('This reason will be visible to the participant. / سيكون هذا السبب مرئياً للمشارك.'),
+                ])
+                ->action(function (array $data) {
+                    $this->record->update([
+                        'decision_reason' => $data['decision_reason'],
+                        'reviewed_by' => auth()->id(),
+                        'reviewed_at' => now(),
+                    ]);
                     $this->record->reject();
+
+                    // Send notification with reason
+                    try {
+                        $this->record->participant?->notify(
+                            new \App\Notifications\Participant\RegistrationDecisionNotification($this->record, 'rejected', $data['decision_reason'])
+                        );
+                    } catch (\Exception $e) {
+                        \Log::warning('Decision notification failed: ' . $e->getMessage());
+                    }
 
                     Notification::make()
                         ->title('Application Rejected / تم رفض التطبيق')
-                        ->body('The application has been rejected.')
+                        ->body('The application has been rejected with reason provided.')
                         ->danger()
                         ->send();
                 }),
+
+            // IN-2062: Request Field Edits
+            Action::make('requestEdit')
+                ->label('Request Edit / طلب تعديل')
+                ->color('warning')
+                ->icon('heroicon-o-pencil-square')
+                ->visible(fn () => !$this->record->isArchived() && $this->record->isPending())
+                ->modalHeading('Request Application Edit / طلب تعديل الطلب')
+                ->modalDescription('Select which fields the participant can edit and provide instructions. / حدد الحقول التي يمكن للمشارك تعديلها وقدم التعليمات.')
+                ->form(function () {
+                    // Get form fields for this application's form
+                    $formFields = FormField::where('form_id', $this->record->form_id)
+                        ->orderBy('sort_order')
+                        ->get();
+
+                    $fieldOptions = $formFields->mapWithKeys(function ($field) {
+                        $label = $field->getTranslation('label', 'en') ?? $field->slug;
+                        return [$field->slug => $label];
+                    })->toArray();
+
+                    return [
+                        Forms\Components\CheckboxList::make('editable_fields')
+                            ->label('Fields to Edit / الحقول للتعديل')
+                            ->options($fieldOptions)
+                            ->required()
+                            ->columns(2)
+                            ->helperText('Select the fields that the participant will be allowed to edit.'),
+
+                        Forms\Components\Textarea::make('edit_notes_en')
+                            ->label('Edit Instructions (English)')
+                            ->required()
+                            ->rows(3)
+                            ->helperText('Explain what changes are needed.'),
+
+                        Forms\Components\Textarea::make('edit_notes_ar')
+                            ->label('تعليمات التعديل (عربي)')
+                            ->rows(3)
+                            ->extraFieldWrapperAttributes(['class' => 'text-right']),
+                    ];
+                })
+                ->action(function (array $data) {
+                    $this->record->update([
+                        'status' => 'edit_requested',
+                        'editable_fields' => $data['editable_fields'],
+                        'edit_notes' => [
+                            'en' => $data['edit_notes_en'],
+                            'ar' => $data['edit_notes_ar'] ?? '',
+                        ],
+                        'edit_requested_at' => now(),
+                        'reviewed_by' => auth()->id(),
+                        'reviewed_at' => now(),
+                    ]);
+
+                    // Send edit request notification
+                    try {
+                        $this->record->participant?->notify(
+                            new \App\Notifications\Participant\EditRequestNotification($this->record)
+                        );
+                    } catch (\Exception $e) {
+                        \Log::warning('Edit request notification failed: ' . $e->getMessage());
+                    }
+
+                    Notification::make()
+                        ->title('Edit Request Sent / تم إرسال طلب التعديل')
+                        ->body('The participant has been notified to edit their application.')
+                        ->warning()
+                        ->send();
+                }),
+
+            // IN-2057: View Evaluation Score Breakdown
+            Action::make('viewScoreBreakdown')
+                ->label('Score Breakdown / تفصيل الدرجات')
+                ->icon('heroicon-o-chart-bar')
+                ->color('info')
+                ->visible(fn () => $this->record->final_evaluation_score !== null
+                    || \App\Models\RegistrationEvaluation::where('competition_application_id', $this->record->id)->exists())
+                ->modalHeading('Evaluation Score Breakdown / تفصيل درجات التقييم')
+                ->modalContent(function () {
+                    $service = new RegistrationEvaluationService();
+                    $breakdown = $service->getScoreBreakdown($this->record->id);
+
+                    return view('filament.modals.score-breakdown', ['breakdown' => $breakdown]);
+                })
+                ->modalSubmitAction(false),
 
             Action::make('restore')
                 ->label('Restore / استعادة')
