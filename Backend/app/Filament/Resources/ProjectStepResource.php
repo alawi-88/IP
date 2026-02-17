@@ -20,13 +20,16 @@ class ProjectStepResource extends Resource
 {
     protected static ?string $model = ProjectStep::class;
 
+    // Managed via Competition Hub
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
 
-    protected static ?string $navigationGroup = 'Forms';
+    protected static ?string $navigationGroup = 'Forms & Configuration';
 
     protected static ?string $navigationLabel = 'Project Steps';
 
-    protected static ?int $navigationSort = 31;
+    protected static ?int $navigationSort = 10;
 
     public static function form(Form $form): Form
     {

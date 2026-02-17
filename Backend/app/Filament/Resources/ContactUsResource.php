@@ -13,12 +13,11 @@ class ContactUsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
-    protected static ?string $navigationLabel = 'Participants';
+    protected static ?string $navigationLabel = 'Contact Messages';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 7;
 
-    protected static ?string $navigationGroup = 'Contact Us';
-
+    protected static ?string $navigationGroup = 'Notifications & Approvals';
 
     public static function getBreadcrumb(): string
     {

@@ -22,7 +22,7 @@ class ProgramParticipantResource extends Resource
     protected static ?string $modelLabel = 'Program Participant';
     protected static ?string $pluralModelLabel = 'Program Participants';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationLabel(): string
     {

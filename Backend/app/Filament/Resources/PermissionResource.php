@@ -18,9 +18,9 @@ use Illuminate\Database\Eloquent\Builder;
 class PermissionResource extends BasePermissionResource
 {
     protected static ?string $navigationIcon = 'heroicon-o-key';
-    protected static ?string $navigationGroup = 'System Management';
+    protected static ?string $navigationGroup = 'Users & Roles';
     protected static ?string $navigationLabel = 'Permissions';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 8;
 
     public static function canViewAny(): bool
     {

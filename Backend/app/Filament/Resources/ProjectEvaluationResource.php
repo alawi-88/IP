@@ -34,7 +34,7 @@ class ProjectEvaluationResource extends Resource
 
     protected static ?string $navigationLabel = 'Evaluations';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationGroup = 'Programs';
 

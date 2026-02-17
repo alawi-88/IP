@@ -20,9 +20,12 @@ class SubTrackResource extends Resource
     protected static ?string $model = SubTrack::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-map-pin';
-    protected static ?string $navigationGroup = 'Form Configs';
+    protected static ?string $navigationGroup = 'Forms & Configuration';
     protected static ?string $navigationLabel = 'SubTrack';
-    protected static ?int $navigationSort = 45;
+    protected static ?int $navigationSort = 7;
+
+    // Merged into TrackResource (Tracks & Sub-Tracks)
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {

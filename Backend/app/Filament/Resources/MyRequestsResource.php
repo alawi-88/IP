@@ -18,7 +18,7 @@ class MyRequestsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Approvals';
+    protected static ?string $navigationGroup = 'Notifications & Approvals';
 
     protected static ?string $navigationLabel = 'My Requests';
 
@@ -26,7 +26,7 @@ class MyRequestsResource extends Resource
 
     protected static ?string $pluralModelLabel = 'My Requests / طلباتي';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     public static function getEloquentQuery(): Builder
     {

@@ -40,9 +40,9 @@ class MentorSessionResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Sessions';
 
-    protected static ?string $navigationGroup = 'Mentor Management';
+    protected static ?string $navigationGroup = 'Users & Roles';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

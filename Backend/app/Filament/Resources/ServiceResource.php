@@ -29,8 +29,8 @@ class ServiceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'Services';
-    protected static ?string $navigationGroup = 'Content';
-    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'System';
+    protected static ?int $navigationSort = 3;
     protected static ?string $pluralModelLabel = 'Services';
     protected static ?string $modelLabel = 'Service';
     protected static ?string $pluralLabel = 'Services';

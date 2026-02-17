@@ -3,6 +3,11 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin();
 
+// Backend URL for proxying storage files (images, uploads, etc.)
+const internalBackendUrl =
+  process.env.INTERNAL_API_ENDPOINT?.replace("/api", "") ||
+  "http://localhost:8080";
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -10,7 +15,19 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**",
       },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
     ],
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/storage/:path*",
+        destination: `${internalBackendUrl}/storage/:path*`,
+      },
+    ];
   },
   // async headers() {
   //   if (process.env.NODE_ENV === "development") {

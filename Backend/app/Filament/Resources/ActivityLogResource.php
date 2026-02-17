@@ -66,7 +66,8 @@ class ActivitylogResource extends BaseActivitylogResource
         return config('activitylog.activity_model', Activity::class);
     }
 
-    protected static ?string $navigationGroup = 'System Logs';
+    protected static ?string $navigationGroup = 'System';
+    protected static ?int $navigationSort = 5;
     protected static ?string $label = 'Log';
     protected static ?string $pluralLabel = 'Logs';
 

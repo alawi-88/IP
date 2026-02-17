@@ -13,11 +13,11 @@ class TaskTemplateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-duplicate';
 
-    protected static ?string $navigationGroup = 'Programs';
+    protected static ?string $navigationGroup = 'AI & Automation';
     protected static ?string $modelLabel = 'Task Template';
     protected static ?string $pluralModelLabel = 'Task Templates';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationLabel(): string
     {

@@ -15,11 +15,14 @@ class EvaluationStageConfigResource extends Resource
 {
     protected static ?string $model = EvaluationStageConfig::class;
 
+    // Managed via Competition Hub
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-flag';
-    protected static ?string $navigationGroup = 'Form Configs';
+    protected static ?string $navigationGroup = 'Forms & Configuration';
     protected static ?string $navigationLabel = 'Evaluation Stages';
 
-    protected static ?int $navigationSort = 40;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Forms\Form $form): Forms\Form
     {
