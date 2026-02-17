@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
@@ -24,7 +23,6 @@ class LoginRequest extends FormRequest
     {
         return
           [
-//            'g-recaptcha-response' => ['bail', 'required', new ReCaptcha()],
             'email' => ['required', 'email'],
             'password' => ['required'],
             'remember_me' => ['required', 'boolean'],

@@ -342,7 +342,7 @@ export default function CompetitionPage() {
             size="small"
             responsive
             items={dynamicForm?.form?.steps?.map((step: any) => ({
-              title: step?.name,
+              title: typeof step?.name === "object" ? (step?.name?.[locale] || step?.name?.en || step?.name?.ar) : step?.name,
             }))}
           />
         )}

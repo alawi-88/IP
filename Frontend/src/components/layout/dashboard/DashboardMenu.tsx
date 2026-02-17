@@ -23,9 +23,11 @@ type MenuItem = Required<MenuProps>["items"][number];
 export default function DashboardMenu({
   type,
   closeDrawer,
+  collapsed = false,
 }: {
   type: string;
   closeDrawer?: () => void;
+  collapsed?: boolean;
 }) {
   const path = usePathname();
   const router = useRouter();
@@ -388,12 +390,15 @@ export default function DashboardMenu({
   return (
     <>
       <Menu
-        className="dashboard-menu [&_li]:flex-shrink-0 lg:overflow-auto !flex !flex-col !h-full !px-6 !text-sm !text-primary-900 !font-medium"
+        className={`dashboard-menu [&_li]:flex-shrink-0 lg:overflow-auto !flex !flex-col !h-full !text-sm !text-primary-900 !font-medium ${
+          collapsed ? "!px-2" : "!px-6"
+        }`}
         mode="inline"
+        inlineCollapsed={collapsed}
         items={items}
         selectedKeys={[getSelectedKey(path)]}
         defaultOpenKeys={
-          path.startsWith(`${dashboardPrefix}/help`) ? ["help"] : []
+          collapsed ? [] : path.startsWith(`${dashboardPrefix}/help`) ? ["help"] : []
         }
       />
       <FeedbackModal

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Judge;
 
-use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -54,8 +53,6 @@ class RegisterRequest extends FormRequest
                 'regex:/[!@#$%^&*_\-]/',
             ],
         ];
-
-            $rules['g-recaptcha-response'] = ['bail', 'required', new ReCaptcha()];
 
         return $rules;
     }

@@ -88,11 +88,13 @@ class RegistrationFormResource extends JsonResource
                 : [],
             'steps' => $steps->isEmpty()
                 ? []
-                : $steps->map(function ($step) use ($aiEnhancementConfig) {
+                : $steps->map(function ($step) use ($aiEnhancementConfig, $request) {
+                    $locale = $request->header('Accept-Language', 'en');
+                    $locale = in_array($locale, ['en', 'ar']) ? $locale : 'en';
                     $fieldsInStep = $this->fields->whereIn('id', $step->field_ids->map(fn($id) => (int)$id));
                     return [
                         'id' => $step->id,
-                        'name' => $step->name,
+                        'name' => $step->getTranslation('name', $locale),
                         'step_order' => $step->step_order,
                         'fields' => $fieldsInStep
                             ->map(fn ($field) => (new FormFieldResource($field, $this->answers, $aiEnhancementConfig))->toArray(request()))
