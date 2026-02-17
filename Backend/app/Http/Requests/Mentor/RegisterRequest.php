@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Mentor;
 
-use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -64,8 +63,6 @@ class RegisterRequest extends FormRequest
             ],
         ];
 
-            $rules['g-recaptcha-response'] = ['bail', 'required', new ReCaptcha()];
-
         return $rules;
     }
 
@@ -92,8 +89,6 @@ class RegisterRequest extends FormRequest
             'password.confirmed' => __('validation.password.confirmed'),
             'password.min' => __('validation.password.min'),
             'password.regex' => __('validation.password.regex'),
-            'g-recaptcha-response.required' => __('validation.recaptcha.required'),
-            'g-recaptcha-response.recaptcha' => __('validation.recaptcha.recaptcha'),
         ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class JudgeUpdatePasswordRequest extends FormRequest
@@ -24,7 +23,6 @@ class JudgeUpdatePasswordRequest extends FormRequest
     {
         return
             [
-                'g-recaptcha-response' => ['bail', 'required', new ReCaptcha()],
                 'password' => 'required|confirmed|string|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,}$/',
             ];
     }

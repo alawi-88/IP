@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ForgotPasswordRequest extends FormRequest
@@ -34,7 +33,6 @@ class ForgotPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'g-recaptcha-response' => ['bail', 'required', new ReCaptcha()],
             'email' => ['required', 'email', 'exists:participants,email'],
         ];
     }

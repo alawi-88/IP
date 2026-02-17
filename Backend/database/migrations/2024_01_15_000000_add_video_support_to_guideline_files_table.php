@@ -3,18 +3,19 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     public function up(): void
     {
+        // If table doesn't exist (fresh installs before it's created), skip safely.
         if (!Schema::hasTable('guideline_files')) {
             return;
         }
 
         Schema::table('guideline_files', function (Blueprint $table) {
-            // Determine which column exists at this point in the migration timeline.
-            // On older/fresh installs the column may still be `url` (renamed later to `attachment`).
+            // Determine which column exists at this point in migration timeline.
             $afterColumn = null;
 
             if (Schema::hasColumn('guideline_files', 'attachment')) {
@@ -23,7 +24,7 @@ return new class extends Migration
                 $afterColumn = 'url';
             }
 
-            // Add file_type safely
+            // file_type
             if (!Schema::hasColumn('guideline_files', 'file_type')) {
                 if ($afterColumn) {
                     $table->string('file_type')->default('video')->after($afterColumn);
@@ -32,11 +33,16 @@ return new class extends Migration
                 }
             }
 
-            // Add description safely
+            // description
             if (!Schema::hasColumn('guideline_files', 'description')) {
                 $table->json('description')->nullable()->after('file_type');
             }
         });
+
+        // Update existing records to have video type (only if column exists)
+        if (Schema::hasColumn('guideline_files', 'file_type')) {
+            DB::table('guideline_files')->update(['file_type' => 'video']);
+        }
     }
 
     public function down(): void
