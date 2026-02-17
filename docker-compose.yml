@@ -79,6 +79,12 @@ services:
     depends_on:
       - backend
 
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
   frontend:
     image: node:20-alpine
     working_dir: /app
