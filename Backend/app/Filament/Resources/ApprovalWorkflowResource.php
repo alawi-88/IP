@@ -19,9 +19,10 @@ class ApprovalWorkflowResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-check-circle';
 
-    protected static ?string $navigationGroup = 'Approvals';
+    protected static ?string $navigationGroup = 'Notifications & Approvals';
 
     protected static ?string $navigationLabel = 'Policies';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $modelLabel = 'Approval Policy / سياسة اعتماد';
 

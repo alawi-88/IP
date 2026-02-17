@@ -18,15 +18,18 @@ class RegistrationStepResource extends Resource
 {
     protected static ?string $model = FormStep::class;
 
+    // Managed via Competition Hub
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
 
-    protected static ?string $navigationGroup = 'Forms';
+    protected static ?string $navigationGroup = 'Forms & Configuration';
 
     protected static ?string $navigationLabel = 'Registration Steps';
 
     protected static ?string $breadcrumb = 'Registration Steps';
 
-    protected static ?int $navigationSort = 32;
+    protected static ?int $navigationSort = 11;
 
     public static function form(Form $form): Form
     {

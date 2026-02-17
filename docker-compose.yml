@@ -1,138 +1,102 @@
-services:
-  # MySQL Database
-  mysql:
-    image: mysql:8.0
-    container_name: ip-mysql
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
-      MYSQL_DATABASE: ${DB_DATABASE:-innovation_platform}
-      MYSQL_USER: ${DB_USERNAME:-ip_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-ip_password}
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./innovation_db_schema.sql:/docker-entrypoint-initdb.d/schema.sql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-prootpassword"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+version: "3.9"
 
-  # Redis (for caching/queues)
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: innovation
+      MYSQL_USER: innovation
+      MYSQL_PASSWORD: innovation
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   redis:
     image: redis:7-alpine
-    container_name: ip-redis
-    restart: unless-stopped
-    network_mode: host
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    ports:
+      - "6379:6379"
 
-  # Laravel Backend API
   backend:
     build:
       context: ./Backend
       dockerfile: Dockerfile
-    container_name: ip-backend
-    restart: unless-stopped
-    network_mode: host
-    environment:
-      APP_NAME: "Innovation Platform"
-      APP_ENV: local
-      APP_DEBUG: "true"
-      APP_TIMEZONE: UTC
-      APP_URL: http://localhost:8000
-      APP_LOCALE: en
-      APP_FALLBACK_LOCALE: en
-      DB_CONNECTION: mysql
-      DB_HOST: 127.0.0.1
-      DB_PORT: "3306"
-      DB_DATABASE: ${DB_DATABASE:-innovation_platform}
-      DB_USERNAME: ${DB_USERNAME:-ip_user}
-      DB_PASSWORD: ${DB_PASSWORD:-ip_password}
-      CACHE_STORE: redis
-      SESSION_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      REDIS_HOST: 127.0.0.1
-      REDIS_PORT: "6379"
-      REDIS_CLIENT: phpredis
-      MAIL_MAILER: log
-      FILESYSTEM_DISK: local
-      APACHE_PORT: 8000
+    working_dir: /var/www
     volumes:
-      - backend_storage:/var/www/html/storage
+      - ./Backend:/var/www
+    environment:
+      APP_ENV: local
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: innovation
+      DB_USERNAME: innovation
+      DB_PASSWORD: innovation
+      REDIS_HOST: redis
     depends_on:
-      mysql:
+      db:
         condition: service_healthy
       redis:
-        condition: service_healthy
+        condition: service_started
 
-  # Laravel Queue Worker
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Backend:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+
   queue:
     build:
       context: ./Backend
       dockerfile: Dockerfile
-    container_name: ip-queue
-    restart: unless-stopped
-    network_mode: host
-    entrypoint: []
-    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3"]
-    environment:
-      APP_NAME: "Innovation Platform"
-      APP_ENV: local
-      APP_DEBUG: "true"
-      APP_TIMEZONE: UTC
-      APP_URL: http://localhost:8000
-      DB_CONNECTION: mysql
-      DB_HOST: 127.0.0.1
-      DB_PORT: "3306"
-      DB_DATABASE: ${DB_DATABASE:-innovation_platform}
-      DB_USERNAME: ${DB_USERNAME:-ip_user}
-      DB_PASSWORD: ${DB_PASSWORD:-ip_password}
-      CACHE_STORE: redis
-      SESSION_DRIVER: redis
-      QUEUE_CONNECTION: redis
-      REDIS_HOST: 127.0.0.1
-      REDIS_PORT: "6379"
-      REDIS_CLIENT: phpredis
-      MAIL_MAILER: log
-      FILESYSTEM_DISK: local
+    working_dir: /var/www
     volumes:
-      - backend_storage:/var/www/html/storage
+      - ./Backend:/var/www
+    command: php artisan queue:work --verbose --tries=3 --timeout=90
     depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - backend
+      - redis
 
-  # Mailpit (local email testing)
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: ip-mailpit
-    restart: unless-stopped
-    network_mode: host
-
-  # Next.js Frontend
-  frontend:
+  scheduler:
     build:
-      context: ./Frontend
+      context: ./Backend
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_ENDPOINT: http://localhost:8000/api
-        NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:-}
-    container_name: ip-frontend
-    restart: unless-stopped
-    network_mode: host
+    working_dir: /var/www
+    volumes:
+      - ./Backend:/var/www
+    command: sh -lc "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
     depends_on:
       - backend
 
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./Frontend:/app
+      - frontend_node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+      NEXT_PUBLIC_API_URL: "http://localhost:8080"
+      INTERNAL_API_ENDPOINT: "http://nginx:80/api"
+    command: sh -lc "npm install && npm run dev -- --hostname 0.0.0.0 --port 3000"
+    depends_on:
+      - nginx
+
 volumes:
-  mysql_data:
-  redis_data:
-  backend_storage:
+  db_data:
+  frontend_node_modules:

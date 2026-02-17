@@ -25,7 +25,7 @@ class CompetitionResource extends Resource
 
     protected static ?string $navigationLabel = 'Programs List';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     public static function getPages(): array
     {
@@ -34,6 +34,7 @@ class CompetitionResource extends Resource
             'create' => Pages\CreateCompetition::route('/create'),
             'view' => Pages\ViewCompetition::route('/{record}'),
             'edit' => Pages\EditCompetition::route('/{record}/edit'),
+            'manage' => Pages\ManageCompetition::route('/{record}/manage'),
         ];
     }
 

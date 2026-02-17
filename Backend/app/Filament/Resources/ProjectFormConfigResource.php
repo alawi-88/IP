@@ -16,10 +16,13 @@ class ProjectFormConfigResource extends Resource
 {
     protected static ?string $model = ProjectFormConfig::class;
 
+    // Managed via Competition Hub
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
-    protected static ?string $navigationGroup = 'Form Configs';
+    protected static ?string $navigationGroup = 'Forms & Configuration';
     protected static ?string $navigationLabel = 'Project Form Configs';
-    protected static ?int $navigationSort = 41;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

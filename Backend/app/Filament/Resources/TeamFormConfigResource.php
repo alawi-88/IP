@@ -19,10 +19,13 @@ class TeamFormConfigResource extends Resource
 {
     protected static ?string $model = TeamFormConfig::class;
 
+    // Managed via Competition Hub
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
-    protected static ?string $navigationGroup = 'Form Configs';
+    protected static ?string $navigationGroup = 'Forms & Configuration';
     protected static ?string $navigationLabel = 'Add Team Form';
-    protected static ?int $navigationSort = 43;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

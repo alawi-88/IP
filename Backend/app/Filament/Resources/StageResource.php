@@ -16,6 +16,8 @@ class StageResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-flag';
 
     protected static ?int $navigationSort = 9;
+    protected static ?string $navigationGroup = 'Program Management';
+    // Managed via Competition Hub
     protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array

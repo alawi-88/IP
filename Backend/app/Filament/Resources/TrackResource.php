@@ -19,9 +19,9 @@ class TrackResource extends Resource
     protected static ?string $model = Track::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-map';
-    protected static ?string $navigationGroup = 'Form Configs';
-    protected static ?string $navigationLabel = 'Track';
-    protected static ?int $navigationSort = 44;
+    protected static ?string $navigationGroup = 'Forms & Content';
+    protected static ?string $navigationLabel = 'Tracks & Sub-Tracks';
+    protected static ?int $navigationSort = 2;
 
 
     public static function form(Form $form): Form
@@ -116,6 +116,11 @@ class TrackResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('order'),
+
+                Tables\Columns\TextColumn::make('sub_tracks_count')
+                    ->counts('subTracks')
+                    ->label('Sub-Tracks')
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Submitted At')

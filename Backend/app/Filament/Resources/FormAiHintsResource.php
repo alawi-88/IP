@@ -17,7 +17,7 @@ class FormAiHintsResource extends Resource
     protected static ?string $model = FormAiEnhancementConfig::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-light-bulb';
-    protected static ?string $navigationGroup = 'AI Agent';
+    protected static ?string $navigationGroup = 'AI & Automation';
     protected static ?string $navigationLabel = 'AI Hints';
     protected static ?int $navigationSort = 2;
 

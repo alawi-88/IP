@@ -24,12 +24,12 @@ class NotificationManagementResource extends Resource
 
     protected static ?string $model = NotificationManagement::class;
 
-    protected static ?string $navigationGroup = 'Notification Management';
+    protected static ?string $navigationGroup = 'Notifications & Approvals';
 
     protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
 
     protected static ?string $navigationLabel = 'Push Notification';
-    protected static ?int $navigationSort = 90;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Form $form): Form
     {

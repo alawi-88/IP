@@ -17,11 +17,14 @@ class RegistrationFormConfigResource extends Resource
 {
     protected static ?string $model = RegistrationFormConfig::class;
 
+    // Managed via Competition Hub
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static ?string $navigationGroup = 'Form Configs';
+    protected static ?string $navigationGroup = 'Forms & Configuration';
 
     protected static ?string $navigationLabel = 'Registration';
-    protected static ?int $navigationSort = 42;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

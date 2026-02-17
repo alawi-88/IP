@@ -9,15 +9,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class JudgeContactUsResource extends Resource
 {
+    // Merged into ContactUsResource
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $model = ContactUs::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     protected static ?string $navigationLabel = 'Judges';
 
-    protected static ?int $navigationSort = 21;
+    protected static ?int $navigationSort = 8;
 
-    protected static ?string $navigationGroup = 'Contact Us';
+    protected static ?string $navigationGroup = 'Approvals & Communication';
 
 
     public static function getBreadcrumb(): string

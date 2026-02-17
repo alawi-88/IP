@@ -18,9 +18,9 @@ class PageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Content';
+    protected static ?string $navigationGroup = 'System';
 
-    protected static ?int $navigationSort = 28;
+    protected static ?int $navigationSort = 4;
 
     public static function getPages(): array
     {

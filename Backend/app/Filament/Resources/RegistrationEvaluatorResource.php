@@ -11,13 +11,16 @@ class RegistrationEvaluatorResource extends Resource
 {
     protected static ?string $model = RegistrationEvaluator::class;
 
+    // Managed via Competition Hub
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Programs';
+    protected static ?string $navigationGroup = 'Forms & Configuration';
     protected static ?string $modelLabel = 'Registration Evaluator';
     protected static ?string $pluralModelLabel = 'Registration Evaluators';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 9;
 
     public static function getNavigationLabel(): string
     {

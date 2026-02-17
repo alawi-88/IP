@@ -28,7 +28,7 @@ class WinnerResource extends Resource
     protected static ?string $navigationLabel = 'Winners';
     protected static ?string $pluralModelLabel = 'Winners';
     protected static ?string $modelLabel = 'Winner';
-    protected static ?int $navigationSort = 18;
+    protected static ?int $navigationSort = 7;
     protected static ?string $navigationGroup = 'Programs';
 
     public static function form(Form $form): Form

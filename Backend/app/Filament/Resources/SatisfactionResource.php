@@ -15,8 +15,9 @@ class SatisfactionResource extends Resource
     protected static ?string $model = Satisfaction::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-face-smile';
+    protected static ?string $navigationGroup = 'System';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 7;
 
     protected static bool $shouldRegisterNavigation = false;
 

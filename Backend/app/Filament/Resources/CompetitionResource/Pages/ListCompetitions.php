@@ -50,6 +50,13 @@ class ListCompetitions extends ListRecords
                     ->visible(fn($record) => !$record->isCurrent() && !$record->isArchived()),
             ])
             ->actions([
+                Tables\Actions\Action::make('manage')
+                    ->label('Manage')
+                    ->color('primary')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->url(fn ($record) => CompetitionResource::getUrl('manage', ['record' => $record]))
+                    ->visible(fn ($record) => !$record->isArchived()),
+
                 Tables\Actions\Action::make('Set as current program')
                     ->label('Set as current')
                     ->color('success')

@@ -19,9 +19,9 @@ use Filament\Tables\Columns\BadgeColumn;
 class RoleResource extends BaseRoleResource
 {
     protected static ?string $navigationIcon = 'heroicon-o-shield-check';
-    protected static ?string $navigationGroup = 'System Management';
+    protected static ?string $navigationGroup = 'Users & Roles';
     protected static ?string $navigationLabel = 'Roles';
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 7;
 
     public static function canViewAny(): bool
     {

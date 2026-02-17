@@ -28,9 +28,9 @@ class FormResource extends Resource
 
     protected static ?string $navigationLabel = 'Forms';
 
-    protected static ?string $navigationGroup = 'Programs';
+    protected static ?string $navigationGroup = 'Forms & Content';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 1;
 
 
     public static function form(Forms\Form $form): Forms\Form
