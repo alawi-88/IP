@@ -111,6 +111,13 @@ services:
       redis:
         condition: service_healthy
 
+  # Mailpit (local email testing)
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: ip-mailpit
+    restart: unless-stopped
+    network_mode: host
+
   # Next.js Frontend
   frontend:
     build:
