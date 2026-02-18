@@ -34,7 +34,9 @@ use App\Filament\Pages\BrandingSettings;
 use App\Filament\Pages\NafathSettingsPage;
 use App\Models\BrandingSetting;
 use Filament\FontProviders\GoogleFontProvider;
+use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\Facades\Schema;
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel

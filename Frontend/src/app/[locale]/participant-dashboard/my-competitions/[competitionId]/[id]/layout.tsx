@@ -181,21 +181,22 @@ export default function MyCompetitionLayout({
       <div className="flex justify-between items-center gap-4 flex-wrap">
         {activeTabs != null && activeTabs.length > 0 ? (
           <div className="overflow-x-auto max-w-full scrollbar-thin">
-          <ConfigProvider direction={locale === "ar" ? "rtl" : "ltr"}>
-            <Segmented
-              value={currentSegment}
-              onChange={(value) => {
-                router.push(
-                  `/participant-dashboard/my-competitions/${competitionId}/${id}/${value}`
-                );
-              }}
-              className="!bg-card !rounded-xl !p-2 !w-max"
-              options={activeTabs.map((tab) => ({
-                value: tab.tab,
-                label: t(tab.tab),
-              }))}
-            />
-          </ConfigProvider>
+            <ConfigProvider direction={locale === "ar" ? "rtl" : "ltr"}>
+              <Segmented
+                value={currentSegment}
+                onChange={(value) => {
+                  router.push(
+                    `/participant-dashboard/my-competitions/${competitionId}/${id}/${value}`
+                  );
+                }}
+                className="!bg-card !rounded-xl !p-2 !w-max"
+                options={activeTabs.map((tab) => ({
+                  value: tab.tab,
+                  label: t(tab.tab),
+                }))}
+              />
+            </ConfigProvider>
+          </div>
         ) : (
           <div className="text-gray-500">{t("no-tabs-available")}</div>
         )}

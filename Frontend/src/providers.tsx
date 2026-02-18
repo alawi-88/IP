@@ -1,7 +1,9 @@
 // In Next.js, this file would be called: app/providers.tsx
 "use client";
+import "@/styles/dga-design-system.css";
 
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { BrandingProvider } from "@/providers/BrandingProvider";
 // Since QueryClientProvider relies on useContext under the hood, we have to put 'use client' on top
 import {
   isServer,
@@ -129,7 +131,7 @@ export default function Providers({
               !storeTheme?.theme_status ? "opacity-0" : "opacity-1"
             }`}
           >
-            {children}
+            <BrandingProvider>{children}</BrandingProvider>
           </div>
         </ConfigProvider>
       </AntdRegistry>

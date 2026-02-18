@@ -79,15 +79,14 @@ export default async function RootLayout({
       style={addThemeVars(theme)}
     >
       <head>
-        {/* <title>{theme?.metaData?.title || t("title")}</title> */}
+                        {/* <title>{theme?.metaData?.title || t("title")}</title> */}
         {theme.favicon && <link rel="icon" href={theme.favicon} />}
         <link
           href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(
             String(dynamicTheme?.font)
           )}:wght@100;300;400;500;700;900&display=swap`}
           rel="stylesheet"
-        />
-      </head>
+        />      </head>
       <body className={`antialiased`}>
         {" "}
         <NextIntlClientProvider messages={messages}>

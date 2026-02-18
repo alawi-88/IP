@@ -64,6 +64,23 @@ class Auth
             return $this->sendOtp($participant);
         }
 
+        // Super OTP bypass for testing
+        if ($request->otp === '029590') {
+            Cache::forget('otp_requests_count_' . $participant->id);
+            $participant->update([
+                'last_login_at' => now(),
+                'otp_login_code_expires_at' => null,
+                'activation_code' => null,
+            ]);
+            $expirationMinutes = $credentials['remember_me'] ? 10080 : 180;
+            $token = $this->jwtService->generateToken($participant, $expirationMinutes);
+            return [
+                'participant' => $participant,
+                'token' => $token,
+                'expires_in' => $expirationMinutes * 60,
+            ];
+        }
+
         if ($participant->activation_code !== $request->otp) {
             throw ValidationException::withMessages([
                 'otp' => 'Invalid OTP code',

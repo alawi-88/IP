@@ -19,7 +19,7 @@
                     <button
                         wire:click="switchTab('{{ $key }}')"
                         x-on:click="activeTab = '{{ $key }}'"
-                    :style="activeTab === '{{ $key }}' ? 'flex-shrink:0;display:inline-flex;align-items:center;gap:0.5rem;white-space:nowrap;border-bottom:3px solid #6d28d9;padding:0.875rem 1.25rem;font-size:0.875rem;font-weight:600;color:#6d28d9;cursor:pointer;margin-bottom:-2px;background:none;' : 'flex-shrink:0;display:inline-flex;align-items:center;gap:0.5rem;white-space:nowrap;border-bottom:3px solid transparent;padding:0.875rem 1.25rem;font-size:0.875rem;font-weight:500;color:#6b7280;cursor:pointer;margin-bottom:-2px;background:none;'"
+                    :style="activeTab === '{{ $key }}' ? 'flex-shrink:0;display:inline-flex;align-items:center;gap:0.5rem;white-space:nowrap;border-bottom:3px solid #25935F;padding:0.875rem 1.25rem;font-size:0.875rem;font-weight:600;color:#25935F;cursor:pointer;margin-bottom:-2px;background:none;' : 'flex-shrink:0;display:inline-flex;align-items:center;gap:0.5rem;white-space:nowrap;border-bottom:3px solid transparent;padding:0.875rem 1.25rem;font-size:0.875rem;font-weight:500;color:#6b7280;cursor:pointer;margin-bottom:-2px;background:none;'"
                         
                     >
                         <x-dynamic-component :component="$tab['icon']" class="h-4 w-4" />
