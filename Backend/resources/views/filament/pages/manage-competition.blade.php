@@ -3,7 +3,7 @@
     <div x-data="{ activeTab: @entangle('activeTab') }" class="space-y-6">
         {{-- Tab Bar --}}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <nav class="flex overflow-x-auto scrollbar-hide" aria-label="Tabs">
+            <nav style="display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;border-bottom:2px solid #e5e7eb;" aria-label="Tabs">
                 @php
                     $tabs = [
                         'setup' => ['label' => 'Setup', 'icon' => 'heroicon-o-cog-6-tooth'],
@@ -19,11 +19,8 @@
                     <button
                         wire:click="switchTab('{{ $key }}')"
                         x-on:click="activeTab = '{{ $key }}'"
-                        :class="{
-                            'border-primary-500 text-primary-600 dark:text-primary-400': activeTab === '{{ $key }}',
-                            'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300': activeTab !== '{{ $key }}'
-                        }"
-                        class="flex-shrink-0 flex items-center gap-2 whitespace-nowrap border-b-2 px-5 py-3.5 text-sm font-medium transition-colors duration-200"
+                    :style="activeTab === '{{ $key }}' ? 'flex-shrink:0;display:inline-flex;align-items:center;gap:0.5rem;white-space:nowrap;border-bottom:3px solid #25935F;padding:0.875rem 1.25rem;font-size:0.875rem;font-weight:600;color:#25935F;cursor:pointer;margin-bottom:-2px;background:none;' : 'flex-shrink:0;display:inline-flex;align-items:center;gap:0.5rem;white-space:nowrap;border-bottom:3px solid transparent;padding:0.875rem 1.25rem;font-size:0.875rem;font-weight:500;color:#6b7280;cursor:pointer;margin-bottom:-2px;background:none;'"
+                        
                     >
                         <x-dynamic-component :component="$tab['icon']" class="h-4 w-4" />
                         {{ $tab['label'] }}

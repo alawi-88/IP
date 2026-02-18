@@ -81,7 +81,7 @@ class AppServiceProvider extends ServiceProvider
         });          
 
         if (!$this->app->environment('local') && !$this->app->environment('staging')) {
-            URL::forceScheme('https');
+            // URL::forceScheme('https'); // Disabled for HTTP deployment
         }
 
         Password::defaults(function () {

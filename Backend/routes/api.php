@@ -358,3 +358,6 @@ Route::prefix('nafath-iam')->group(function () {
 });
 
 });
+
+// Branding API endpoint
+Route::get('/branding', [\App\Http\Controllers\Api\BrandingController::class, 'index']);

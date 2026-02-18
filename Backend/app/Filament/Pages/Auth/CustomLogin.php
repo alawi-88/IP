@@ -7,7 +7,6 @@ namespace App\Filament\Pages\Auth;
 use Filament\Pages\Auth\Login as FilamentLogin;
 use Illuminate\Auth\Events\Login;
 use App\Listeners\SendAdminOtp;
-use RedirectToOtpAfterLogin;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 
 class CustomLogin extends FilamentLogin

@@ -1,8 +1,12 @@
-<x-filament::page>
-    {{ $this->form }}
-    @if(auth()->user()->can('update BrandingSettings'))
-    <x-filament::button wire:click="save" class="mt-4">
-        Save Settings
-    </x-filament::button>
-    @endif
-</x-filament::page>
+<x-filament-panels::page>
+    <form wire:submit="save">
+        {{ $this->form }}
+
+        <div class="mt-6 flex justify-end">
+            <x-filament::button type="submit" icon="heroicon-o-check">
+                Save Branding Settings
+            </x-filament::button>
+        </div>
+    </form>
+</x-filament-panels::page>
+

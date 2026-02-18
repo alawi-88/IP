@@ -21,7 +21,7 @@ export const createThemeConfig = (
     paddingMD: 16,
     paddingLG: 24,
     paddingXL: 32,
-    borderRadius: 16,
+    borderRadius: 8,
   },
   components: {
     Button: {
