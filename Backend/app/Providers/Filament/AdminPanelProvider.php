@@ -17,6 +17,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
 use Joaopaulolndev\FilamentEditProfile\Pages\EditProfilePage;
+use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -129,7 +130,6 @@ class AdminPanelProvider extends PanelProvider
                     ->shouldShowEditProfileForm(false)
                     ->shouldRegisterNavigation(false),
                 ActivitylogPlugin::make()
-                    ->resource(\App\Filament\Resources\ActivitylogResource::class)
                     ->navigationSort(93)
             ])
             ->databaseNotifications()
@@ -156,6 +156,16 @@ class AdminPanelProvider extends PanelProvider
             ->passwordReset()
             ->sidebarWidth('13rem')
             ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups([
+                NavigationGroup::make('Programs'),
+                NavigationGroup::make('Forms & Content'),
+                NavigationGroup::make('Forms & Configuration'),
+                NavigationGroup::make('Users & Roles'),
+                NavigationGroup::make('Notifications & Approvals'),
+                NavigationGroup::make('Approvals & Communication'),
+                NavigationGroup::make('System'),
+                NavigationGroup::make('AI & Automation'),
+            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
