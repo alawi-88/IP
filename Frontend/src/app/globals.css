@@ -198,8 +198,8 @@ button {
 }
 
 .ant-segmented-group {
-  flex-wrap: wrap;
-  gap: 16px !important;
+  flex-wrap: nowrap;
+  gap: 8px !important;
   font-size: 14px !important;
   color: var(--text-color) !important;
 }
