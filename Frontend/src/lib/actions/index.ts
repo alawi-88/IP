@@ -16,7 +16,7 @@ const getApiEndpoint = () => {
 //getBrandTheme
 export async function getBrandTheme(): Promise<Theme | null> {
   try {
-    const res = await fetch(`${getApiEndpoint()}/branding-settings`, {
+    const res = await fetch(`${getApiEndpoint()}/branding`, {
       cache: "no-store",
     });
 
@@ -25,7 +25,10 @@ export async function getBrandTheme(): Promise<Theme | null> {
       return null;
     }
 
-    return (await res.json()) as Theme;
+    const json = await res.json();
+    // /api/branding returns { success: true, data: { primary_color, ... } }
+    const data = json?.data || json;
+    return data as Theme;
   } catch (error) {
     console.warn("Failed to fetch theme:", error);
     return null;

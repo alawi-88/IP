@@ -91,6 +91,9 @@ export default async function RootLayout({
       themeVars["--dga-primary-700"] = adjustColor(primary, -20);
       themeVars["--dga-primary-800"] = adjustColor(primary, -40);
       themeVars["--dga-primary-900"] = adjustColor(primary, -60);
+      // Set RGB triplet for rgba() usage in CSS
+      const num = parseInt(primary.replace("#", ""), 16);
+      themeVars["--dga-primary-rgb"] = `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
     }
     if (secondary) {
       themeVars["--dga-primary-600"] = secondary;
