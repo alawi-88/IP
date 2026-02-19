@@ -14,10 +14,17 @@ mkdir -p /var/www/bootstrap/cache
 chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Generate app key if not set
+# Clear config cache
 php artisan config:clear 2>/dev/null || true
 
 # Create storage symlink
 php artisan storage:link 2>/dev/null || true
+
+# Run database migrations automatically
+echo "Running database migrations..."
+php artisan migrate --force 2>/dev/null || echo "Warning: Migrations failed (DB may not be ready yet)"
+
+# Clear and rebuild caches
+php artisan optimize:clear 2>/dev/null || true
 
 exec "$@"
