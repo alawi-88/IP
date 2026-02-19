@@ -32,7 +32,8 @@ class CompetitionResource extends Resource
         return [
             'index' => Pages\ListCompetitions::route('/'),
             'create' => Pages\CreateCompetition::route('/create'),
-            'view' => Pages\ViewCompetition::route('/{record}'),
+            // View merged into Edit - EditCompetition handles both view and edit
+            'view' => Pages\EditCompetition::route('/{record}'),
             'edit' => Pages\EditCompetition::route('/{record}/edit'),
             'manage' => Pages\ManageCompetition::route('/{record}/manage'),
         ];

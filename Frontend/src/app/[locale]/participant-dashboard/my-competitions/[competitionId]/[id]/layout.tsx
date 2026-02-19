@@ -12,15 +12,19 @@ import { useEffect } from "react";
 
 interface Tab {
   tab: string;
+  label_en?: string;
+  label_ar?: string;
   is_visible: boolean;
 }
 
 const availableTabs = [
+  "journey",
   "events",
   "mentors",
   "my-team",
   "teams",
   "projects",
+  "tasks",
   "guidelines",
   "winners",
   "leaderboard"
@@ -192,7 +196,7 @@ export default function MyCompetitionLayout({
                 className="!bg-card !rounded-xl !p-2 !w-max"
                 options={activeTabs.map((tab) => ({
                   value: tab.tab,
-                  label: t(tab.tab),
+                  label: (locale === "ar" && tab.label_ar) ? tab.label_ar : (tab.label_en || t(tab.tab)),
                 }))}
               />
             </ConfigProvider>
