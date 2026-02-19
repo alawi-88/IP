@@ -45,8 +45,8 @@ export function BrandingProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchBranding = async () => {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-        const response = await fetch(`${apiUrl}/api/branding`);
+        const apiUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || '';
+        const response = await fetch(`${apiUrl}/branding`);
         if (response.ok) {
           const result = await response.json();
           if (result.success && result.data) {

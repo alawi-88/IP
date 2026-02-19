@@ -61,11 +61,6 @@
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
                     <x-heroicon-o-bars-3-bottom-left class="h-5 w-5 text-primary-500" />
                     Stages & Tracks
-                    <a href="{{ url('admin/competitions/' . $record->id . '/edit') }}"
-                       class="ml-auto text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 flex items-center gap-1 font-normal">
-                        <x-heroicon-o-pencil class="h-4 w-4" />
-                        Edit in Full View
-                    </a>
                 </h3>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
