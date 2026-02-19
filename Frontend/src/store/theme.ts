@@ -7,9 +7,9 @@ export const defaultTheme: Theme = {
   logo: "/logo.svg",
   white_logo: "/logo-white.svg",
   favicon: "",
-  primary_color: "#6e62e5",
-  secondary_color: "#08bcb8",
-  font: "IBM Plex Sans Arabic",
+  primary_color: "#25935F",
+  secondary_color: "#1a6b44",
+  font: "IBM Plex Sans",
   theme_status: undefined,
   mode: "light",
 };
