@@ -74,6 +74,7 @@ function applyToDOM(b: BrandingSettings) {
   const primary = b.primary_color || '#25935F';
   const secondary = b.secondary_color || '#1a6b44';
 
+  // Set DGA design system variables
   root.style.setProperty('--dga-primary-500', primary);
   root.style.setProperty('--dga-primary-600', secondary);
   root.style.setProperty('--dga-primary-400', adjustColor(primary, 20));
@@ -86,8 +87,13 @@ function applyToDOM(b: BrandingSettings) {
   root.style.setProperty('--dga-primary-900', adjustColor(primary, -60));
   root.style.setProperty('--dga-primary-rgb', hexToRgb(primary));
 
+  // Also sync Tailwind CSS variables so text-primary, bg-primary etc. reflect branding
+  root.style.setProperty('--primary-color', primary);
+  root.style.setProperty('--secondary-color', secondary);
+
   if (b.font) {
     root.style.setProperty('--dga-font', `"${b.font}", "Noto Sans Arabic", sans-serif`);
+    root.style.setProperty('--font', b.font);
   }
 
   if (b.favicon) {

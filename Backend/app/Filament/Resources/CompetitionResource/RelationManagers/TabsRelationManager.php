@@ -21,7 +21,7 @@ class TabsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns(CompetitionTab::columns())
-            ->defaultSort(fn(Builder $query) => $query->orderByRaw("FIELD(tab, 'events', 'mentors', 'my-team', 'teams', 'projects', 'guidelines', 'leaderboard')"))
+            ->defaultSort(fn(Builder $query) => $query->orderByRaw("FIELD(tab, 'journey', 'events', 'mentors', 'my-team', 'teams', 'projects', 'tasks', 'guidelines', 'winners', 'leaderboard')"))
             ->headerActions([]);
 
     }

@@ -82,6 +82,7 @@ export function applyBrandingToDOM(branding: BrandingSettings) {
   };
   const primary = branding.primary_color || '#25935F';
   const secondary = branding.secondary_color || '#1a6b44';
+  // DGA design system variables
   root.style.setProperty('--dga-primary-500', primary);
   root.style.setProperty('--dga-primary-600', secondary);
   root.style.setProperty('--dga-primary-400', adjustColor(primary, 20));
@@ -93,8 +94,12 @@ export function applyBrandingToDOM(branding: BrandingSettings) {
   root.style.setProperty('--dga-primary-800', adjustColor(primary, -40));
   root.style.setProperty('--dga-primary-900', adjustColor(primary, -60));
   root.style.setProperty('--dga-primary-rgb', hexToRgb(primary));
+  // Sync Tailwind CSS variables so text-primary, bg-primary etc. reflect branding
+  root.style.setProperty('--primary-color', primary);
+  root.style.setProperty('--secondary-color', secondary);
   if (branding.font) {
     root.style.setProperty('--dga-font', `"${branding.font}", "Noto Sans Arabic", sans-serif`);
+    root.style.setProperty('--font', branding.font);
   }
   if (branding.favicon) {
     const existingFavicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;

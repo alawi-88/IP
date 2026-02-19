@@ -22,7 +22,7 @@ class CreateCompetitionTabs
     public function handle(CompetitionCreated $event): void
     {
         // Create all participation hub tabs for the new competition
-        $tabs = ['events', 'mentors', 'my-team', 'teams', 'projects', 'guidelines', 'leaderboard'];
+        $tabs = ['journey', 'events', 'mentors', 'my-team', 'teams', 'projects', 'tasks', 'guidelines', 'leaderboard'];
 
         foreach ($tabs as $tab) {
             $event->competition->tabs()->updateOrCreate(

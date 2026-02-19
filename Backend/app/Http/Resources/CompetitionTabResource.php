@@ -16,6 +16,8 @@ class CompetitionTabResource extends JsonResource
     {
         return [
             'tab' => $this->tab,
+            'label_en' => $this->label_en,
+            'label_ar' => $this->label_ar,
             'is_visible' => $this->is_visible,
         ];
     }
