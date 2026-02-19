@@ -1,6 +1,25 @@
 import { ThemeConfig, theme as antdTheme } from "antd";
 
-// Function to create theme config with actual values instead of CSS variables
+/**
+ * DGA Design System - Ant Design Theme Configuration
+ * Colors are derived from admin-controlled branding settings.
+ * Dark mode uses DGA neutral palette CSS variables for consistency.
+ */
+
+// Dark mode neutral palette (mirrors --dga-neutral-* CSS variables)
+const darkNeutral = {
+  surface: "#1f1f1f",       // --dga-neutral-50
+  surfaceAlt: "#272727",    // --dga-neutral-100
+  surfaceElevated: "#2d2d2d", // --dga-neutral-200
+  control: "#3a3a3a",       // --dga-neutral-300
+  controlAlt: "#565656",    // --dga-neutral-400
+  textMuted: "#8c8c8c",     // --dga-neutral-500
+  textSecondary: "#a3a3a3", // --dga-neutral-600
+  textPrimary: "#f0f0f0",   // --dga-neutral-900
+  border: "rgba(255,255,255,0.12)",
+  hoverBg: "rgba(255,255,255,0.06)",
+};
+
 export const createThemeConfig = (
   theme: any,
   isDarkMode: boolean = false
@@ -8,9 +27,9 @@ export const createThemeConfig = (
   algorithm: isDarkMode ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
   token: {
     colorPrimary: theme?.primary_color,
-    colorPrimaryBg: isDarkMode ? "#272727" : theme?.primary_color,
-    colorText: isDarkMode ? "#ffffff" : "#141414",
-    colorPrimaryText: isDarkMode ? "#ffffff" : "#141414",
+    colorPrimaryBg: isDarkMode ? darkNeutral.surfaceAlt : theme?.primary_color,
+    colorText: isDarkMode ? darkNeutral.textPrimary : "#141414",
+    colorPrimaryText: isDarkMode ? darkNeutral.textPrimary : "#141414",
 
     fontSize: 16,
     fontFamily: "var(--font-regular)",
@@ -26,74 +45,74 @@ export const createThemeConfig = (
   components: {
     Button: {
       borderRadius: 8,
-      colorBgContainer: isDarkMode ? "#565656" : "#fff",
+      colorBgContainer: isDarkMode ? darkNeutral.controlAlt : "#fff",
     },
     Input: {
       borderRadius: 8,
       paddingInline: 16,
       paddingBlock: 10,
       ...(isDarkMode && {
-        colorBgContainer: "#565656",
-        colorTextPlaceholder: "#B1B1B1",
+        colorBgContainer: darkNeutral.controlAlt,
+        colorTextPlaceholder: darkNeutral.textMuted,
       }),
     },
     InputNumber: {
       borderRadius: 8,
       ...(isDarkMode && {
-        colorBgContainer: "#565656",
-        colorTextPlaceholder: "#B1B1B1",
+        colorBgContainer: darkNeutral.controlAlt,
+        colorTextPlaceholder: darkNeutral.textMuted,
       }),
     },
     Select: {
       borderRadius: 8,
       ...(isDarkMode && {
-        colorBgContainer: "#565656",
-        colorTextPlaceholder: "#B1B1B1",
+        colorBgContainer: darkNeutral.controlAlt,
+        colorTextPlaceholder: darkNeutral.textMuted,
       }),
     },
     Radio: {
       borderRadius: 8,
       ...(isDarkMode && {
-        colorBgContainer: "#565656",
-        colorTextPlaceholder: "#B1B1B1",
+        colorBgContainer: darkNeutral.controlAlt,
+        colorTextPlaceholder: darkNeutral.textMuted,
       }),
     },
     Checkbox: {
       borderRadius: 8,
       ...(isDarkMode && {
-        colorBgContainer: "#565656",
-        colorTextPlaceholder: "#B1B1B1",
+        colorBgContainer: darkNeutral.controlAlt,
+        colorTextPlaceholder: darkNeutral.textMuted,
       }),
     },
     DatePicker: {
       borderRadius: 8,
       ...(isDarkMode && {
-        colorBgContainer: "#565656",
-        colorTextPlaceholder: "#B1B1B1",
+        colorBgContainer: darkNeutral.controlAlt,
+        colorTextPlaceholder: darkNeutral.textMuted,
       }),
     },
     Table: {
-      headerBg: isDarkMode ? "#2d2d2d" : "#0000000f",
+      headerBg: isDarkMode ? darkNeutral.surfaceElevated : "#0000000f",
     },
     Menu: {
       itemSelectedBg: isDarkMode ? theme?.primary_color : "#0000000f",
-      itemActiveBg: isDarkMode ? "#ffffff1f" : "#0000000f",
-      itemSelectedColor: isDarkMode ? "#fff" : theme?.primary_color,
-      colorBgContainer: isDarkMode ? "#272727" : "#ffffff",
+      itemActiveBg: isDarkMode ? darkNeutral.hoverBg : "#0000000f",
+      itemSelectedColor: isDarkMode ? darkNeutral.textPrimary : theme?.primary_color,
+      colorBgContainer: isDarkMode ? darkNeutral.surfaceAlt : "#ffffff",
     },
     Drawer: {
-      colorBgContainer: isDarkMode ? "#272727" : "#ffffff",
-      colorBgElevated: isDarkMode ? "#272727" : "#ffffff",
+      colorBgContainer: isDarkMode ? darkNeutral.surfaceAlt : "#ffffff",
+      colorBgElevated: isDarkMode ? darkNeutral.surfaceAlt : "#ffffff",
     },
     Segmented: {
       itemSelectedBg: isDarkMode ? theme?.primary_color : "#f2f4f7",
     },
     Card: {
-      colorBgContainer: isDarkMode ? "#272727" : "#ffffff",
+      colorBgContainer: isDarkMode ? darkNeutral.surfaceAlt : "#ffffff",
     },
     Modal: {
-      contentBg: isDarkMode ? "#272727" : "#ffffff",
-      headerBg: isDarkMode ? "#272727" : "#ffffff",
+      contentBg: isDarkMode ? darkNeutral.surfaceAlt : "#ffffff",
+      headerBg: isDarkMode ? darkNeutral.surfaceAlt : "#ffffff",
     },
   },
 });
