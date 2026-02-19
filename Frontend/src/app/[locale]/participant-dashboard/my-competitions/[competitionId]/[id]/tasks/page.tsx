@@ -108,7 +108,7 @@ export default function TasksPage() {
   }
 
   if (!tasks || tasks.length === 0) {
-    return <Empty text={t("no-tasks") || "No tasks assigned yet"} />;
+    return <Empty description={t("no-tasks") || "No tasks assigned yet"} />;
   }
 
   // Separate stage-linked tasks from ad-hoc tasks
