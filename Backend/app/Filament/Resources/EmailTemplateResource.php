@@ -35,7 +35,7 @@ class EmailTemplateResource extends Resource
             ->options([
                 'user.registration_confirmation'   => 'User Emails - Registration Confirmation',
                 'user.otp_login'                  => 'User Emails - OTP for Login',     
-                'user.competition_confirmation'    => 'User Emails - Application Submitted Successfully',
+                'user.program_confirmation'    => 'User Emails - Application Submitted Successfully',
                 'user.screening_result'            => 'User Emails - Application Screening Result',
                 'user.application_comment_added'   => 'User Emails - Application Comment Added',
                 'user.project_submitted'           => 'User Emails - Project Submitted Successfully',
@@ -308,37 +308,37 @@ class EmailTemplateResource extends Resource
             'en' => 'Available variables: {{name}}, {{url}}',
             'ar' => 'المتغيرات المتاحة: {{name}}, {{url}}',
         ],
-        'user.competition_confirmation' => [
-            'en' => 'Available variables: {{competition}}, {{name}}',
-            'ar' => 'المتغيرات المتاحة: {{competition}}, {{name}}',
+        'user.program_confirmation' => [
+            'en' => 'Available variables: {{program}}, {{name}}',
+            'ar' => 'المتغيرات المتاحة: {{program}}, {{name}}',
         ],
         'user.project_status_updates' => [
-            'en' => 'Available variables: {{project}}, {{competition}}, {{newStatus}}, {{oldStatus}}',
-            'ar' => 'المتغيرات المتاحة: {{project}}, {{competition}}, {{newStatus}}, {{oldStatus}}',
+            'en' => 'Available variables: {{project}}, {{program}}, {{newStatus}}, {{oldStatus}}',
+            'ar' => 'المتغيرات المتاحة: {{project}}, {{program}}, {{newStatus}}, {{oldStatus}}',
         ],
         'user.screening_result' => [
-            'en' => 'Available variables: {{competition}}, {{new_status}}, {{old_status}}',
-            'ar' => 'المتغيرات المتاحة: {{competition}}, {{new_status}}, {{old_status}}',
+            'en' => 'Available variables: {{program}}, {{new_status}}, {{old_status}}',
+            'ar' => 'المتغيرات المتاحة: {{program}}, {{new_status}}, {{old_status}}',
         ],
         'user.team_addition' => [
-            'en' => 'Available variables: {{team}}, {{competition}}, {{url}}',
-            'ar' => 'المتغيرات المتاحة: {{team}}, {{competition}}, {{url}}',
+            'en' => 'Available variables: {{team}}, {{program}}, {{url}}',
+            'ar' => 'المتغيرات المتاحة: {{team}}, {{program}}, {{url}}',
         ],
         'user.project_evaluation' => [
-            'en' => 'Available variables: {{name}}, {{appName}}, {{project}}, {{competition}}',
-            'ar' => 'المتغيرات المتاحة: {{name}}, {{appName}}, {{project}}, {{competition}}',
+            'en' => 'Available variables: {{name}}, {{appName}}, {{project}}, {{program}}',
+            'ar' => 'المتغيرات المتاحة: {{name}}, {{appName}}, {{project}}, {{program}}',
         ],
         'user.communication_channel' => [
             'en' => 'Available variables: {{project}}, {{admin}}, {{comment}},{{name}}',
             'ar' => 'المتغيرات المتاحة: {{project}}, {{admin}}, {{comment}},{{name}}',
         ], 
         'admin.application_comment_added' => [
-            'en' => 'Available variables: {{competition}}, {{commenterName}}, {{NotifiableName}}, {{comment}}',
-            'ar' => 'المتغيرات المتاحة: {{competition}}, {{commenterName}}, {{NotifiableName}}, {{comment}}',
+            'en' => 'Available variables: {{program}}, {{commenterName}}, {{NotifiableName}}, {{comment}}',
+            'ar' => 'المتغيرات المتاحة: {{program}}, {{commenterName}}, {{NotifiableName}}, {{comment}}',
         ],
         'user.application_comment_added' => [
-            'en' => 'Available variables: {{competition}}, {{commenterName}}, {{NotifiableName}}, {{comment}}',
-            'ar' => 'المتغيرات المتاحة: {{competition}}, {{commenterName}}, {{NotifiableName}}, {{comment}}',
+            'en' => 'Available variables: {{program}}, {{commenterName}}, {{NotifiableName}}, {{comment}}',
+            'ar' => 'المتغيرات المتاحة: {{program}}, {{commenterName}}, {{NotifiableName}}, {{comment}}',
         ],
         'admin.participant_project_reply' => [
             'en' => 'Available variables: {{project}}, {{AdminName}}, {{UserName}}, {{comment}}',
@@ -349,12 +349,12 @@ class EmailTemplateResource extends Resource
             'ar' => 'المتغيرات المتاحة: {{project}}, {{AdminName}}, {{UserName}}, {{comment}}',
         ],
         'admin.participant_application_reply' => [
-            'en' => 'Available variables: {{competition}}, {{AdminName}}, {{UserName}}, {{comment}}',
-            'ar' => 'المتغيرات المتاحة: {{competition}}, {{AdminName}}, {{UserName}}, {{comment}}',
+            'en' => 'Available variables: {{program}}, {{AdminName}}, {{UserName}}, {{comment}}',
+            'ar' => 'المتغيرات المتاحة: {{program}}, {{AdminName}}, {{UserName}}, {{comment}}',
         ],
         'user.project_submitted' => [
-            'en' => 'Available variables: {{competition}}, {{name}}',
-            'ar' => 'المتغيرات المتاحة: {{competition}}, {{name}}',
+            'en' => 'Available variables: {{program}}, {{name}}',
+            'ar' => 'المتغيرات المتاحة: {{program}}, {{name}}',
         ],
         'mentor.admin_registration_notification' => [
             'en' => 'Available variables: {{name}}, {{email}}, {{phone}}, {{profession}}, {{experience}}, {{date}}',  
@@ -368,6 +368,6 @@ class EmailTemplateResource extends Resource
 
     return $key && isset($placeholders[$key][$lang])
         ? $placeholders[$key][$lang]
-        : 'Use {{project}}, {{admin}}, {{comment}},{{url}},{{name}}, {{password}}, {{loginUrl}}, {{role}}, {{code}}, {{competition}}, {{new_status}}, {{old_status}}, {{team}}, {{loginUrl}} placeholders';
+        : 'Use {{project}}, {{admin}}, {{comment}},{{url}},{{name}}, {{password}}, {{loginUrl}}, {{role}}, {{code}}, {{program}}, {{new_status}}, {{old_status}}, {{team}}, {{loginUrl}} placeholders';
 }
 }

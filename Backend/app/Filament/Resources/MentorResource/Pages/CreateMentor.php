@@ -17,7 +17,7 @@ class CreateMentor extends CreateRecord
     
     protected ?string $plainPassword = null;
     
-    protected ?array $competitions = null;
+    protected ?array $programs = null;
 
     public function form(Form $form): Form
     {
@@ -26,11 +26,11 @@ class CreateMentor extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        // Store competitions to sync after creation
-        $this->competitions = $data['competitions'] ?? [];
+        // Store programs to sync after creation
+        $this->programs = $data['programs'] ?? [];
         
-        // Remove competitions from data as it's not a fillable field
-        unset($data['competitions']);
+        // Remove programs from data as it's not a fillable field
+        unset($data['programs']);
         
         // Generate random password
         $this->plainPassword = Str::random(16);
@@ -59,9 +59,9 @@ class CreateMentor extends CreateRecord
 
     protected function afterCreate(): void
     {
-        // Sync competitions if any were selected
-        if (isset($this->competitions) && !empty($this->competitions)) {
-            $this->record->competitions()->sync($this->competitions);
+        // Sync programs if any were selected
+        if (isset($this->programs) && !empty($this->programs)) {
+            $this->record->programs()->sync($this->programs);
         }
         
         // Send credentials email

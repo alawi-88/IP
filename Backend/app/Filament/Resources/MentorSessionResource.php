@@ -6,7 +6,7 @@ use App\Filament\Resources\MentorSessionResource\Pages;
 use App\Filament\Resources\MentorSessionResource\RelationManagers;
 use App\Filament\Exports\MentorSessionExporter;
 use App\Models\MentorSession;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Mentor;
 use App\Models\Participant;
 use Filament\Forms;
@@ -62,9 +62,9 @@ class MentorSessionResource extends Resource
                     ->preload()
                     ->nullable(),
 
-                Forms\Components\Select::make('competition_id')
+                Forms\Components\Select::make('program_id')
                     ->label('Program')
-                    ->relationship('competition', 'title')
+                    ->relationship('program', 'title')
                     ->searchable()
                     ->preload()
                     ->required(),
@@ -234,7 +234,7 @@ class MentorSessionResource extends Resource
                         Infolists\Components\TextEntry::make('participant.email')
                             ->label('Participant Email')
                             ->default('N/A'),
-                        Infolists\Components\TextEntry::make('competition.title')
+                        Infolists\Components\TextEntry::make('program.title')
                             ->label('Program'),
                     ])
                     ->columns(2),
@@ -285,8 +285,8 @@ class MentorSessionResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('competition.title')
-                    ->label(__('sessions.competition'))
+                TextColumn::make('program.title')
+                    ->label(__('sessions.program'))
                     ->searchable()
                     ->sortable(),
 
@@ -351,9 +351,9 @@ class MentorSessionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('competition_id')
-                    ->label(__('sessions.competition'))
-                    ->relationship('competition', 'title')
+                SelectFilter::make('program_id')
+                    ->label(__('sessions.program'))
+                    ->relationship('program', 'title')
                     ->searchable()
                     ->preload(),
 

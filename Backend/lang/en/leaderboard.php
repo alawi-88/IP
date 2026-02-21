@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'competition_not_found' => 'Competition not found',
+    'program_not_found' => 'Program not found',
     'error_loading' => 'Unable to load leaderboard',
     'rank_not_available' => 'Rank not available',
     'team_name_not_available' => 'Team name not available',

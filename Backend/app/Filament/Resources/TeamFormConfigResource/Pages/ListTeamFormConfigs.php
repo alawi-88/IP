@@ -4,7 +4,7 @@ namespace App\Filament\Resources\TeamFormConfigResource\Pages;
 
 use App\Filament\Resources\TeamFormConfigResource;
 use App\Models\TeamFormConfig;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
@@ -31,14 +31,14 @@ class ListTeamFormConfigs extends ListRecords
                 if ($user->isSuperAdmin()) {
                     return $query;
                 }
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereIn('competition_id', $supervisorCompetitions);
+                return $query->whereIn('program_id', $supervisorPrograms);
             })
             ->columns([
-                Tables\Columns\TextColumn::make('competition.title')
+                Tables\Columns\TextColumn::make('program.title')
                     ->label('Program')
                     ->searchable()
                     ->sortable(),
@@ -257,10 +257,10 @@ class ListTeamFormConfigs extends ListRecords
             return $query;
         }
 
-        $supervisorCompetitions = \App\Models\UserCompetition::where('user_id', $user->id)
-            ->pluck('competition_id')
+        $supervisorPrograms = \App\Models\UserProgram::where('user_id', $user->id)
+            ->pluck('program_id')
             ->toArray();
 
-        return $query->whereIn('competition_id', $supervisorCompetitions);
+        return $query->whereIn('program_id', $supervisorPrograms);
     }
 }

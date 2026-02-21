@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\Competition\FilterByCompetition;
+use App\Traits\Program\FilterByProgram;
 use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,19 +14,19 @@ use Spatie\Translatable\HasTranslations;
 
 
 /**
- * @method static byCompetition()
+ * @method static byProgram()
  */
 
 class Form extends Model
 {
-    use HasTranslations, FilterByCompetition, LogsActivity, HasActivityLog;
+    use HasTranslations, FilterByProgram, LogsActivity, HasActivityLog;
 
     public array $translatable = ['name', 'description'];
 
     protected $with = ['fields'];
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'type',
         'name',
         'description',
@@ -47,8 +47,8 @@ class Form extends Model
         'is_published',
         'is_archived',
         'archived_at',
-        'competition.title',
-        'competition_id',
+        'program.title',
+        'program_id',
     ];
 
     protected string $moduleName = 'Form';
@@ -117,9 +117,9 @@ class Form extends Model
         return $this->hasMany(Stage::class, 'form_id');
     }
 
-    public function CompetitionApplication(): HasMany
+    public function ProgramApplication(): HasMany
     {
-        return $this->hasMany(CompetitionApplication::class);
+        return $this->hasMany(ProgramApplication::class);
     }
 
     public function Projects(): HasMany
@@ -137,9 +137,9 @@ class Form extends Model
         return $this->hasMany(FormSection::class);
     }
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
     public function FormSteps()
     {
@@ -199,7 +199,7 @@ class Form extends Model
     public function submissionTrend()
     {
         if ($this->type == 'registration'){
-            $submissionTrend =  $this->CompetitionApplication()
+            $submissionTrend =  $this->ProgramApplication()
                 ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
                 ->groupBy('date')
                 ->orderBy('date')
@@ -238,13 +238,13 @@ class Form extends Model
         return $lastCount >= $prevCount ? 'up' : 'down';
     }
 
-    public static function availableEvaluationForms(int $competitionId, array $stages, array $currentStage): array
+    public static function availableEvaluationForms(int $programId, array $stages, array $currentStage): array
     {
         $currentFormId = $currentStage['evaluation_form_id'] ?? null;
 
-        // Get all evaluation forms for this competition
+        // Get all evaluation forms for this program
         $forms = self::where('type', 'evaluation')
-            ->where('competition_id', $competitionId)
+            ->where('program_id', $programId)
             ->get()
             ->keyBy('id');
         
@@ -252,8 +252,8 @@ class Form extends Model
         // check if it's a valid evaluation form and add it
         if ($currentFormId && !$forms->has($currentFormId)) {
             $currentForm = self::find($currentFormId);
-            // Only include if it's actually an evaluation form for this competition
-            if ($currentForm && $currentForm->type === 'evaluation' && $currentForm->competition_id == $competitionId) {
+            // Only include if it's actually an evaluation form for this program
+            if ($currentForm && $currentForm->type === 'evaluation' && $currentForm->program_id == $programId) {
                 $forms->put($currentFormId, $currentForm);
             }
         }
@@ -308,7 +308,7 @@ class Form extends Model
                 if ($matchedStages->isNotEmpty()) {
                     return [
                         'id' => $config->id,
-                        'competition_id' => $config->competition_id,
+                        'program_id' => $config->program_id,
                         'number_of_stages' => $config->number_of_stages,
                         'is_active' => $config->is_active,
                         'stages' => $matchedStages,

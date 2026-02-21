@@ -348,7 +348,7 @@ class ViewApprovalRequest extends ViewRecord
                         ViewEntry::make('action_data')
                             ->label('')
                             ->view('filament.custom-entries.action-data-display', [
-                                'competition_id' => $record->action_data['competition_id'] ?? null
+                                'program_id' => $record->action_data['program_id'] ?? null
                             ])
                             ->columnSpanFull()
                             ->visible(fn ($record) => !empty($record->action_data)),
@@ -754,12 +754,12 @@ class ViewApprovalRequest extends ViewRecord
             return $this->getProjectDisplay($record);
         }
 
-        if ($targetType === 'App\\Models\\Competition' || $targetType === \App\Models\Competition::class) {
-            return $this->getCompetitionDisplay($record);
+        if ($targetType === 'App\\Models\\Program' || $targetType === \App\Models\Program::class) {
+            return $this->getProgramDisplay($record);
         }
 
-        if ($targetType === 'App\\Models\\CompetitionApplication' || $targetType === \App\Models\CompetitionApplication::class) {
-            return $this->getCompetitionApplicationDisplay($record);
+        if ($targetType === 'App\\Models\\ProgramApplication' || $targetType === \App\Models\ProgramApplication::class) {
+            return $this->getProgramApplicationDisplay($record);
         }
 
         if ($record->target) {
@@ -794,16 +794,16 @@ class ViewApprovalRequest extends ViewRecord
     }
 
     /**
-     * Get display name for Competition model
+     * Get display name for Program model
      */
-    protected function getCompetitionDisplay($record): string
+    protected function getProgramDisplay($record): string
     {
         if ($record->program) {
             $title = $record->program->title;
             if (is_array($title)) {
-                return $title['en'] ?? $title['ar'] ?? 'Competition #' . $record->program->id;
+                return $title['en'] ?? $title['ar'] ?? 'Program #' . $record->program->id;
             }
-            return $title ?: 'Competition #' . $record->program->id;
+            return $title ?: 'Program #' . $record->program->id;
         }
 
         $actionData = $record->action_data ?? [];
@@ -819,9 +819,9 @@ class ViewApprovalRequest extends ViewRecord
     }
 
     /**
-     * Get display name for CompetitionApplication model
+     * Get display name for ProgramApplication model
      */
-    protected function getCompetitionApplicationDisplay($record): string
+    protected function getProgramApplicationDisplay($record): string
     {
         if ($record->application) {
             if ($record->application->team_name) {

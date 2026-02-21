@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -79,7 +79,7 @@ class RegistrationFormResource extends JsonResource
             'is_published' => $this->is_published,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'competition' => new CompetitionResource($this->competition),
+            'program' => new ProgramResource($this->program),
             'ai_enhancement' => [
                 'enabled' => $aiEnhancementEnabled,
             ],

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Imports;
 
-use App\Models\Competition;
-use App\Models\CompetitionApplication;
+use App\Models\Program;
+use App\Models\ProgramApplication;
 use App\Models\Form;
 use App\Models\FormField;
 use App\Models\Project;
@@ -21,55 +21,55 @@ class DynamicProjectImporter extends Importer
 {
     protected static ?string $model = Project::class;
 
-    // Store current competition ID to use in resolveRecord()
-    protected static ?int $storedCompetitionId = null;
+    // Store current program ID to use in resolveRecord()
+    protected static ?int $storedProgramId = null;
 
     public static function getColumns(): array
     {
-        // Get current competition from session
+        // Get current program from session
         // Note: getColumns() may be called from queue job where session is not available
         $sessionValue1 = null;
         $sessionValue2 = null;
 
         try {
-            $sessionValue1 = session('current_competition_id');
+            $sessionValue1 = session('current_program_id');
         } catch (\Exception $e) {
             // Session not available (e.g., in queue job)
         }
 
         try {
             if (request()->hasSession()) {
-                $sessionValue2 = request()->session()->get('current_competition_id');
+                $sessionValue2 = request()->session()->get('current_program_id');
             }
         } catch (\Exception $e) {
             // Request session not available
         }
 
-        $helperValue = function_exists('currentCompetitionId') ? currentCompetitionId() : null;
+        $helperValue = function_exists('currentProgramId') ? currentProgramId() : null;
 
-        $currentCompetitionId = $sessionValue1;
+        $currentProgramId = $sessionValue1;
 
-        // Try multiple methods to get competition ID
-        if (!$currentCompetitionId) {
-            $currentCompetitionId = $sessionValue2;
+        // Try multiple methods to get program ID
+        if (!$currentProgramId) {
+            $currentProgramId = $sessionValue2;
         }
 
-        if (!$currentCompetitionId && function_exists('currentCompetitionId')) {
-            $currentCompetitionId = $helperValue;
+        if (!$currentProgramId && function_exists('currentProgramId')) {
+            $currentProgramId = $helperValue;
         }
 
         // Store it in static property for use in resolveRecord()
-        static::$storedCompetitionId = $currentCompetitionId ? (int) $currentCompetitionId : null;
+        static::$storedProgramId = $currentProgramId ? (int) $currentProgramId : null;
 
         // Get form_id from current stage (project-submission)
         $currentFormId = null;
         $projectForms = collect();
 
-        if ($currentCompetitionId) {
-            $competition = Competition::find($currentCompetitionId);
-            if ($competition) {
+        if ($currentProgramId) {
+            $program = Program::find($currentProgramId);
+            if ($program) {
                 // First try to get the current active stage
-                $currentStage = $competition->currentStage();
+                $currentStage = $program->currentStage();
                 if ($currentStage && $currentStage->slug === 'project-submission' && $currentStage->form_id) {
                     $currentFormId = $currentStage->form_id;
                     $form = Form::where('id', $currentFormId)
@@ -82,7 +82,7 @@ class DynamicProjectImporter extends Importer
                     }
                 } else {
                     // If no active stage, try to get project-submission stage regardless of dates
-                    $projectStage = $competition->projectStage();
+                    $projectStage = $program->projectStage();
                     if ($projectStage && $projectStage->form_id) {
                         $currentFormId = $projectStage->form_id;
                         $form = Form::where('id', $currentFormId)
@@ -98,12 +98,12 @@ class DynamicProjectImporter extends Importer
             }
         }
 
-        // If no form found from stage, get all project forms for the competition
-        if ($projectForms->isEmpty() && $currentCompetitionId) {
+        // If no form found from stage, get all project forms for the program
+        if ($projectForms->isEmpty() && $currentProgramId) {
             $projectForms = Form::projectType()
                 ->published()
                 ->active()
-                ->where('competition_id', $currentCompetitionId)
+                ->where('program_id', $currentProgramId)
                 ->get();
         }
 
@@ -114,8 +114,8 @@ class DynamicProjectImporter extends Importer
                 ->where('is_archived', false)
                 ->take(10)
                 ->get();
-        } elseif ($currentCompetitionId) {
-            $existingProjects = Project::where('competition_id', $currentCompetitionId)
+        } elseif ($currentProgramId) {
+            $existingProjects = Project::where('program_id', $currentProgramId)
                 ->where('is_archived', false)
                 ->take(10)
                 ->get();
@@ -151,12 +151,12 @@ class DynamicProjectImporter extends Importer
             }
         }
 
-        // Get participant emails - filter by current competition if available
-        $applicationQuery = CompetitionApplication::where('is_archived', false)
+        // Get participant emails - filter by current program if available
+        $applicationQuery = ProgramApplication::where('is_archived', false)
             ->with(['participant', 'team.members.participant']);
 
-        if ($currentCompetitionId) {
-            $applicationQuery->where('competition_id', $currentCompetitionId);
+        if ($currentProgramId) {
+            $applicationQuery->where('program_id', $currentProgramId);
         }
 
         $applications = $applicationQuery->take(20)->get();
@@ -186,14 +186,14 @@ class DynamicProjectImporter extends Importer
         $emailExamples = array_unique($emailExamples);
         $emailExamples = array_slice($emailExamples, 0, 10);
 
-        // Add competition_id column to CSV example file
-        $competitionIdExamples = $currentCompetitionId ? [(string) $currentCompetitionId] : [];
+        // Add program_id column to CSV example file
+        $programIdExamples = $currentProgramId ? [(string) $currentProgramId] : [];
 
         $columns = [
-            ImportColumn::make('competition_id')
-                ->label('Competition ID')
-                ->examples($competitionIdExamples ?: ['127'])
-                ->rules(['nullable', 'integer', 'exists:competitions,id']),
+            ImportColumn::make('program_id')
+                ->label('Program ID')
+                ->examples($programIdExamples ?: ['127'])
+                ->rules(['nullable', 'integer', 'exists:programs,id']),
 
             ImportColumn::make('email')
                 ->label('Email')
@@ -370,14 +370,14 @@ class DynamicProjectImporter extends Importer
         }
 
         // Add track and subtrack columns if track changes are allowed and they don't exist as form fields
-        if ($allowTrackChange && $currentCompetitionId) {
+        if ($allowTrackChange && $currentProgramId) {
             // Check if track exists as a form field
             $hasTrackField = $allFormFields->has('track');
 
             if (!$hasTrackField) {
-                // Always use competition tracks with display names (labels) for examples - never raw IDs
+                // Always use program tracks with display names (labels) for examples - never raw IDs
                 $trackExamples = [];
-                $tracks = \App\Models\Track::where('competition_id', $currentCompetitionId)->get();
+                $tracks = \App\Models\Track::where('program_id', $currentProgramId)->get();
                 foreach ($tracks as $track) {
                     $label = static::getTrackDisplayName($track);
                     if ($label !== '') {
@@ -398,10 +398,10 @@ class DynamicProjectImporter extends Importer
             $hasSubtrackField = $allFormFields->has('sub_track');
 
             if (!$hasSubtrackField) {
-                // Always use competition subtracks with display names (labels) for examples - never raw IDs
+                // Always use program subtracks with display names (labels) for examples - never raw IDs
                 $subtrackExamples = [];
-                $subtracks = \App\Models\SubTrack::whereHas('track', function ($query) use ($currentCompetitionId) {
-                    $query->where('competition_id', $currentCompetitionId);
+                $subtracks = \App\Models\SubTrack::whereHas('track', function ($query) use ($currentProgramId) {
+                    $query->where('program_id', $currentProgramId);
                 })->get();
                 foreach ($subtracks as $subtrack) {
                     $label = static::getSubTrackDisplayName($subtrack);
@@ -428,10 +428,10 @@ class DynamicProjectImporter extends Importer
         // Don't flush event listeners - we need boot events to run for proper saving
         // Project::flushEventListeners();
 
-        // Get competition_id from CSV data FIRST (highest priority)
-        $competitionIdFromData = null;
-        if (isset($this->data['competition_id']) && $this->data['competition_id'] !== '') {
-            $competitionIdFromData = (int) $this->data['competition_id'];
+        // Get program_id from CSV data FIRST (highest priority)
+        $programIdFromData = null;
+        if (isset($this->data['program_id']) && $this->data['program_id'] !== '') {
+            $programIdFromData = (int) $this->data['program_id'];
         }
 
         $email = $this->data['email'] ?? null;
@@ -443,25 +443,25 @@ class DynamicProjectImporter extends Importer
         // Normalize email to lowercase for case-insensitive lookup
         $normalizedEmail = strtolower(trim($email));
 
-        // Get current competition ID - CSV data has highest priority
-        $currentCompetitionId = null;
+        // Get current program ID - CSV data has highest priority
+        $currentProgramId = null;
 
-        // Method 1: Use competition_id from CSV data (HIGHEST PRIORITY)
-        if ($competitionIdFromData) {
-            $currentCompetitionId = $competitionIdFromData;
+        // Method 1: Use program_id from CSV data (HIGHEST PRIORITY)
+        if ($programIdFromData) {
+            $currentProgramId = $programIdFromData;
         }
 
-        // Method 2: Use stored competition ID from getColumns() (if CSV doesn't have it)
-        if (!$currentCompetitionId && static::$storedCompetitionId) {
-            $currentCompetitionId = static::$storedCompetitionId;
+        // Method 2: Use stored program ID from getColumns() (if CSV doesn't have it)
+        if (!$currentProgramId && static::$storedProgramId) {
+            $currentProgramId = static::$storedProgramId;
         }
 
         // Method 3: Try session (fallback only if CSV and stored value are not available)
-        if (!$currentCompetitionId) {
+        if (!$currentProgramId) {
             try {
-                $sessionValue = session('current_competition_id');
+                $sessionValue = session('current_program_id');
                 if ($sessionValue) {
-                    $currentCompetitionId = (int) $sessionValue;
+                    $currentProgramId = (int) $sessionValue;
                 }
             } catch (\Exception $e) {
                 // Session not available (e.g., in queue job)
@@ -469,12 +469,12 @@ class DynamicProjectImporter extends Importer
         }
 
         // Method 4: Try request session (fallback)
-        if (!$currentCompetitionId) {
+        if (!$currentProgramId) {
             try {
                 if (request()->hasSession()) {
-                    $sessionValue = request()->session()->get('current_competition_id');
+                    $sessionValue = request()->session()->get('current_program_id');
                     if ($sessionValue) {
-                        $currentCompetitionId = (int) $sessionValue;
+                        $currentProgramId = (int) $sessionValue;
                     }
                 }
             } catch (\Exception $e) {
@@ -483,23 +483,23 @@ class DynamicProjectImporter extends Importer
         }
 
         // Method 5: Try helper function if available (fallback)
-        if (!$currentCompetitionId && function_exists('currentCompetitionId')) {
-            $helperValue = currentCompetitionId();
+        if (!$currentProgramId && function_exists('currentProgramId')) {
+            $helperValue = currentProgramId();
             if ($helperValue) {
-                $currentCompetitionId = (int) $helperValue;
+                $currentProgramId = (int) $helperValue;
             }
         }
 
-        if (!$currentCompetitionId) {
+        if (!$currentProgramId) {
             throw ImportValidationException::withMessages([
-                'email' => "No competition is currently selected. Please select a competition before importing projects.",
+                'email' => "No program is currently selected. Please select a program before importing projects.",
             ]);
         }
 
 
         // First, check if the email belongs to a team member (not leader) to provide a clear error message
-        $teamMemberApplication = CompetitionApplication::where('is_archived', false)
-            ->where('competition_id', $currentCompetitionId) // Filter by current competition
+        $teamMemberApplication = ProgramApplication::where('is_archived', false)
+            ->where('program_id', $currentProgramId) // Filter by current program
             ->where('has_team', true)
             ->whereHas('team.members', function ($query) use ($normalizedEmail) {
                 $query->where('is_leader', false)
@@ -523,9 +523,9 @@ class DynamicProjectImporter extends Importer
         }
 
         // First, try to find application by participant email (for individual applications)
-        // IMPORTANT: Filter by current competition to ensure we get the correct application
-        $application = CompetitionApplication::where('is_archived', false)
-            ->where('competition_id', $currentCompetitionId) // Filter by current competition
+        // IMPORTANT: Filter by current program to ensure we get the correct application
+        $application = ProgramApplication::where('is_archived', false)
+            ->where('program_id', $currentProgramId) // Filter by current program
             ->whereHas('participant', function ($query) use ($normalizedEmail) {
                 $query->whereRaw('LOWER(email) = ?', [$normalizedEmail]);
             })
@@ -534,8 +534,8 @@ class DynamicProjectImporter extends Importer
 
         // If not found, try to find by team leader's email (for team applications)
         if (!$application) {
-            $application = CompetitionApplication::where('is_archived', false)
-                ->where('competition_id', $currentCompetitionId) // Filter by current competition
+            $application = ProgramApplication::where('is_archived', false)
+                ->where('program_id', $currentProgramId) // Filter by current program
                 ->where('has_team', true)
                 ->whereHas('team.members', function ($query) use ($normalizedEmail) {
                     $query->where('is_leader', true)
@@ -553,7 +553,7 @@ class DynamicProjectImporter extends Importer
             $participantExists = $participant !== null;
 
             // Check if there are any applications (including archived) for this email
-            $anyApplication = CompetitionApplication::whereHas('participant', function ($query) use ($normalizedEmail) {
+            $anyApplication = ProgramApplication::whereHas('participant', function ($query) use ($normalizedEmail) {
                 $query->whereRaw('LOWER(email) = ?', [$normalizedEmail]);
             })->orWhereHas('team.members', function ($query) use ($normalizedEmail) {
                 $query->where('is_leader', true)
@@ -566,7 +566,7 @@ class DynamicProjectImporter extends Importer
 
             $errorMessage = "No active application found for email: {$email}.";
             if ($participantExists && !$hasArchivedApplication) {
-                $errorMessage .= " Participant exists but has no application for this competition.";
+                $errorMessage .= " Participant exists but has no application for this program.";
             } elseif ($hasArchivedApplication) {
                 $errorMessage .= " Application exists but is archived. Please restore the application first.";
             } else {
@@ -630,10 +630,10 @@ class DynamicProjectImporter extends Importer
             }
         }
 
-        // Verify that the application belongs to the current competition
-        if ((int)$application->competition_id !== (int)$currentCompetitionId) {
+        // Verify that the application belongs to the current program
+        if ((int)$application->program_id !== (int)$currentProgramId) {
             throw ImportValidationException::withMessages([
-                'email' => "The application for email '{$email}' belongs to competition ID {$application->competition_id}, but the current selected competition is ID {$currentCompetitionId}. Please ensure the imported project belongs to the currently selected competition.",
+                'email' => "The application for email '{$email}' belongs to program ID {$application->program_id}, but the current selected program is ID {$currentProgramId}. Please ensure the imported project belongs to the currently selected program.",
             ]);
         }
 
@@ -650,25 +650,25 @@ class DynamicProjectImporter extends Importer
             ]);
         }
 
-        $competitionId = $currentCompetitionId; // Use current competition ID instead of application's competition_id
+        $programId = $currentProgramId; // Use current program ID instead of application's program_id
 
         // Get form_id from project-submission stage
         $formId = null;
-        $competition = Competition::find($competitionId);
+        $program = Program::find($programId);
 
-        if ($competition) {
+        if ($program) {
             // First try to get the current active stage
-            $currentStage = $competition->currentStage();
+            $currentStage = $program->currentStage();
             if ($currentStage && $currentStage->slug === 'project-submission' && $currentStage->form_id) {
                 $formId = $currentStage->form_id;
             } else {
                 // If no active stage, try to get project-submission stage regardless of dates
-                $projectStage = $competition->projectStage();
+                $projectStage = $program->projectStage();
                 if ($projectStage && $projectStage->form_id) {
                     $formId = $projectStage->form_id;
                 } else {
-                    // If still no form_id, try to get any project form for this competition
-                    $projectForm = Form::where('competition_id', $competitionId)
+                    // If still no form_id, try to get any project form for this program
+                    $projectForm = Form::where('program_id', $programId)
                         ->projectType()
                         ->published()
                         ->active()
@@ -682,7 +682,7 @@ class DynamicProjectImporter extends Importer
 
         if (!$formId) {
             throw ImportValidationException::withMessages([
-                'email' => "No project form found for competition ID: {$competitionId}. Please ensure a project-submission stage exists with a form assigned, or a project form is configured for this competition.",
+                'email' => "No project form found for program ID: {$programId}. Please ensure a project-submission stage exists with a form assigned, or a project form is configured for this program.",
             ]);
         }
 
@@ -699,10 +699,10 @@ class DynamicProjectImporter extends Importer
             ]);
         }
 
-        // Verify the form belongs to the same competition as the application
-        if ($form->competition_id !== $application->competition_id) {
+        // Verify the form belongs to the same program as the application
+        if ($form->program_id !== $application->program_id) {
             throw ImportValidationException::withMessages([
-                'form_id' => "Form ID {$formId} does not belong to the same competition as the application for email: {$email}",
+                'form_id' => "Form ID {$formId} does not belong to the same program as the application for email: {$email}",
             ]);
         }
 
@@ -754,7 +754,7 @@ class DynamicProjectImporter extends Importer
             $project = Project::create([
                 'form_id' => $formId,
                 'application_id' => $applicationId,
-                'competition_id' => $competitionId, // Use current competition ID
+                'program_id' => $programId, // Use current program ID
                 'form_submissions' => $formSubmissions,
                 'status' => $this->data['status'] ?? 'pending',
                 'type' => 'submission',
@@ -2169,7 +2169,7 @@ class DynamicProjectImporter extends Importer
             }
         }
 
-        $competitionIdForResolve = !empty($this->data['competition_id']) ? (int) $this->data['competition_id'] : static::$storedCompetitionId;
+        $programIdForResolve = !empty($this->data['program_id']) ? (int) $this->data['program_id'] : static::$storedProgramId;
 
         // Add track to form_submissions if it exists in data but not in form fields
         // Accept ID, slug, or display name (label) and store slug
@@ -2182,8 +2182,8 @@ class DynamicProjectImporter extends Importer
                     $trackModel = \App\Models\Track::find((int)$track);
                 } else {
                     $trackModel = \App\Models\Track::where('slug', $track)->first();
-                    if (!$trackModel && $competitionIdForResolve) {
-                        $trackModel = \App\Models\Track::where('competition_id', $competitionIdForResolve)->get()
+                    if (!$trackModel && $programIdForResolve) {
+                        $trackModel = \App\Models\Track::where('program_id', $programIdForResolve)->get()
                             ->first(function ($t) use ($track) {
                                 $label = static::getTrackDisplayName($t);
                                 return strcasecmp($label, $track) === 0;
@@ -2209,8 +2209,8 @@ class DynamicProjectImporter extends Importer
                     $subTrackModel = \App\Models\SubTrack::find((int)$subTrack);
                 } else {
                     $subTrackModel = \App\Models\SubTrack::where('slug', $subTrack)->first();
-                    if (!$subTrackModel && $competitionIdForResolve) {
-                        $subTrackModel = \App\Models\SubTrack::whereHas('track', fn($q) => $q->where('competition_id', $competitionIdForResolve))
+                    if (!$subTrackModel && $programIdForResolve) {
+                        $subTrackModel = \App\Models\SubTrack::whereHas('track', fn($q) => $q->where('program_id', $programIdForResolve))
                             ->get()
                             ->first(function ($st) use ($subTrack) {
                                 $label = static::getSubTrackDisplayName($st);
@@ -2235,8 +2235,8 @@ class DynamicProjectImporter extends Importer
                     $trackModel = \App\Models\Track::find((int)$trackValue);
                 } else {
                     $trackModel = \App\Models\Track::where('slug', $trackValue)->first();
-                    if (!$trackModel && $competitionIdForResolve) {
-                        $trackModel = \App\Models\Track::where('competition_id', $competitionIdForResolve)->get()
+                    if (!$trackModel && $programIdForResolve) {
+                        $trackModel = \App\Models\Track::where('program_id', $programIdForResolve)->get()
                             ->first(function ($t) use ($trackValue) {
                                 $label = static::getTrackDisplayName($t);
                                 return strcasecmp($label, $trackValue) === 0;
@@ -2254,8 +2254,8 @@ class DynamicProjectImporter extends Importer
                     $subTrackModel = \App\Models\SubTrack::find((int)$subTrackValue);
                 } else {
                     $subTrackModel = \App\Models\SubTrack::where('slug', $subTrackValue)->first();
-                    if (!$subTrackModel && $competitionIdForResolve) {
-                        $subTrackModel = \App\Models\SubTrack::whereHas('track', fn($q) => $q->where('competition_id', $competitionIdForResolve))
+                    if (!$subTrackModel && $programIdForResolve) {
+                        $subTrackModel = \App\Models\SubTrack::whereHas('track', fn($q) => $q->where('program_id', $programIdForResolve))
                             ->get()
                             ->first(function ($st) use ($subTrackValue) {
                                 $label = static::getSubTrackDisplayName($st);
@@ -2280,12 +2280,12 @@ class DynamicProjectImporter extends Importer
 
     public function beforeFill()
     {
-        // Remove email, project_name, and competition_id - they're not direct columns
+        // Remove email, project_name, and program_id - they're not direct columns
         // email is used to find the application but shouldn't be saved to Project
         // project_name is stored in form_submissions, not as a direct column
-        // competition_id is used to filter applications but shouldn't be saved to Project (it's set from application)
+        // program_id is used to filter applications but shouldn't be saved to Project (it's set from application)
         // NOTE: Keep 'status' - it's a direct column and should be saved
-        Arr::forget($this->data, ['email', 'project_name', 'competition_id']);
+        Arr::forget($this->data, ['email', 'project_name', 'program_id']);
     }
 
     public function afterCreate()
@@ -2314,9 +2314,9 @@ class DynamicProjectImporter extends Importer
             $needsUpdate = true;
         }
 
-        // Ensure competition_id is set
-        if (!$project->competition_id && $project->application) {
-            $project->competition_id = $project->application->competition_id;
+        // Ensure program_id is set
+        if (!$project->program_id && $project->application) {
+            $project->program_id = $project->application->program_id;
             $needsUpdate = true;
         }
 

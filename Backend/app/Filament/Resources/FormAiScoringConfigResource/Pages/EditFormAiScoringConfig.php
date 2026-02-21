@@ -73,34 +73,34 @@ class EditFormAiScoringConfig extends EditRecord
         return $form->schema([
             \Filament\Forms\Components\Section::make('Select Form / اختر النموذج')
                 ->schema([
-                    \Filament\Forms\Components\Select::make('competition_id')
+                    \Filament\Forms\Components\Select::make('program_id')
                         ->label('Program / البرنامج')
                         ->options(function () {
                             $user = auth()->user();
-                            $currentCompetitionId = currentCompetitionId();
+                            $currentProgramId = currentProgramId();
 
                             if ($user->isSuperAdmin()) {
-                                $competitions = \App\Models\Competition::pluck('title', 'id')->toArray();
+                                $programs = \App\Models\Program::pluck('title', 'id')->toArray();
                             } else {
-                                $supervisorCompetitions = \App\Models\UserCompetition::where('user_id', $user->id)
-                                    ->pluck('competition_id')
+                                $supervisorPrograms = \App\Models\UserProgram::where('user_id', $user->id)
+                                    ->pluck('program_id')
                                     ->toArray();
 
-                                $competitions = \App\Models\Competition::whereIn('id', $supervisorCompetitions)
+                                $programs = \App\Models\Program::whereIn('id', $supervisorPrograms)
                                     ->pluck('title', 'id')
                                     ->toArray();
                             }
 
-                            // Prioritize current competition - move it to the top
-                            if ($currentCompetitionId && isset($competitions[$currentCompetitionId])) {
-                                $currentTitle = $competitions[$currentCompetitionId];
-                                unset($competitions[$currentCompetitionId]);
-                                $competitions = [$currentCompetitionId => $currentTitle] + $competitions;
+                            // Prioritize current program - move it to the top
+                            if ($currentProgramId && isset($programs[$currentProgramId])) {
+                                $currentTitle = $programs[$currentProgramId];
+                                unset($programs[$currentProgramId]);
+                                $programs = [$currentProgramId => $currentTitle] + $programs;
                             }
 
-                            return $competitions;
+                            return $programs;
                         })
-                        ->default($currentForm?->competition_id)
+                        ->default($currentForm?->program_id)
                         ->required()
                         ->disabled()
                         ->dehydrated(false)
@@ -163,9 +163,9 @@ class EditFormAiScoringConfig extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        // Add competition_id and form_type for the form (read-only for display)
+        // Add program_id and form_type for the form (read-only for display)
         if ($this->record->form) {
-            $data['competition_id'] = $this->record->form->competition_id;
+            $data['program_id'] = $this->record->form->program_id;
             $data['form_type'] = $this->record->form->type;
             $data['form_id'] = $this->record->form_id;
         }
@@ -190,8 +190,8 @@ class EditFormAiScoringConfig extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        // Remove competition_id and form_type from data as they're not in the model
-        unset($data['competition_id']);
+        // Remove program_id and form_type from data as they're not in the model
+        unset($data['program_id']);
         unset($data['form_type']);
         
         return $data;

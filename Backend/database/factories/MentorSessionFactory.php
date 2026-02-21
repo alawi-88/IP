@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Mentor;
 use App\Models\Participant;
-use App\Models\Competition;
+use App\Models\Program;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -28,7 +28,7 @@ class MentorSessionFactory extends Factory
         return [
             'mentor_id' => Mentor::factory(),
             'participant_id' => Participant::factory(),
-            'competition_id' => Competition::factory(),
+            'program_id' => Program::factory(),
             'title' => $this->faker->sentence(3),
             'description' => $this->faker->paragraph(),
             'scheduled_at' => $scheduledAt,

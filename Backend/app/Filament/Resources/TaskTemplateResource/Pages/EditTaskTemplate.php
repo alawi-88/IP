@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\TaskTemplateResource\Pages;
 
 use App\Filament\Resources\TaskTemplateResource;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Form;
 use Filament\Actions;
 use Filament\Forms;
@@ -27,9 +27,9 @@ class EditTaskTemplate extends EditRecord
             Forms\Components\Section::make('Task Template / قالب المهمة')
                 ->columns(2)
                 ->schema([
-                    Forms\Components\Select::make('competition_id')
+                    Forms\Components\Select::make('program_id')
                         ->label('Program / البرنامج')
-                        ->options(fn () => Competition::active()->get()->mapWithKeys(fn ($c) => [$c->id => $c->getTranslation('title', 'en')]))
+                        ->options(fn () => Program::active()->get()->mapWithKeys(fn ($c) => [$c->id => $c->getTranslation('title', 'en')]))
                         ->required()
                         ->searchable()
                         ->reactive(),
@@ -37,9 +37,9 @@ class EditTaskTemplate extends EditRecord
                     Forms\Components\Select::make('form_id')
                         ->label('Form Template / نموذج التسليم')
                         ->options(function (callable $get) {
-                            $competitionId = $get('competition_id');
-                            if (!$competitionId) return Form::pluck('name', 'id')->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t);
-                            return Form::where('competition_id', $competitionId)
+                            $programId = $get('program_id');
+                            if (!$programId) return Form::pluck('name', 'id')->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t);
+                            return Form::where('program_id', $programId)
                                 ->pluck('name', 'id')
                                 ->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t);
                         })

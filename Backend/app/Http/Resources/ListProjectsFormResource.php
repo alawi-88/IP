@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Competition;
+use App\Models\Program;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

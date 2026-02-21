@@ -27,7 +27,7 @@ class ProjectRequest extends FormRequest
             }
 
             // Get the application
-            $application = \App\Models\CompetitionApplication::find($applicationId);
+            $application = \App\Models\ProgramApplication::find($applicationId);
             
             if (!$application) {
                 return false;
@@ -65,7 +65,7 @@ class ProjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'application_id' => ['required', 'exists:competition_applications,id'],
+            'application_id' => ['required', 'exists:program_applications,id'],
             'form_id' => ['required', 'exists:forms,id'],
             'answers' => ['required', 'array'],
             'type' => ['required', 'string', 'in:draft,submission'],
@@ -130,7 +130,7 @@ class ProjectRequest extends FormRequest
                                 
                                 $validator->errors()->add(
                                     "answers.{$key}",
-                                    __('competition_application.mandatory_checkbox_options_required', [
+                                    __('program_application.mandatory_checkbox_options_required', [
                                         'field' => $fieldLabel,
                                         'options' => implode(', ', $uncheckedLabels)
                                     ])

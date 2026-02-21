@@ -35,7 +35,7 @@ class SessionUpdatedNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         // Reload session from database to ensure all data is loaded (important for queued notifications)
-        $this->session = $this->session->fresh(['mentor', 'participant', 'competition']);
+        $this->session = $this->session->fresh(['mentor', 'participant', 'program']);
 
         // Set locale based on user's preference (check notification locale property first)
         $locale = getUserPreferredLocale($notifiable, $this);
@@ -234,7 +234,7 @@ class SessionUpdatedNotification extends Notification implements ShouldQueue
     public function toArray($notifiable): array
     {
         // Reload session from database to ensure all data is loaded (important for queued notifications)
-        $this->session = $this->session->fresh(['mentor', 'participant', 'competition']);
+        $this->session = $this->session->fresh(['mentor', 'participant', 'program']);
 
         // Set locale based on user's preference (check notification locale property first)
         $locale = getUserPreferredLocale($notifiable, $this);

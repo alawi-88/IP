@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomDashboardResource\Pages;
 use App\Models\Dashboard;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\FormField;
 use App\Services\DashboardAggregationService;
 use Filament\Forms;
@@ -103,8 +103,8 @@ class CustomDashboardResource extends Resource
                                         return [];
                                     }
 
-                                    $competitionId = currentCompetitionId();
-                                    $fields = DashboardAggregationService::getAvailableFields($dataSources, $competitionId);
+                                    $programId = currentProgramId();
+                                    $fields = DashboardAggregationService::getAvailableFields($dataSources, $programId);
 
                                     return $fields->mapWithKeys(function ($field) {
                                         $label = $field->getTranslation('label', app()->getLocale()) ?? $field->slug;
@@ -194,8 +194,8 @@ class CustomDashboardResource extends Resource
                                 return [];
                             }
 
-                            $competitionId = currentCompetitionId();
-                            $fields = DashboardAggregationService::getAvailableFields($dataSources, $competitionId);
+                            $programId = currentProgramId();
+                            $fields = DashboardAggregationService::getAvailableFields($dataSources, $programId);
 
                             return $fields->mapWithKeys(function ($field) {
                                 $label = $field->getTranslation('label', app()->getLocale()) ?? $field->slug;
@@ -213,7 +213,7 @@ class CustomDashboardResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->query(Dashboard::query()->where('competition_id', currentCompetitionId())->orWhereNull('competition_id'))
+            ->query(Dashboard::query()->where('program_id', currentProgramId())->orWhereNull('program_id'))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('dashboard.dashboard_name'))

@@ -73,9 +73,9 @@ class ApprovalRequestStatusChanged extends Notification
     private function getActionText(string $action): string
     {
         return match ($action) {
-            'CompetitionApplication.update' => 'Update Competition Application / تحديث طلب مسابقة',
-            'CompetitionApplication.delete' => 'Delete Competition Application / حذف طلب مسابقة',
-            'CompetitionApplication.archive' => 'Archive Competition Application / أرشفة طلب مسابقة',
+            'ProgramApplication.update' => 'Update Program Application / تحديث طلب مسابقة',
+            'ProgramApplication.delete' => 'Delete Program Application / حذف طلب مسابقة',
+            'ProgramApplication.archive' => 'Archive Program Application / أرشفة طلب مسابقة',
             'Program.create' => 'Create Program / إنشاء برنامج',
             'Program.update' => 'Update Program / تحديث برنامج',
             'Program.delete' => 'Delete Program / حذف برنامج',

@@ -22,7 +22,7 @@ class ListFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'competition_id' => ['required', 'integer', 'exists:competitions,id'],
+            'program_id' => ['required', 'integer', 'exists:programs,id'],
         ];
     }
 }

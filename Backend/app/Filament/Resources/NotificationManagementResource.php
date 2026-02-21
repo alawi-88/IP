@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\NotificationManagementResource\Pages;
 use App\Filament\Resources\NotificationManagementResource\RelationManagers;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\NotificationManagement;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -45,9 +45,9 @@ class NotificationManagementResource extends Resource
                                 ->reactive()
                                 ->placeholder('Enter notification title'),
 
-                            Select::make('competition_id')
+                            Select::make('program_id')
                                 ->label('Program (optional)')
-                                ->options(Competition::query()->pluck('title', 'id'))
+                                ->options(Program::query()->pluck('title', 'id'))
                                 ->searchable()
                                 ->nullable()
                                 ->reactive(),
@@ -82,17 +82,17 @@ class NotificationManagementResource extends Resource
                         ->multiple()
                         ->searchable()
                         ->options(function (Get $get) {
-                            $competitionId = $get('competition_id');
+                            $programId = $get('program_id');
                             return match ($get('user_type')) {
-                                'participant' => Participant::whereHas('competitionApplications', function ($query) use ($competitionId) {
-                                    if ($competitionId) {
-                                        $query->where('competition_id', $competitionId);
+                                'participant' => Participant::whereHas('programApplications', function ($query) use ($programId) {
+                                    if ($programId) {
+                                        $query->where('program_id', $programId);
                                     }
                                 })->pluck('name', 'id')->toArray(),
 
-                                'judge' => Judge::when($competitionId, function ($query) use ($competitionId) {
-                                    $query->whereHas('competitions', function ($query) use ($competitionId) {
-                                        $query->where('competition_id', $competitionId);
+                                'judge' => Judge::when($programId, function ($query) use ($programId) {
+                                    $query->whereHas('programs', function ($query) use ($programId) {
+                                        $query->where('program_id', $programId);
                                     });
                                 })->pluck('name', 'id')->toArray(),
 
@@ -107,7 +107,7 @@ class NotificationManagementResource extends Resource
                         ->label('Recipient Count (Estimated)')
                         ->content(function (Get $get) {
                             $type = $get('user_type');
-                            $competition = $get('competition_id');
+                            $program = $get('program_id');
                             $selectedUsers = $get('user_ids') ?? [];
 
                             if (!empty($selectedUsers) && $type !== 'all') {
@@ -115,33 +115,33 @@ class NotificationManagementResource extends Resource
                             }
 
                             $count = match ($type) {
-                                'participant' => Participant::when($competition, function ($query) use ($competition) {
-                                    $query->whereHas('competitionApplications', function ($query) use ($competition) {
-                                        if ($competition) {
-                                            $query->where('competition_id', $competition);
+                                'participant' => Participant::when($program, function ($query) use ($program) {
+                                    $query->whereHas('programApplications', function ($query) use ($program) {
+                                        if ($program) {
+                                            $query->where('program_id', $program);
                                         }
                                     });
                                 })->count(),
 
-                                'judge' => Judge::when($competition, function ($query) use ($competition) {
-                                    $query->whereHas('competitions', function ($query) use ($competition) {
-                                        if ($competition) {
-                                            $query->where('competition_id', $competition);
+                                'judge' => Judge::when($program, function ($query) use ($program) {
+                                    $query->whereHas('programs', function ($query) use ($program) {
+                                        if ($program) {
+                                            $query->where('program_id', $program);
                                         }
                                     });
                                 })->count(),
 
-                                'all' => Participant::when($competition, function ($query) use ($competition) {
-                                    $query->whereHas('competitionApplications', function ($query) use ($competition) {
-                                        if ($competition) {
-                                            $query->where('competition_id', $competition);
+                                'all' => Participant::when($program, function ($query) use ($program) {
+                                    $query->whereHas('programApplications', function ($query) use ($program) {
+                                        if ($program) {
+                                            $query->where('program_id', $program);
                                         }
                                     });
                                 })->count()
-                                    + Judge::when($competition, function ($query) use ($competition) {
-                                        $query->whereHas('competitions', function ($query) use ($competition) {
-                                            if ($competition) {
-                                                $query->where('competition_id', $competition);
+                                    + Judge::when($program, function ($query) use ($program) {
+                                        $query->whereHas('programs', function ($query) use ($program) {
+                                            if ($program) {
+                                                $query->where('program_id', $program);
                                             }
                                         });
                                     })->count(),
@@ -156,7 +156,7 @@ class NotificationManagementResource extends Resource
                     Hidden::make('recipient_count')
                         ->default(function (Get $get) {
                             $type = $get('user_type');
-                            $competition = $get('competition_id');
+                            $program = $get('program_id');
                             $selectedUsers = $get('user_ids') ?? [];
 
                             if (!empty($selectedUsers)) {
@@ -164,26 +164,26 @@ class NotificationManagementResource extends Resource
                             }
 
                             return match ($type) {
-                                'participant' => Participant::whereHas('competitionApplications', function ($query) use ($competition) {
-                                    if ($competition) {
-                                        $query->where('competition_id', $competition);
+                                'participant' => Participant::whereHas('programApplications', function ($query) use ($program) {
+                                    if ($program) {
+                                        $query->where('program_id', $program);
                                     }
                                 })->count(),
 
-                                'judge' => Judge::whereHas('competitions', function ($query) use ($competition) {
-                                    if ($competition) {
-                                        $query->where('competition_id', $competition);
+                                'judge' => Judge::whereHas('programs', function ($query) use ($program) {
+                                    if ($program) {
+                                        $query->where('program_id', $program);
                                     }
                                 })->count(),
 
-                                'all' => Participant::whereHas('competitionApplications', function ($query) use ($competition) {
-                                    if ($competition) {
-                                        $query->where('competition_id', $competition);
+                                'all' => Participant::whereHas('programApplications', function ($query) use ($program) {
+                                    if ($program) {
+                                        $query->where('program_id', $program);
                                     }
                                 })->count()
-                                    + Judge::whereHas('competitions', function ($query) use ($competition) {
-                                        if ($competition) {
-                                            $query->where('competition_id', $competition);
+                                    + Judge::whereHas('programs', function ($query) use ($program) {
+                                        if ($program) {
+                                            $query->where('program_id', $program);
                                         }
                                     })->count(),
 

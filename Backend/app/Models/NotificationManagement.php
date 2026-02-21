@@ -16,7 +16,7 @@ class NotificationManagement extends Model
         'title',
         'body',
         'user_type',
-        'competition_id',
+        'program_id',
         'user_ids',
         'recipient_count',
         'admin_id',
@@ -36,8 +36,8 @@ class NotificationManagement extends Model
         'recipient_count',
         'send_email',
         'admin.name',
-        'competition.title',
-        'competition_id'
+        'program.title',
+        'program_id'
     ];
 
     protected string $moduleName = 'Notification Management';
@@ -49,9 +49,9 @@ class NotificationManagement extends Model
     }
 
 
-    public function competition()
+    public function program()
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function users()

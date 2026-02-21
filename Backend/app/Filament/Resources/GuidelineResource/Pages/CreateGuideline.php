@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\GuidelineResource\Pages;
 
 use App\Filament\Resources\GuidelineResource;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Guideline;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;

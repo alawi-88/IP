@@ -23,7 +23,7 @@ class ProfileController extends Controller
         }
         
         // Load relationships
-        $mentor->load(['competitions', 'track', 'competition']);
+        $mentor->load(['programs', 'track', 'program']);
         
         return response()->json(new MentorResource($mentor));
     }
@@ -175,7 +175,7 @@ class ProfileController extends Controller
 
         // Reload mentor with relationships
         $mentor->refresh();
-        $mentor->load(['competitions', 'track', 'competition']);
+        $mentor->load(['programs', 'track', 'program']);
 
         return response()->json([
             'message' => __('mentor.profile_updated_successfully'),

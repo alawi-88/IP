@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\ProgramParticipantResource\Pages;
 
 use App\Filament\Resources\ProgramParticipantResource;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\Project;
 use App\Models\Stage;
 use App\Services\ApplicationApprovalService;
@@ -32,8 +32,8 @@ class ViewProgramParticipant extends ViewRecord
      */
     protected function resolveRecord(string|int $key): \Illuminate\Database\Eloquent\Model
     {
-        $record = CompetitionApplication::with([
-            'competition.stages' => function ($q) {
+        $record = ProgramApplication::with([
+            'program.stages' => function ($q) {
                 $q->where('slug', '!=', 'registration')
                   ->orderBy('starts_at', 'asc');
             },
@@ -99,7 +99,7 @@ class ViewProgramParticipant extends ViewRecord
                         $this->record->form_id,
                         $answers,
                         $this->record->id,
-                        'competition_application'
+                        'program_application'
                     );
 
                     if (!$result['success']) {
@@ -273,7 +273,7 @@ class ViewProgramParticipant extends ViewRecord
                     $approvalService = new ApplicationApprovalService();
                     $result = $approvalService->processAction(
                         'update',
-                        ['status' => 'approved', 'competition_id' => $this->record->competition_id, 'title' => $this->record->competition?->title ?? 'N/A'],
+                        ['status' => 'approved', 'program_id' => $this->record->program_id, 'title' => $this->record->program?->title ?? 'N/A'],
                         $this->record->id,
                         'Approve participant request'
                     );
@@ -316,7 +316,7 @@ class ViewProgramParticipant extends ViewRecord
                     $approvalService = new ApplicationApprovalService();
                     $result = $approvalService->processAction(
                         'update',
-                        ['status' => 'rejected', 'competition_id' => $this->record->competition_id, 'title' => $this->record->competition?->title ?? 'N/A'],
+                        ['status' => 'rejected', 'program_id' => $this->record->program_id, 'title' => $this->record->program?->title ?? 'N/A'],
                         $this->record->id,
                         'Reject participant request'
                     );
@@ -351,13 +351,13 @@ class ViewProgramParticipant extends ViewRecord
                 ->icon('heroicon-o-x-mark')
                 ->requiresConfirmation()
                 ->modalHeading('Disqualify Participant / استبعاد المشارك')
-                ->modalDescription('Are you sure you want to disqualify this participant? This will mark them as disqualified and they will not be able to continue in the competition. This action will be submitted for approval. / هل أنت متأكد من استبعاد هذا المشارك؟ سيتم تمييزه كمستبعد ولن يتمكن من متابعة المسابقة. سيتم تقديم هذا الإجراء للموافقة.')
+                ->modalDescription('Are you sure you want to disqualify this participant? This will mark them as disqualified and they will not be able to continue in the program. This action will be submitted for approval. / هل أنت متأكد من استبعاد هذا المشارك؟ سيتم تمييزه كمستبعد ولن يتمكن من متابعة المسابقة. سيتم تقديم هذا الإجراء للموافقة.')
                 ->visible(fn () => !$this->record->isArchived() && $this->record->isApproved())
                 ->action(function () {
                     $approvalService = new ApplicationApprovalService();
                     $result = $approvalService->processAction(
                         'update',
-                        ['status' => 'rejected', 'competition_id' => $this->record->competition_id, 'title' => $this->record->competition?->title ?? 'N/A'],
+                        ['status' => 'rejected', 'program_id' => $this->record->program_id, 'title' => $this->record->program?->title ?? 'N/A'],
                         $this->record->id,
                         'Disqualify participant request'
                     );
@@ -398,7 +398,7 @@ class ViewProgramParticipant extends ViewRecord
                     $approvalService = new ApplicationApprovalService();
                     $result = $approvalService->processAction(
                         'archive',
-                        ['is_archived' => true, 'archived_at' => now(), 'competition_id' => $this->record->competition_id, 'title' => $this->record->competition?->title ?? 'N/A'],
+                        ['is_archived' => true, 'archived_at' => now(), 'program_id' => $this->record->program_id, 'title' => $this->record->program?->title ?? 'N/A'],
                         $this->record->id,
                         'Archive participant request'
                     );
@@ -460,12 +460,12 @@ class ViewProgramParticipant extends ViewRecord
                 ->requiresConfirmation()
                 ->modalHeading('Delete Participant / حذف المشارك')
                 ->modalDescription('Are you sure you want to delete this participant? This action cannot be undone. This action will be submitted for approval. / هل أنت متأكد من حذف هذا المشارك؟ لا يمكن التراجع عن هذا الإجراء. سيتم تقديم هذا الإجراء للموافقة.')
-                ->visible(fn () => auth()->user()?->can('delete CompetitionApplication'))
+                ->visible(fn () => auth()->user()?->can('delete ProgramApplication'))
                 ->action(function () {
                     $approvalService = new ApplicationApprovalService();
                     $result = $approvalService->processAction(
                         'delete',
-                        ['competition_id' => $this->record->competition_id, 'title' => $this->record->competition?->title ?? 'N/A'],
+                        ['program_id' => $this->record->program_id, 'title' => $this->record->program?->title ?? 'N/A'],
                         $this->record->id,
                         'Delete participant request'
                     );
@@ -524,7 +524,7 @@ class ViewProgramParticipant extends ViewRecord
                     })
                     ->getStateUsing(fn($record) => str($record->status)->ucfirst()),
 
-                TextEntry::make('competition.title')
+                TextEntry::make('program.title')
                     ->label('Program / البرنامج'),
 
                 TextEntry::make('created_at')
@@ -647,7 +647,7 @@ class ViewProgramParticipant extends ViewRecord
                         $isArrayValue = is_array($value);
                         $arrayValue = $isArrayValue ? $value : array_map('trim', explode(',', $value));
                         // Pass the field object directly to avoid re-querying
-                        $formattedValue = \App\Models\CompetitionApplication::formatFormFieldValueStatic($key, $arrayValue, $field);
+                        $formattedValue = \App\Models\ProgramApplication::formatFormFieldValueStatic($key, $arrayValue, $field);
                         $entries[] = TextEntry::make("form_submissions_{$key}")
                             ->label($label)
                             ->default($formattedValue ?? '—');
@@ -729,9 +729,9 @@ class ViewProgramParticipant extends ViewRecord
         }
 
         // Stages and Projects
-        $competition = $this->record->competition;
-        if ($competition && $competition->stages) {
-            $stages = $competition->stages->where('slug', '!=', 'registration');
+        $program = $this->record->program;
+        if ($program && $program->stages) {
+            $stages = $program->stages->where('slug', '!=', 'registration');
 
             if ($stages->isNotEmpty()) {
                 foreach ($stages as $stage) {

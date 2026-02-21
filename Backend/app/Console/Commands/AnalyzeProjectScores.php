@@ -97,25 +97,25 @@ class AnalyzeProjectScores extends Command
         $this->line("Application ID: " . ($project->application_id ?: 'N/A'));
         
         if (!$project->application_id) {
-            $this->error("❌ No application_id - cannot determine competition");
+            $this->error("❌ No application_id - cannot determine program");
             return;
         }
         
-        $competition = $project->application?->competition;
-        if (!$competition) {
-            $this->error("❌ No competition found for application");
+        $program = $project->application?->program;
+        if (!$program) {
+            $this->error("❌ No program found for application");
             return;
         }
         
-        $this->line("Competition: {$competition->title}");
+        $this->line("Program: {$program->title}");
         
-        // Get all stages for this competition
-        $stages = Stage::where('competition_id', $competition->id)
+        // Get all stages for this program
+        $stages = Stage::where('program_id', $program->id)
             ->orderBy('ends_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();
             
-        $this->line("\nStages in competition:");
+        $this->line("\nStages in program:");
         foreach ($stages as $stage) {
             $this->line("- Stage {$stage->id}: {$stage->title} (ends: {$stage->ends_at})");
         }

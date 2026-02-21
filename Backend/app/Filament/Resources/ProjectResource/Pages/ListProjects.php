@@ -6,7 +6,7 @@ use App\Filament\Exports\ProjectExporter;
 use App\Filament\Imports\DynamicProjectImporter;
 use App\Filament\Resources\ProjectResource;
 use App\Models\CommitteeJudge;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Form;
 use App\Models\JudgeProject;
 use App\Models\Project;
@@ -36,7 +36,7 @@ class ListProjects extends ListRecords
     public function table(Table $table): Table
     {
         // Set default query to show all projects (active + archived)
-        $table->query(Project::byCompetition()->submission()->with(['form', 'application.participant']));
+        $table->query(Project::byProgram()->submission()->with(['form', 'application.participant']));
 
         return $table
             ->columns(Project::columns())
@@ -51,31 +51,31 @@ class ListProjects extends ListRecords
                             return false;
                         }
 
-                        // Get current competition from session
-                        $currentCompetitionId = session('current_competition_id');
+                        // Get current program from session
+                        $currentProgramId = session('current_program_id');
 
-                        if (!$currentCompetitionId) {
+                        if (!$currentProgramId) {
                             return false;
                         }
 
-                        // Get the competition
-                        $competition = Competition::where('id', $currentCompetitionId)
+                        // Get the program
+                        $program = Program::where('id', $currentProgramId)
                             ->published()
                             ->active()
                             ->first();
 
-                        if (!$competition) {
+                        if (!$program) {
                             return false;
                         }
 
                         // Check if current stage is project-submission
-                        $currentStage = $competition->currentStage();
+                        $currentStage = $program->currentStage();
                         if (!$currentStage || $currentStage->slug !== 'project-submission') {
                             return false;
                         }
 
-                        // Check if there is a project form linked to the competition
-                        $hasProjectForm = Form::where('competition_id', $currentCompetitionId)
+                        // Check if there is a project form linked to the program
+                        $hasProjectForm = Form::where('program_id', $currentProgramId)
                             ->projectType()
                             ->published()
                             ->active()
@@ -1018,7 +1018,7 @@ class ListProjects extends ListRecords
                                 'total_rows' => $export->total_rows,
                                 'export_timestamp' => now()->toIso8601String(),
                                 'criteria' => [
-                                    'competition_id' => session('current_competition_id'),
+                                    'program_id' => session('current_program_id'),
                                 ],
                             ])
                             ->log($user->name . ' exported projects');
@@ -1060,7 +1060,7 @@ class ListProjects extends ListRecords
 
     public function getTabs(): array
     {
-        $baseQuery = Project::byCompetition()->submission();
+        $baseQuery = Project::byProgram()->submission();
 
         $tabs = [
             'all' => \Filament\Resources\Components\Tab::make('All')

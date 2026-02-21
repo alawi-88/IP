@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Competition;
-use App\Models\CompetitionTab;
+use App\Models\Program;
+use App\Models\ProgramTab;
 use Illuminate\Database\Seeder;
 
 class TabSeeder extends Seeder
@@ -13,7 +13,7 @@ class TabSeeder extends Seeder
      */
     public function run(): void
     {
-        $competitions = Competition::all();
+        $programs = Program::all();
 
         $tabs = [
             'teams',
@@ -26,10 +26,10 @@ class TabSeeder extends Seeder
             'leaderboard'
         ];
 
-        foreach ($competitions as $competition) {
+        foreach ($programs as $program) {
             foreach ($tabs as $tab) {
-                CompetitionTab::updateOrCreate(
-                    ['competition_id' => $competition->id, 'tab' => $tab],
+                ProgramTab::updateOrCreate(
+                    ['program_id' => $program->id, 'tab' => $tab],
                     ['is_visible' => fake()->boolean()]
                 );
             }

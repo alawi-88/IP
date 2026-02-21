@@ -4,8 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\WinnerResource\Pages;
 use App\Filament\Resources\WinnerResource\RelationManagers;
-use App\Models\Competition;
-use App\Models\UserCompetition;
+use App\Models\Program;
+use App\Models\UserProgram;
 use App\Models\Winner;
 use App\Models\Track;
 use App\Services\WinnerApprovalService;
@@ -39,20 +39,20 @@ class WinnerResource extends Resource
                 ->columns(2)
                 ->schema([
 
-                    Forms\Components\Select::make('competition_id')
+                    Forms\Components\Select::make('program_id')
                         ->label('Program')
                         ->placeholder('Select a program')
                         ->options(function () {
                             $user = auth()->user();
 
                             if ($user->isSuperAdmin()) {
-                                return Competition::pluck('title', 'id');
+                                return Program::pluck('title', 'id');
                             }
 
-                            $competitionIds = UserCompetition::where('user_id', $user->id)
-                                ->pluck('competition_id');
+                            $programIds = UserProgram::where('user_id', $user->id)
+                                ->pluck('program_id');
 
-                            return Competition::whereIn('id', $competitionIds)->pluck('title', 'id');
+                            return Program::whereIn('id', $programIds)->pluck('title', 'id');
                         })
                         ->required()
                         ->reactive()
@@ -65,14 +65,14 @@ class WinnerResource extends Resource
                         ->label('Track (Optional)')
                         ->placeholder('Select a track')
                         ->options(function (callable $get) {
-                            $competitionId = $get('competition_id');
-                            if (!$competitionId) return [];
-                            return Track::where('competition_id', $competitionId)
+                            $programId = $get('program_id');
+                            if (!$programId) return [];
+                            return Track::where('program_id', $programId)
                                 ->orderBy('name')
                                 ->pluck('name', 'id');
                         })
                         ->searchable()
-                        ->visible(fn(callable $get) => filled($get('competition_id')))
+                        ->visible(fn(callable $get) => filled($get('program_id')))
                         ->nullable()
                         ->helperText('Select a track if applicable.'),
 
@@ -86,7 +86,7 @@ class WinnerResource extends Resource
                         ->rule(function (callable $get) {
                             return Rule::unique('winners', 'rank')
                                 ->where(function ($query) use ($get) {
-                                    $query->where('competition_id', $get('competition_id'))
+                                    $query->where('program_id', $get('program_id'))
                                         ->where('track_id', $get('track_id'));
                                 })
                                 ->ignore($get('id') ?? null);
@@ -152,16 +152,16 @@ class WinnerResource extends Resource
                     return $query;
                 }
 
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereHas('competition', function ($q) use ($supervisorCompetitions) {
-                    $q->whereIn('competitions.id', $supervisorCompetitions);
+                return $query->whereHas('program', function ($q) use ($supervisorPrograms) {
+                    $q->whereIn('programs.id', $supervisorPrograms);
                 });
             })
             ->columns([
-                Tables\Columns\TextColumn::make('competition.title')->label('Program')->sortable(),
+                Tables\Columns\TextColumn::make('program.title')->label('Program')->sortable(),
                 Tables\Columns\TextColumn::make('track.name')->label('Track')->sortable(),
                 Tables\Columns\TextColumn::make('rank')->label('Rank')->sortable(),
                 Tables\Columns\TextColumn::make('name.en')->label('Winner Name')->searchable(),

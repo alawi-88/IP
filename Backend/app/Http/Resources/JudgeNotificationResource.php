@@ -29,7 +29,7 @@ class JudgeNotificationResource extends JsonResource
         if (isset($this->data['message'])) {
             return $this->data['message'] === 'reset_password' 
                 ? __('passwords.reset_password') 
-                : __('competition_application.' . $this->data['message']);
+                : __('program_application.' . $this->data['message']);
         }
 
         return $this->data['title'] ?? null;

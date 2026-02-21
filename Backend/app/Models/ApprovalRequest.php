@@ -191,7 +191,7 @@ class ApprovalRequest extends Model
      */
     public function program()
     {
-        return $this->belongsTo(Competition::class, 'target_id');
+        return $this->belongsTo(Program::class, 'target_id');
     }
 
     /**
@@ -199,7 +199,7 @@ class ApprovalRequest extends Model
      */
     public function application()
     {
-        return $this->belongsTo(CompetitionApplication::class, 'target_id');
+        return $this->belongsTo(ProgramApplication::class, 'target_id');
     }
 
     /**
@@ -231,7 +231,7 @@ class ApprovalRequest extends Model
      */
     public function getProgram()
     {
-        if ($this->target_type === Competition::class && $this->target_id) {
+        if ($this->target_type === Program::class && $this->target_id) {
             return $this->program;
         }
         return null;
@@ -242,7 +242,7 @@ class ApprovalRequest extends Model
      */
     public function getApplication()
     {
-        if ($this->target_type === CompetitionApplication::class && $this->target_id) {
+        if ($this->target_type === ProgramApplication::class && $this->target_id) {
             return $this->application;
         }
         return null;
@@ -253,7 +253,7 @@ class ApprovalRequest extends Model
      */
     public function isProgramRequest(): bool
     {
-        return $this->target_type === Competition::class;
+        return $this->target_type === Program::class;
     }
 
     /**
@@ -261,7 +261,7 @@ class ApprovalRequest extends Model
      */
     public function isApplicationRequest(): bool
     {
-        return $this->target_type === CompetitionApplication::class;
+        return $this->target_type === ProgramApplication::class;
     }
 
     /**
@@ -411,9 +411,9 @@ class ApprovalRequest extends Model
 
     private function executeProgramCreateAction(array $actionData): bool
     {
-        unset($actionData['action_type'], $actionData['competition_id'], $actionData['old_values']);
+        unset($actionData['action_type'], $actionData['program_id'], $actionData['old_values']);
         try {
-            $program = Competition::create($actionData);
+            $program = Program::create($actionData);
             
 
             if ($this->requested_by) {
@@ -421,7 +421,7 @@ class ApprovalRequest extends Model
             }
 
             $this->update([
-                'target_type' => Competition::class,
+                'target_type' => Program::class,
                 'target_id' => $program->id,
             ]);
 
@@ -442,7 +442,7 @@ class ApprovalRequest extends Model
             return false;
         }
 
-        unset($actionData['action_type'], $actionData['competition_id'], $actionData['old_values']);
+        unset($actionData['action_type'], $actionData['program_id'], $actionData['old_values']);
 
         return $program->update($actionData);
     }
@@ -493,7 +493,7 @@ class ApprovalRequest extends Model
 
     private function executeApplicationCreateAction(array $actionData): bool
     {
-        $application = CompetitionApplication::create($actionData);
+        $application = ProgramApplication::create($actionData);
         $this->update(['target_id' => $application->id]);
         return true;
     }
@@ -507,7 +507,7 @@ class ApprovalRequest extends Model
         }
         
         unset($actionData['action_type']);
-        unset($actionData['competition_id'], $actionData['old_values']);
+        unset($actionData['program_id'], $actionData['old_values']);
         
         $result = true;
 
@@ -837,7 +837,7 @@ class ApprovalRequest extends Model
             \Illuminate\Support\Facades\DB::commit();
             
             // Fire the event that would normally be fired when creating a form
-            event(new \App\Events\FormCompetitionStagesCreated($form));
+            event(new \App\Events\FormProgramStagesCreated($form));
             
             return true;
         } catch (\Exception $e) {

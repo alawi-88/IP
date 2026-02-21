@@ -5,9 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\FormExporter;
 use App\Filament\Resources\FormResource\Pages;
 use App\Filament\Widgets\FormStatsOverview;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\FormField;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Closure;
 use Filament\Tables\Actions\Action;
 use Filament\Notifications\Notification;
@@ -39,24 +39,24 @@ class FormResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Program')
                     ->schema([
-                        // make currentCompetitionId() method in Form model is selected
+                        // make currentProgramId() method in Form model is selected
 
-                        Forms\Components\Select::make('competition_id')
+                        Forms\Components\Select::make('program_id')
                             ->label('Program')
                             ->options(function () {
                                 $user = auth()->user();
 
                                 if ($user->isSuperAdmin()) {
-                                    return Competition::pluck('title', 'id')->toArray();
+                                    return Program::pluck('title', 'id')->toArray();
                                 }
 
-                                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                                    ->pluck('competition_id')
+                                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                                    ->pluck('program_id')
                                     ->toArray();
 
-                                return Competition::whereIn('id', $supervisorCompetitions)->pluck('title', 'id')->toArray();
+                                return Program::whereIn('id', $supervisorPrograms)->pluck('title', 'id')->toArray();
                             })
-                            ->default(currentCompetitionId())
+                            ->default(currentProgramId())
                             ->required()
                             ->searchable()
                             ->reactive()
@@ -99,15 +99,15 @@ class FormResource extends Resource
                             ->label('Form Type')
                             ->helperText('Select the form type / اختر نوع النموذج')
                             ->options(function (callable $get) {
-                                $competitionId = $get('competition_id');
+                                $programId = $get('program_id');
                                 $allTypes = \App\Models\Form::getAvailableFormTypes();
                                 $alwaysAllowed = ['evaluation','project'];
 
-                                if (empty($competitionId)) {
+                                if (empty($programId)) {
                                     return $allTypes;
                                 }
 
-                                $existingTypes = \App\Models\Form::where('competition_id', $competitionId)
+                                $existingTypes = \App\Models\Form::where('program_id', $programId)
                                     ->pluck('type')
                                     ->toArray();
 
@@ -1262,11 +1262,11 @@ class FormResource extends Resource
                     return $query;
                 }
 
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereIn('competition_id', $supervisorCompetitions);
+                return $query->whereIn('program_id', $supervisorPrograms);
             })
             ->columns([
                 Tables\Columns\TextColumn::make('name')->sortable()->searchable(),
@@ -1281,7 +1281,7 @@ class FormResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('competition.title')->label('Program')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('program.title')->label('Program')->sortable()->searchable(),
                 Tables\Columns\IconColumn::make('is_published')
                     ->label('Published')
                     ->boolean()
@@ -1698,7 +1698,7 @@ class FormResource extends Resource
         if (!$user || !$user->can('view Form')) {
             return false;
         }
-        return static::userCanAccessFormCompetition($user, $record->competition_id);
+        return static::userCanAccessFormProgram($user, $record->program_id);
     }
 
     public static function canCreate(): bool
@@ -1706,7 +1706,7 @@ class FormResource extends Resource
         if (!auth()->user()?->can('create Form')) {
             return false;
         }
-        return !empty(currentCompetitionId());
+        return !empty(currentProgramId());
     }
 
     /**
@@ -1718,7 +1718,7 @@ class FormResource extends Resource
         if (!$user || !$user->can('update Form') || $record->isArchived()) {
             return false;
         }
-        return static::userCanAccessFormCompetition($user, $record->competition_id);
+        return static::userCanAccessFormProgram($user, $record->program_id);
     }
 
     /**
@@ -1730,7 +1730,7 @@ class FormResource extends Resource
         if (!$user || !$user->can('delete Form')) {
             return false;
         }
-        return static::userCanAccessFormCompetition($user, $record->competition_id);
+        return static::userCanAccessFormProgram($user, $record->program_id);
     }
 
     /**
@@ -1742,7 +1742,7 @@ class FormResource extends Resource
         if (!$user || !$user->can('archive Form') || $record->isArchived()) {
             return false;
         }
-        return static::userCanAccessFormCompetition($user, $record->competition_id);
+        return static::userCanAccessFormProgram($user, $record->program_id);
     }
 
     /**
@@ -1754,21 +1754,21 @@ class FormResource extends Resource
         if (!$user || !$user->can('restore Form') || !$record->isArchived()) {
             return false;
         }
-        return static::userCanAccessFormCompetition($user, $record->competition_id);
+        return static::userCanAccessFormProgram($user, $record->program_id);
     }
 
     /**
-     * IDOR prevention: verify user has authorization to access forms for the given competition.
-     * Super admins have full access. Others must be assigned via user_competitions.
+     * IDOR prevention: verify user has authorization to access forms for the given program.
+     * Super admins have full access. Others must be assigned via user_programs.
      */
-    protected static function userCanAccessFormCompetition($user, ?int $competitionId): bool
+    protected static function userCanAccessFormProgram($user, ?int $programId): bool
     {
-        if ($competitionId === null) {
+        if ($programId === null) {
             return false;
         }
         if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
             return true;
         }
-        return $user->competitions()->where('competitions.id', $competitionId)->exists();
+        return $user->programs()->where('programs.id', $programId)->exists();
     }
 }

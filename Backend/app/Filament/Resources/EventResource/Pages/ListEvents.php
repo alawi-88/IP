@@ -27,7 +27,7 @@ class ListEvents extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->query(Event::byCompetition())
+            ->query(Event::byProgram())
             ->columns(Event::columns())
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -279,7 +279,7 @@ class ListEvents extends ListRecords
 
     public function getTabs(): array
     {
-        $baseQuery = Event::byCompetition();
+        $baseQuery = Event::byProgram();
 
         $tabs = [
             'all' => Tab::make('All')

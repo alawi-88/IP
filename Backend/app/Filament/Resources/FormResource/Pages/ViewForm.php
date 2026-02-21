@@ -176,7 +176,7 @@ class ViewForm extends ViewRecord
 
                             TextEntry::make('updated_at')->label('Updated At'),
 
-                            TextEntry::make('competition.title')->label('Program'),
+                            TextEntry::make('program.title')->label('Program'),
 
                             TextEntry::make('number_of_submissions')->default(0)->label('Number of Submissions'),
 

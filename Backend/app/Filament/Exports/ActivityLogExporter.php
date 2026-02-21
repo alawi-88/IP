@@ -48,7 +48,7 @@ class ActivityLogExporter extends Exporter
 
         return match ($scope) {
             'date_range' => $this->applyDateRange($query, $data),
-            'competition' => $this->applyCompetitionFilter($query, $data),
+            'program' => $this->applyProgramFilter($query, $data),
             default => $query,
         };
     }
@@ -64,10 +64,10 @@ class ActivityLogExporter extends Exporter
         return $query;
     }
 
-    private function applyCompetitionFilter(Builder $query, array $data): Builder
+    private function applyProgramFilter(Builder $query, array $data): Builder
     {
-        if (isset($data['competition_id'])) {
-            return $query->where('properties->attributes->competition_id', $data['competition_id']);
+        if (isset($data['program_id'])) {
+            return $query->where('properties->attributes->program_id', $data['program_id']);
         }
         return $query;
     }

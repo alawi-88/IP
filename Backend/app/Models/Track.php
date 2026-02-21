@@ -15,7 +15,7 @@ class Track extends Model
     public array $translatable = ['name'];
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'name',
         'slug',
         'order',
@@ -28,8 +28,8 @@ class Track extends Model
     protected array $logFields = [
         'name',
         'order',
-        'competition.title',
-        'competition_id',
+        'program.title',
+        'program_id',
     ];
 
     protected string $moduleName = 'Track';
@@ -39,9 +39,9 @@ class Track extends Model
         'created_at',
         'updated_at',
     ];
-    public function competition()
+    public function program()
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function subTracks()

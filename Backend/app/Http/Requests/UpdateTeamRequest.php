@@ -22,7 +22,7 @@ class UpdateTeamRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'application_id' => ['required', 'exists:competition_applications,id'],
+            'application_id' => ['required', 'exists:program_applications,id'],
             'name' => ['required_if:has_team,1', 'string', 'max:255'],
             'logo' => ['nullable', 'image', 'mimes:jpg,png', 'max:1024'],
             'strength' => ['required_if:has_team,1', 'max:500'],

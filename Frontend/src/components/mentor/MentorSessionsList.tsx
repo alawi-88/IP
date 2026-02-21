@@ -725,10 +725,10 @@ const SessionRating = ({
                   </div>
                   <div className="flex flex-col gap-2">
                     <p className="text-sm text-[#667084] font-medium">
-                      {t("competition")}
+                      {t("program")}
                     </p>
                     <p className="font-bold text-sm flex items-center gap-1">
-                      {session.competition.title}
+                      {session.program.title}
                     </p>
                   </div>
                 </div>

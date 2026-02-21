@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\Participant;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -49,14 +49,14 @@ class TestingAccounts extends Seeder
                 ]
             );
 
-            CompetitionApplication::updateOrCreate(['participant_id' => $participant->id, 'competition_id' => 1],
+            ProgramApplication::updateOrCreate(['participant_id' => $participant->id, 'program_id' => 1],
                 [
                     'has_team' => false,
                     'has_idea' => false,
                     'participation_interest' => 'interest description'
                 ]);
 
-            CompetitionApplication::updateOrCreate(['participant_id' => $participant->id, 'competition_id' => 2],
+            ProgramApplication::updateOrCreate(['participant_id' => $participant->id, 'program_id' => 2],
                 [
                     'has_team' => false,
                     'has_idea' => false,

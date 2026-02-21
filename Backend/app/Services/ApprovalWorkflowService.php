@@ -15,12 +15,12 @@ class ApprovalWorkflowService
     public function getAvailableActions(): array
     {
         return [
-            'Competition.create' => 'Create Competition',
-            'Competition.update' => 'Update Competition',
-            'Competition.delete' => 'Delete Competition',
-            'CompetitionApplication.update' => 'Update Competition Application',
-            'CompetitionApplication.delete' => 'Delete Competition Application',
-            'CompetitionApplication.archive' => 'Archive Competition Application',
+            'Program.create' => 'Create Program',
+            'Program.update' => 'Update Program',
+            'Program.delete' => 'Delete Program',
+            'ProgramApplication.update' => 'Update Program Application',
+            'ProgramApplication.delete' => 'Delete Program Application',
+            'ProgramApplication.archive' => 'Archive Program Application',
             'Form.create' => 'Create Form',
             'Form.update' => 'Update Form',
             'Form.delete' => 'Delete Form',

@@ -22,7 +22,7 @@ class SessionRequest extends FormRequest
     {
         $rules = [
             'participant_id' => ['required', 'exists:participants,id'],
-            'competition_id' => ['required', 'exists:competitions,id'],
+            'program_id' => ['required', 'exists:programs,id'],
             'title' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],
             'scheduled_at' => ['required', 'date', 'after:now'],
@@ -32,7 +32,7 @@ class SessionRequest extends FormRequest
         // For updates, make some fields optional and exclude duration_minutes
         if ($this->isMethod('patch') || $this->isMethod('put')) {
             $rules['participant_id'] = ['sometimes', 'exists:participants,id'];
-            $rules['competition_id'] = ['sometimes', 'exists:competitions,id'];
+            $rules['program_id'] = ['sometimes', 'exists:programs,id'];
             $rules['title'] = ['sometimes', 'string', 'max:255'];
             $rules['scheduled_at'] = ['sometimes', 'date', 'after:now'];
 
@@ -51,8 +51,8 @@ class SessionRequest extends FormRequest
         return [
             'participant_id.required' => __('sessions.participant_required'),
             'participant_id.exists' => __('sessions.participant_not_found'),
-            'competition_id.required' => __('sessions.competition_required'),
-            'competition_id.exists' => __('sessions.competition_not_found'),
+            'program_id.required' => __('sessions.program_required'),
+            'program_id.exists' => __('sessions.program_not_found'),
             'title.max' => __('sessions.title_too_long'),
             'description.max' => __('sessions.description_too_long'),
             'scheduled_at.required' => __('sessions.scheduled_at_required'),

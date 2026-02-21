@@ -6,7 +6,7 @@ use App\Filament\Resources\FormAiScoringConfigResource\Pages;
 use App\Filament\Resources\FormAiScoringConfigResource\RelationManagers;
 use App\Models\FormAiScoringConfig;
 use App\Models\FormAiEnhancementConfig;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -28,35 +28,35 @@ class FormAiScoringConfigResource extends Resource
         return $form->schema([
             Forms\Components\Section::make('Select Form / اختر النموذج')
                 ->schema([
-                    Forms\Components\Select::make('competition_id')
+                    Forms\Components\Select::make('program_id')
                         ->label('Program / البرنامج')
                         ->options(function () {
                             $user = auth()->user();
-                            $currentCompetitionId = currentCompetitionId();
+                            $currentProgramId = currentProgramId();
 
                             if ($user->isSuperAdmin()) {
-                                $competitions = \App\Models\Competition::pluck('title', 'id')->toArray();
+                                $programs = \App\Models\Program::pluck('title', 'id')->toArray();
                             } else {
-                                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                                    ->pluck('competition_id')
+                                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                                    ->pluck('program_id')
                                     ->toArray();
 
-                                $competitions = \App\Models\Competition::whereIn('id', $supervisorCompetitions)
+                                $programs = \App\Models\Program::whereIn('id', $supervisorPrograms)
                                     ->pluck('title', 'id')
                                     ->toArray();
                             }
 
-                            // Prioritize current competition - move it to the top
-                            if ($currentCompetitionId && isset($competitions[$currentCompetitionId])) {
-                                $currentTitle = $competitions[$currentCompetitionId];
-                                unset($competitions[$currentCompetitionId]);
-                                $competitions = [$currentCompetitionId => $currentTitle] + $competitions;
+                            // Prioritize current program - move it to the top
+                            if ($currentProgramId && isset($programs[$currentProgramId])) {
+                                $currentTitle = $programs[$currentProgramId];
+                                unset($programs[$currentProgramId]);
+                                $programs = [$currentProgramId => $currentTitle] + $programs;
                             }
 
-                            return $competitions;
+                            return $programs;
                         })
                         ->default(function () {
-                            return currentCompetitionId();
+                            return currentProgramId();
                         })
                         ->required()
                         ->live()
@@ -71,22 +71,22 @@ class FormAiScoringConfigResource extends Resource
                         ->required()
                         ->live()
                         ->afterStateUpdated(fn (callable $set) => $set('form_id', null))
-                        ->disabled(fn (callable $get) => !$get('competition_id'))
+                        ->disabled(fn (callable $get) => !$get('program_id'))
                         ->helperText('Please select a form type / يرجى اختيار نوع النموذج'),
 
                     Forms\Components\Select::make('form_id')
                         ->label('Form / النموذج')
                         ->placeholder('Select form / اختر النموذج')
                         ->options(function (callable $get) {
-                            $competitionId = $get('competition_id');
+                            $programId = $get('program_id');
                             $formType = $get('form_type');
                             
-                            if (!$competitionId || !$formType) {
+                            if (!$programId || !$formType) {
                                 return [];
                             }
 
                             $query = \App\Models\Form::where('type', $formType)
-                                ->where('competition_id', $competitionId)
+                                ->where('program_id', $programId)
                                 ->active()
                                 ->where('is_archived', false);
 
@@ -139,16 +139,16 @@ class FormAiScoringConfigResource extends Resource
                 if ($user->isSuperAdmin()) {
                     return $query;
                 }
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereHas('form.competition', function ($q) use ($supervisorCompetitions) {
-                    $q->whereIn('id', $supervisorCompetitions);
+                return $query->whereHas('form.program', function ($q) use ($supervisorPrograms) {
+                    $q->whereIn('id', $supervisorPrograms);
                 });
             })
             ->columns([
-                Tables\Columns\TextColumn::make('form.competition.title')
+                Tables\Columns\TextColumn::make('form.program.title')
                     ->label('Program / البرنامج')
                     ->searchable()
                     ->sortable(),
@@ -201,9 +201,9 @@ class FormAiScoringConfigResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('competition_id')
+                Tables\Filters\SelectFilter::make('program_id')
                     ->label('Program / البرنامج')
-                    ->relationship('form.competition', 'title')
+                    ->relationship('form.program', 'title')
                     ->searchable()
                     ->preload(),
 

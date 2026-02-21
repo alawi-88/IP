@@ -168,8 +168,8 @@ class ApprovalRequestResource extends Resource
                     ->sortable()
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'App\\Models\\Competition' => 'info',
-                        'App\\Models\\CompetitionApplication' => 'warning',
+                        'App\\Models\\Program' => 'info',
+                        'App\\Models\\ProgramApplication' => 'warning',
                         'App\\Models\\Form' => 'primary',
                         'App\\Models\\Project' => 'success',
                         'App\\Models\\Mentor' => 'info',
@@ -179,8 +179,8 @@ class ApprovalRequestResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'App\\Models\\Competition' => 'Program / برنامج',
-                        'App\\Models\\CompetitionApplication' => 'Application / طلب',
+                        'App\\Models\\Program' => 'Program / برنامج',
+                        'App\\Models\\ProgramApplication' => 'Application / طلب',
                         'App\\Models\\Form' => 'Form / نموذج',
                         'App\\Models\\Project' => 'Project / مشروع',
                         'App\\Models\\Mentor' => 'Mentor / مدرب',
@@ -299,16 +299,16 @@ class ApprovalRequestResource extends Resource
                 Tables\Filters\SelectFilter::make('action')
                     ->label('Action / الإجراء')
                     ->options([
-                        // Competition Actions
-                        'Competition.create' => 'Create Competition / إنشاء مسابقة',
-                        'Competition.update' => 'Update Competition / تحديث مسابقة',
-                        'Competition.delete' => 'Delete Competition / حذف مسابقة',
-                        'Competition.archive' => 'Archive Competition / أرشفة مسابقة',
+                        // Program Actions
+                        'Program.create' => 'Create Program / إنشاء مسابقة',
+                        'Program.update' => 'Update Program / تحديث مسابقة',
+                        'Program.delete' => 'Delete Program / حذف مسابقة',
+                        'Program.archive' => 'Archive Program / أرشفة مسابقة',
                         
-                        // Competition Application Actions
-                        'CompetitionApplication.update' => 'Update Competition Application / تحديث طلب مسابقة',
-                        'CompetitionApplication.delete' => 'Delete Competition Application / حذف طلب مسابقة',
-                        'CompetitionApplication.archive' => 'Archive Competition Application / أرشفة طلب مسابقة',
+                        // Program Application Actions
+                        'ProgramApplication.update' => 'Update Program Application / تحديث طلب مسابقة',
+                        'ProgramApplication.delete' => 'Delete Program Application / حذف طلب مسابقة',
+                        'ProgramApplication.archive' => 'Archive Program Application / أرشفة طلب مسابقة',
                         
                         // Form Actions
                         'Form.create' => 'Create Form / إنشاء نموذج',
@@ -332,8 +332,8 @@ class ApprovalRequestResource extends Resource
                 Tables\Filters\SelectFilter::make('target_type')
                     ->label('Type / النوع')
                     ->options([
-                        'App\\Models\\Competition' => 'Program / برنامج',
-                        'App\\Models\\CompetitionApplication' => 'Application / طلب',
+                        'App\\Models\\Program' => 'Program / برنامج',
+                        'App\\Models\\ProgramApplication' => 'Application / طلب',
                         'App\\Models\\Form' => 'Form / نموذج',
                         'App\\Models\\Project' => 'Project / مشروع',
                         'App\\Models\\Mentor' => 'Mentor / مدرب',
@@ -344,12 +344,12 @@ class ApprovalRequestResource extends Resource
 
                 Tables\Filters\Filter::make('program_requests')
                     ->label('Program Requests Only / طلبات البرامج فقط')
-                    ->query(fn (Builder $query): Builder => $query->where('target_type', 'App\\Models\\Competition'))
+                    ->query(fn (Builder $query): Builder => $query->where('target_type', 'App\\Models\\Program'))
                     ->toggle(),
 
                 Tables\Filters\Filter::make('application_requests')
                     ->label('Application Requests Only / طلبات التطبيقات فقط')
-                    ->query(fn (Builder $query): Builder => $query->where('target_type', 'App\\Models\\CompetitionApplication'))
+                    ->query(fn (Builder $query): Builder => $query->where('target_type', 'App\\Models\\ProgramApplication'))
                     ->toggle(),
             ])
             ->actions([

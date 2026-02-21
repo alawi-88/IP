@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\RegistrationEvaluatorResource\Pages;
 
 use App\Filament\Resources\RegistrationEvaluatorResource;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\RegistrationEvaluationForm;
 use App\Models\User;
 use Filament\Forms;
@@ -20,9 +20,9 @@ class CreateRegistrationEvaluator extends CreateRecord
             Forms\Components\Section::make('Assign Evaluator / تعيين مقيّم')
                 ->columns(2)
                 ->schema([
-                    Forms\Components\Select::make('competition_id')
+                    Forms\Components\Select::make('program_id')
                         ->label('Program / البرنامج')
-                        ->options(fn () => Competition::active()->get()->mapWithKeys(fn ($c) => [$c->id => $c->getTranslation('title', 'en')]))
+                        ->options(fn () => Program::active()->get()->mapWithKeys(fn ($c) => [$c->id => $c->getTranslation('title', 'en')]))
                         ->required()
                         ->searchable()
                         ->reactive()
@@ -42,9 +42,9 @@ class CreateRegistrationEvaluator extends CreateRecord
                         ->label('Assigned Evaluation Sections / أقسام التقييم المعينة')
                         ->multiple()
                         ->options(function (callable $get) {
-                            $competitionId = $get('competition_id');
-                            if (!$competitionId) return [];
-                            return RegistrationEvaluationForm::where('competition_id', $competitionId)
+                            $programId = $get('program_id');
+                            if (!$programId) return [];
+                            return RegistrationEvaluationForm::where('program_id', $programId)
                                 ->where('status', 'published')
                                 ->get()
                                 ->mapWithKeys(fn ($f) => [$f->id => $f->getTranslation('name', 'en')]);
@@ -60,8 +60,8 @@ class CreateRegistrationEvaluator extends CreateRecord
         $sectionFormIds = $this->data['section_form_ids'] ?? [];
 
         if (empty($sectionFormIds)) {
-            // Assign all published forms for this competition
-            $sectionFormIds = RegistrationEvaluationForm::where('competition_id', $this->record->competition_id)
+            // Assign all published forms for this program
+            $sectionFormIds = RegistrationEvaluationForm::where('program_id', $this->record->program_id)
                 ->where('status', 'published')
                 ->pluck('id')
                 ->toArray();

@@ -20,7 +20,7 @@ class ProjectStepResource extends Resource
 {
     protected static ?string $model = ProjectStep::class;
 
-    // Managed via Competition Hub
+    // Managed via Program Hub
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-list-bullet';

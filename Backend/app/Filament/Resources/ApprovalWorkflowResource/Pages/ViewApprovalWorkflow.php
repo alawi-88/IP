@@ -58,15 +58,15 @@ class ViewApprovalWorkflow extends ViewRecord
                                     'Program.delete' => 'Delete Program / حذف برنامج',
                                     'Program.archive' => 'Archive Program / أرشفة برنامج',
 
-                                    // Competition Actions
-                                    'Competition.create' => 'Create Competition / إنشاء مسابقة',
-                                    'Competition.update' => 'Update Competition / تحديث مسابقة',
-                                    'Competition.delete' => 'Delete Competition / حذف مسابقة',
+                                    // Program Actions
+                                    'Program.create' => 'Create Program / إنشاء مسابقة',
+                                    'Program.update' => 'Update Program / تحديث مسابقة',
+                                    'Program.delete' => 'Delete Program / حذف مسابقة',
 
-                                    // Competition Application Actions
-                                    'CompetitionApplication.update' => 'Update Competition Application / تحديث طلب مسابقة',
-                                    'CompetitionApplication.delete' => 'Delete Competition Application / حذف طلب مسابقة',
-                                    'CompetitionApplication.archive' => 'Archive Competition Application / أرشفة طلب مسابقة',
+                                    // Program Application Actions
+                                    'ProgramApplication.update' => 'Update Program Application / تحديث طلب مسابقة',
+                                    'ProgramApplication.delete' => 'Delete Program Application / حذف طلب مسابقة',
+                                    'ProgramApplication.archive' => 'Archive Program Application / أرشفة طلب مسابقة',
 
                                     // Form Actions
                                     'Form.create' => 'Create Form / إنشاء نموذج',

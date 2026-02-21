@@ -14,8 +14,8 @@ class MentorSessionExporter extends Exporter
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('competition.title')
-                ->label(__('sessions.competition')),
+            ExportColumn::make('program.title')
+                ->label(__('sessions.program')),
             ExportColumn::make('mentor.name')
                 ->label(__('sessions.fields.mentor')),
             ExportColumn::make('participant.name')

@@ -16,7 +16,7 @@ class TaskAssignment extends Model
 
     protected $fillable = [
         'task_template_id',
-        'competition_id',
+        'program_id',
         'stage_id',
         'assignment_type',
         'team_id',
@@ -89,9 +89,9 @@ class TaskAssignment extends Model
         return $this->belongsTo(TaskTemplate::class, 'task_template_id');
     }
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function stage(): BelongsTo

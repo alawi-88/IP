@@ -2,7 +2,7 @@
 
 namespace App\Rules;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\Participant;
 use App\Models\TeamMember;
 use Closure;
@@ -27,7 +27,7 @@ readonly class QualifiedMember implements ValidationRule
 
         // if value does not have 8 digits
         if (strlen($value) !== 8) {
-            $fail(__('competition_application.The member serial number must be 6 digits.', ['participant' => $value]));
+            $fail(__('program_application.The member serial number must be 6 digits.', ['participant' => $value]));
             return;
         }
 
@@ -35,36 +35,36 @@ readonly class QualifiedMember implements ValidationRule
 
         // if the member is not registered
         if (! $participant) {
-            $fail(__('competition_application.The member must be registered on the platform to be added to the team.', ['participant' => $value]));
+            $fail(__('program_application.The member must be registered on the platform to be added to the team.', ['participant' => $value]));
             return;
         }
 
         // if not have an application
-        if (CompetitionApplication::where('participant_id', $participant->id)
-            ->where('competition_id', getCompetitionId(request('application_id')))
+        if (ProgramApplication::where('participant_id', $participant->id)
+            ->where('program_id', getProgramId(request('application_id')))
             ->doesntExist()) {
-            $fail(__('competition_application.The member is not registered in the program', ['participant' => $participant->serial_number]));
+            $fail(__('program_application.The member is not registered in the program', ['participant' => $participant->serial_number]));
             return;
         }
 
         // if the member is the same as the authenticated user
         if ($participant && $participant->id === request()->user()->id) {
-            $fail(__('competition_application.You cannot add yourself to the team', ['participant' => $participant->serial_number]));
+            $fail(__('program_application.You cannot add yourself to the team', ['participant' => $participant->serial_number]));
             return;
         }
 
-        $teamConfig = TeamFormConfig::where('competition_id',getCompetitionId(request('application_id')))
+        $teamConfig = TeamFormConfig::where('program_id',getProgramId(request('application_id')))
             ->notArchived() // Only use non-archived Team Form Configurations
             ->first();
 
         if ($teamConfig && $teamConfig->require_same_track) {
 
-        $memberApplication = CompetitionApplication::where('participant_id', $participant->id)
-            ->where('competition_id', getCompetitionId(request('application_id')))
+        $memberApplication = ProgramApplication::where('participant_id', $participant->id)
+            ->where('program_id', getProgramId(request('application_id')))
             ->first();
 
-        $teamLeadApplication = CompetitionApplication::where('participant_id', request()->user()->id)
-            ->where('competition_id', getCompetitionId(request('application_id')))
+        $teamLeadApplication = ProgramApplication::where('participant_id', request()->user()->id)
+            ->where('program_id', getProgramId(request('application_id')))
             ->first();
 
         $memberTrack = data_get($memberApplication->form_submissions, 'track');
@@ -72,32 +72,32 @@ readonly class QualifiedMember implements ValidationRule
 
 
         if( $memberTrack != $leadTrack){
-            $fail(__('competition_application.Team mambers must have the same track', ['participant' => $participant->serial_number]));
+            $fail(__('program_application.Team mambers must have the same track', ['participant' => $participant->serial_number]));
             return;
         }
         }
 
         // if the member is not approved
-        if (CompetitionApplication::where('participant_id', $participant->id)
-            ->where('competition_id', getCompetitionId(request('application_id')))
+        if (ProgramApplication::where('participant_id', $participant->id)
+            ->where('program_id', getProgramId(request('application_id')))
             ->where('status', 'approved')->doesntExist()) {
-            $fail(__('competition_application.The member is not approved in the program', ['participant' => $participant->serial_number]));
+            $fail(__('program_application.The member is not approved in the program', ['participant' => $participant->serial_number]));
             return;
         }
 
         // if the member is registered in another team (excluding archived teams)
         if ($participant && TeamMember::where('participant_id', $participant->id)
                 ->whereHas('team', fn ($query) => $query->where('is_archived', false)
-                    ->whereHas('application', fn ($query) => $query->where('competition_id', getCompetitionId(request('application_id')))))
+                    ->whereHas('application', fn ($query) => $query->where('program_id', getProgramId(request('application_id')))))
                 ->exists()) {
-            $fail(__('competition_application.The member registered in the another team', ['participant' => $participant->serial_number]));
+            $fail(__('program_application.The member registered in the another team', ['participant' => $participant->serial_number]));
             return;
         }
 
         // Get team configuration - prioritize RegistrationFormConfig over TeamFormConfig
         // RegistrationFormConfig is the source of truth for team size limits
         // Note: scopeActive() already checks is_archived, so we don't need notArchived()
-        $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', getCompetitionId(request('application_id')))
+        $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', getProgramId(request('application_id')))
             ->active()
             ->first();
         
@@ -108,7 +108,7 @@ readonly class QualifiedMember implements ValidationRule
             $maxTeamMembers = $registrationConfig->max_team_members !== null ? $registrationConfig->max_team_members : config('team.max_members', 6);
         } else {
             // Fallback to TeamFormConfig if RegistrationFormConfig doesn't exist
-            $teamConfig = TeamFormConfig::where('competition_id', getCompetitionId(request('application_id')))
+            $teamConfig = TeamFormConfig::where('program_id', getProgramId(request('application_id')))
                 ->active()
                 ->notArchived()
                 ->first();
@@ -165,14 +165,14 @@ readonly class QualifiedMember implements ValidationRule
 
         // Validate MINIMUM team size
         if ($totalMembers < $minTeamMembers) {
-            $fail(__('competition_application.The total number of team members must be at least :min.', ['min' => $minTeamMembers])
+            $fail(__('program_application.The total number of team members must be at least :min.', ['min' => $minTeamMembers])
                 ?: "The total number of team members must be at least {$minTeamMembers}.");
             return;
         }
 
         // Validate MAXIMUM team size
         if ($totalMembers > $maxTeamMembers) {
-            $fail(__('competition_application.The total number of team members must not exceed :max.', ['max' => $maxTeamMembers]));
+            $fail(__('program_application.The total number of team members must not exceed :max.', ['max' => $maxTeamMembers]));
             return;
         }
     }

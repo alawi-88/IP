@@ -23,7 +23,7 @@ class ListProjectEvaluations extends ListRecords
     public function getTabs(): array
     {
         $baseQuery = FormEvaluationScore::query()
-            ->whereHas('judgeProject', fn($query) => $query->whereHas('project', fn($query) => $query->byCompetition()));
+            ->whereHas('judgeProject', fn($query) => $query->whereHas('project', fn($query) => $query->byProgram()));
 
         $tabs = [
             'all' => Tab::make('All')

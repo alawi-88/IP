@@ -45,8 +45,8 @@ class ProjectEvaluationResult extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $competition = $this->project->form->competition;
-        $competitionName = $competition->title;
+        $program = $this->project->form->program;
+        $programName = $program->title;
         $projectTitle = $this->project?->form_submissions?->project_name ?? __('project_evaluation.Untitled Project');
         $appName = config('app.name', ' Platform');
         
@@ -54,7 +54,7 @@ class ProjectEvaluationResult extends Notification
             'name' => is_array($notifiable->name) ? ($notifiable->name[app()->getLocale()] ?? $notifiable->name['en'] ?? '') : ($notifiable->name ?? ''),
             'appName' => $appName,
             'project' => $projectTitle,
-            'competition' => $competitionName,
+            'program' => $programName,
         ]);
         
         if ($data && !empty($data['body']) && $data['body'] !== null) {
@@ -74,7 +74,7 @@ class ProjectEvaluationResult extends Notification
                 ->greeting(__('project_evaluation.Dear Participant,'))
                 ->line(__('project_evaluation.evaluation_results_message', [
                     'project' => $projectTitle,
-                    'competition' => $competitionName,
+                    'program' => $programName,
                 ]))
                 ->line(__('project_evaluation.check_results_message'))
                 ->line(__('project_evaluation.Innovation Platform Team', [
@@ -90,8 +90,8 @@ class ProjectEvaluationResult extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        $competition = $this->project->form->competition;
-        $competitionName = $competition->title;
+        $program = $this->project->form->program;
+        $programName = $program->title;
         $projectTitle = $this->project?->form_submissions?->project_name ?? getTranslationForLocale('project_evaluation.Untitled Project', app()->getLocale());
         $appName = config('app.name', ' Platform');
         $participantName = is_array($notifiable->name) ? ($notifiable->name['ar'] ?? $notifiable->name['en'] ?? '') : ($notifiable->name ?? '');
@@ -100,14 +100,14 @@ class ProjectEvaluationResult extends Notification
             'name' => $participantName,
             'appName' => $appName,
             'project' => $projectTitle,
-            'competition' => $competitionName,
+            'program' => $programName,
         ]);
         
         $data_en = $this->renderNotificationMessage('user.project_evaluation', [
             'name' => is_array($notifiable->name) ? ($notifiable->name['en'] ?? '') : ($notifiable->name ?? ''),
             'appName' => $appName,
             'project' => $projectTitle,
-            'competition' => $competitionName,
+            'program' => $programName,
         ]);
         
         if ($data) {
@@ -124,19 +124,19 @@ class ProjectEvaluationResult extends Notification
             $body = [
                 'ar' => getTranslationForLocale('project_evaluation.evaluation_results_message', 'ar', [
                     'project' => $projectTitle,
-                    'competition' => $competitionName,
+                    'program' => $programName,
                 ]),
                 'en' => getTranslationForLocale('project_evaluation.evaluation_results_message', 'en', [
                     'project' => $projectTitle,
-                    'competition' => $competitionName,
+                    'program' => $programName,
                 ])
             ];
         }
 
         return [
             'project_id' => $this->project->id,
-            'competition_id' => $this->project->form->competition_id,
-            'competition_name' => $competitionName,
+            'program_id' => $this->project->form->program_id,
+            'program_name' => $programName,
             'title' => $subject,
             'body' => $body,
             'status' => 'evaluation_completed',

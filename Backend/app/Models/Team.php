@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\CompetitionApplicationScope;
+use App\Models\Scopes\ProgramApplicationScope;
 use App\Traits\HasActivityLog;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
@@ -21,10 +21,10 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @method static withoutGlobalScopes()
- * @method static byCompetition()
+ * @method static byProgram()
  * @method static published()
  */
-#[ScopedBy([CompetitionApplicationScope::class])]
+#[ScopedBy([ProgramApplicationScope::class])]
 class Team extends Model
 {
     use LogsActivity, HasActivityLog;
@@ -71,16 +71,16 @@ class Team extends Model
         'archived_at',
         'track.title',
         'subTrack.title',
-        'application.competition.title',
-        'application.competition_id',
+        'application.program.title',
+        'application.program_id',
     ];
 
     protected string $moduleName = 'Team';
     protected string $logName = 'team';
 
-    public function scopeByCompetition($query)
+    public function scopeByProgram($query)
     {
-        $applicationsIds = CompetitionApplication::byCompetition()->pluck('id');
+        $applicationsIds = ProgramApplication::byProgram()->pluck('id');
         return $query->whereIn('application_id', $applicationsIds);
     }
 
@@ -124,7 +124,7 @@ class Team extends Model
 
     public function application(): BelongsTo
     {
-        return $this->belongsTo(CompetitionApplication::class);
+        return $this->belongsTo(ProgramApplication::class);
     }
 
     public function members(): HasMany

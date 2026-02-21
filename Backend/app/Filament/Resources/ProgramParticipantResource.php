@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProgramParticipantResource\Pages;
 use App\Filament\Resources\ProgramParticipantResource\RelationManagers\CommentsRelationManager;
 use App\Filament\Traits\CanBeDeletable;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +13,7 @@ class ProgramParticipantResource extends Resource
 {
     use CanBeDeletable;
 
-    protected static ?string $model = CompetitionApplication::class;
+    protected static ?string $model = ProgramApplication::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
@@ -62,7 +62,7 @@ class ProgramParticipantResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->can('view CompetitionApplication') ?? false;
+        return auth()->user()?->can('view ProgramApplication') ?? false;
     }
 
     /**
@@ -82,9 +82,9 @@ class ProgramParticipantResource extends Resource
             return true;
         }
 
-        // Check if user has access to the program (competition) this participant belongs to
-        if ($record->competition) {
-            return $record->competition->canAccessProgram();
+        // Check if user has access to the program (program) this participant belongs to
+        if ($record->program) {
+            return $record->program->canAccessProgram();
         }
 
         return false;
@@ -100,15 +100,15 @@ class ProgramParticipantResource extends Resource
 
         // Super admin can delete all participants
         if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) {
-            return $user->can('delete CompetitionApplication');
+            return $user->can('delete ProgramApplication');
         }
 
         // Check if user has access to the program before allowing delete
-        if ($record->competition && !$record->competition->canAccessProgram()) {
+        if ($record->program && !$record->program->canAccessProgram()) {
             return false;
         }
 
-        return $user->can('delete CompetitionApplication');
+        return $user->can('delete ProgramApplication');
     }
 
     public static function canArchive(Model $record): bool
@@ -125,12 +125,12 @@ class ProgramParticipantResource extends Resource
         }
 
         // Check if user has access to the program before allowing archive
-        if ($record->competition && !$record->competition->canAccessProgram()) {
+        if ($record->program && !$record->program->canAccessProgram()) {
             return false;
         }
 
-        // Check if user has "archive CompetitionApplication" permission
-        return $user->can('archive CompetitionApplication');
+        // Check if user has "archive ProgramApplication" permission
+        return $user->can('archive ProgramApplication');
     }
 
     public static function canRestore(Model $record): bool
@@ -147,12 +147,12 @@ class ProgramParticipantResource extends Resource
         }
 
         // Check if user has access to the program before allowing restore
-        if ($record->competition && !$record->competition->canAccessProgram()) {
+        if ($record->program && !$record->program->canAccessProgram()) {
             return false;
         }
 
-        // Check if user has "restore CompetitionApplication" permission
-        return $user->can('restore CompetitionApplication');
+        // Check if user has "restore ProgramApplication" permission
+        return $user->can('restore ProgramApplication');
     }
 }
 

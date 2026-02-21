@@ -13,7 +13,7 @@ class RegistrationEvaluationForm extends Model
     use HasFactory, HasTranslations;
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'name',
         'description',
         'dimension',
@@ -42,9 +42,9 @@ class RegistrationEvaluationForm extends Model
     }
 
     // Relationships
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function criteria(): HasMany

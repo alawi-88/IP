@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Exports\ActivityLogExporter;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Actions\Action;
@@ -38,7 +38,7 @@ use Rmsramos\Activitylog\Actions\Concerns\ActionContent;
 use Rmsramos\Activitylog\ActivitylogPlugin;
 use Rmsramos\Activitylog\Helpers\ActivityLogHelper;
 use App\Filament\Resources\ActivitylogResource\Pages;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\Exports\Enums\ExportFormat;
@@ -398,16 +398,16 @@ class ActivitylogResource extends BaseActivitylogResource
                 if ($user->isSuperAdmin()) {
                     return $query;
                 }
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereIn('properties->attributes->competition_id', $supervisorCompetitions);
+                return $query->whereIn('properties->attributes->program_id', $supervisorPrograms);
             })
             ->filters([
                 static::getDateFilterComponent(),
                 static::getEventFilterComponent(),
-                static::getCompetitionFilterComponent(),
+                static::getProgramFilterComponent(),
                 static::getUsernameFilterComponent(),
                 static::getUserRoleFilterComponent(),
             ])
@@ -424,7 +424,7 @@ class ActivitylogResource extends BaseActivitylogResource
                             ->options([
                                 'visible'     => 'Currently displayed',
                                 'date_range'  => 'Date range',
-                                'competition' => 'Program',
+                                'program' => 'Program',
                             ])
                             ->default('visible')
                             ->columnSpanFull()
@@ -441,12 +441,12 @@ class ActivitylogResource extends BaseActivitylogResource
                             ->visible(fn($get) => $get('scope') === 'date_range')
                             ->required(fn($get) => $get('scope') === 'date_range'),
 
-                        Select::make('competition_id')
+                        Select::make('program_id')
                             ->label('Program')
-                            ->options(fn() => \App\Models\Competition::pluck('title', 'id'))
+                            ->options(fn() => \App\Models\Program::pluck('title', 'id'))
                             ->searchable()
-                            ->visible(fn($get) => $get('scope') === 'competition')
-                            ->required(fn($get) => $get('scope') === 'competition'),
+                            ->visible(fn($get) => $get('scope') === 'program')
+                            ->required(fn($get) => $get('scope') === 'program'),
                     ])
                     ->options(function (array $data) {
                         return $data;
@@ -459,8 +459,8 @@ class ActivitylogResource extends BaseActivitylogResource
                                     Carbon::parse($data['to_date'])->endOfDay(),
                                 ]);
                             }
-                        } elseif ($data['scope'] == 'competition') {
-                            $query->where('properties->attributes->competition_id', $data['competition_id']);
+                        } elseif ($data['scope'] == 'program') {
+                            $query->where('properties->attributes->program_id', $data['program_id']);
                         }
                     })
                     ->fileName(function (Export $export, array $data): string {
@@ -470,7 +470,7 @@ class ActivitylogResource extends BaseActivitylogResource
                             'date_range' => isset($data['from_date'], $data['to_date'])
                                 ? Carbon::parse($data['from_date'])->format('Y-m-d') . '_to_' . Carbon::parse($data['to_date'])->format('Y-m-d')
                                 : 'date_range',
-                            'competition' => 'competition',
+                            'program' => 'program',
                             default       => 'current_view',
                         };
 
@@ -785,22 +785,22 @@ class ActivitylogResource extends BaseActivitylogResource
             );
     }
 
-    public static function getCompetitionFilterComponent(): SelectFilter
+    public static function getProgramFilterComponent(): SelectFilter
     {
-        return SelectFilter::make('competition_id')
+        return SelectFilter::make('program_id')
             ->label('Program')
             ->options(function () {
                 $user = auth()->user();
 
                 if ($user->isSuperAdmin()) {
-                    return Competition::pluck('title', 'id')->toArray();
+                    return Program::pluck('title', 'id')->toArray();
                 }
 
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return Competition::whereIn('id', $supervisorCompetitions)
+                return Program::whereIn('id', $supervisorPrograms)
                     ->pluck('title', 'id')
                     ->toArray();
             })
@@ -810,7 +810,7 @@ class ActivitylogResource extends BaseActivitylogResource
                     return $query;
                 }
 
-                return $query->where('properties->attributes->competition_id', $data['value']);
+                return $query->where('properties->attributes->program_id', $data['value']);
             });
     }
 

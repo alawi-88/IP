@@ -19,7 +19,7 @@ class FormExporter extends Exporter
             ExportColumn::make('type')->label('Type'),
             ExportColumn::make('created_at')->label('Created At'),
             ExportColumn::make('updated_at')->label('Updated At'),
-            ExportColumn::make('competition.title')->label('Program Title'),
+            ExportColumn::make('program.title')->label('Program Title'),
             ExportColumn::make('number_of_submissions')->label('Number of Submissions')->default(0),
             ExportColumn::make('is_published')->formatStateUsing(fn($record) => $record->is_published ? 'Yes' : 'No'),
         ];

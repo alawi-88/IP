@@ -11,7 +11,7 @@ use Carbon\Carbon;
 class NaqlThon5Seeder extends Seeder
 {
     private int $adminUserId = 166;
-    private int $competitionId;
+    private int $programId;
     private int $regFormId;
     private int $projFormId;
 
@@ -22,13 +22,13 @@ class NaqlThon5Seeder extends Seeder
         // ================================================================
         // 1. CREATE COMPETITION
         // ================================================================
-        $this->command->info('Creating competition...');
+        $this->command->info('Creating program...');
 
-        $this->competitionId = DB::table('competitions')->insertGetId([
+        $this->programId = DB::table('programs')->insertGetId([
             'title' => json_encode(['en' => 'Naql Thon 5 - Saudi Transportation Innovation Hackathon', 'ar' => 'نقل ثون 5 - هاكاثون الابتكار في النقل السعودي']),
             'about' => json_encode(['en' => 'Naql Thon 5 is the fifth edition of the premier Saudi transportation hackathon organized by the Transport General Authority (TGA). This hackathon brings together innovators, developers, and entrepreneurs to solve critical challenges in Saudi Arabia\'s transportation ecosystem. Aligned with Vision 2030, participants will develop solutions spanning smart mobility, logistics optimization, autonomous transport, sustainable infrastructure, and passenger experience enhancement. Over 48 hours, teams will ideate, prototype, and pitch their solutions to a panel of industry experts and government officials.', 'ar' => 'نقل ثون 5 هو النسخة الخامسة من هاكاثون النقل السعودي الرائد الذي تنظمه الهيئة العامة للنقل. يجمع هذا الهاكاثون المبتكرين والمطورين ورواد الأعمال لحل التحديات الحرجة في منظومة النقل السعودية. يتماشى مع رؤية 2030، حيث يطور المشاركون حلولاً تشمل التنقل الذكي وتحسين اللوجستيات والنقل الذاتي والبنية التحتية المستدامة وتحسين تجربة الركاب.']),
             'terms_and_conditions' => json_encode(['en' => 'By participating in Naql Thon 5, you agree to: 1) All intellectual property created during the hackathon belongs to the team. 2) TGA retains a non-exclusive license to showcase solutions. 3) Participants must be 18+ years old. 4) Teams must consist of 2-5 members. 5) Solutions must address Saudi transportation challenges. 6) Code of conduct must be followed at all times. 7) Judging decisions are final.', 'ar' => 'بالمشاركة في نقل ثون 5، أنت توافق على: 1) جميع حقوق الملكية الفكرية المنشأة خلال الهاكاثون تعود للفريق. 2) تحتفظ الهيئة العامة للنقل بترخيص غير حصري لعرض الحلول. 3) يجب أن يكون عمر المشاركين 18 سنة فأكثر.']),
-            'banner' => 'competitions/naqlthon5/banner.jpg',
+            'banner' => 'programs/naqlthon5/banner.jpg',
             'registration_closed_date' => Carbon::now()->addDays(30)->toDateString(),
             'is_published' => true,
             'is_archived' => false,
@@ -37,7 +37,7 @@ class NaqlThon5Seeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        $this->command->info('   Competition ID: ' . $this->competitionId);
+        $this->command->info('   Program ID: ' . $this->programId);
 
         // ================================================================
         // 2. CREATE TRACKS & SUB-TRACKS
@@ -55,7 +55,7 @@ class NaqlThon5Seeder extends Seeder
         $subTrackIds = [];
         foreach ($tracksData as $order => $td) {
             $trackId = DB::table('tracks')->insertGetId([
-                'competition_id' => $this->competitionId,
+                'program_id' => $this->programId,
                 'name' => json_encode($td['name']),
                 'order' => $order + 1,
                 'slug' => Str::slug($td['name']['en']),
@@ -86,7 +86,7 @@ class NaqlThon5Seeder extends Seeder
         $stageIds = [];
         foreach ($stagesData as $sd) {
             $stageIds[$sd['slug']] = DB::table('stages')->insertGetId([
-                'competition_id' => $this->competitionId, 'slug' => $sd['slug'],
+                'program_id' => $this->programId, 'slug' => $sd['slug'],
                 'title' => json_encode($sd['title']),
                 'description' => json_encode(['en' => 'Stage: ' . $sd['title']['en'], 'ar' => 'مرحلة: ' . $sd['title']['ar']]),
                 'starts_at' => Carbon::now()->addDays($sd['days_from']), 'ends_at' => Carbon::now()->addDays($sd['days_to']),
@@ -98,12 +98,12 @@ class NaqlThon5Seeder extends Seeder
         // 4. REGISTRATION FORM CONFIG & TEAM FORM CONFIG
         // ================================================================
         DB::table('registration_form_configs')->insert([
-            'competition_id' => $this->competitionId, 'registration_type' => 'both', 'min_age' => 18, 'max_age' => 65,
+            'program_id' => $this->programId, 'registration_type' => 'both', 'min_age' => 18, 'max_age' => 65,
             'is_active' => true, 'scoring_enabled' => true, 'minimum_score_threshold' => 60, 'is_archived' => false,
             'created_at' => now(), 'updated_at' => now(),
         ]);
         DB::table('team_form_configs')->insert([
-            'competition_id' => $this->competitionId, 'is_active' => true, 'min_team_members' => 2, 'max_team_members' => 5,
+            'program_id' => $this->programId, 'is_active' => true, 'min_team_members' => 2, 'max_team_members' => 5,
             'allow_track_selection' => true, 'require_same_track' => false, 'auto_publish_teams' => true,
             'is_archived' => false, 'created_at' => now(), 'updated_at' => now(),
         ]);
@@ -113,7 +113,7 @@ class NaqlThon5Seeder extends Seeder
         // ================================================================
         $this->command->info('Creating registration form...');
         $this->regFormId = DB::table('forms')->insertGetId([
-            'competition_id' => $this->competitionId, 'type' => 'registration',
+            'program_id' => $this->programId, 'type' => 'registration',
             'name' => json_encode(['en' => 'Naql Thon 5 Registration Form', 'ar' => 'نموذج التسجيل في نقل ثون 5']),
             'description' => json_encode(['en' => 'Complete this form to register for Naql Thon 5.', 'ar' => 'أكمل هذا النموذج للتسجيل في نقل ثون 5.']),
             'status' => 'active', 'is_published' => true, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now(),
@@ -169,7 +169,7 @@ class NaqlThon5Seeder extends Seeder
         // ================================================================
         $this->command->info('Creating project form...');
         $this->projFormId = DB::table('forms')->insertGetId([
-            'competition_id' => $this->competitionId, 'type' => 'project',
+            'program_id' => $this->programId, 'type' => 'project',
             'name' => json_encode(['en' => 'Naql Thon 5 Project Submission', 'ar' => 'تسليم مشروع نقل ثون 5']),
             'description' => json_encode(['en' => 'Submit your hackathon project.', 'ar' => 'قدم مشروع الهاكاثون.']),
             'status' => 'active', 'is_published' => true, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now(),
@@ -246,7 +246,7 @@ class NaqlThon5Seeder extends Seeder
         // 8. REGISTRATION EVALUATION FORMS
         // ================================================================
         $this->command->info('Creating registration evaluation forms...');
-        $evalForm1Id = DB::table('registration_evaluation_forms')->insertGetId(['competition_id' => $this->competitionId, 'name' => json_encode(['en' => 'Innovation & Technical Assessment', 'ar' => 'تقييم الابتكار والتقنية']), 'description' => json_encode(['en' => 'Evaluate technical depth and innovation potential', 'ar' => 'تقييم العمق التقني وإمكانات الابتكار']), 'dimension' => 'Technical', 'scoring_scale' => '1-10', 'status' => 'published', 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()]);
+        $evalForm1Id = DB::table('registration_evaluation_forms')->insertGetId(['program_id' => $this->programId, 'name' => json_encode(['en' => 'Innovation & Technical Assessment', 'ar' => 'تقييم الابتكار والتقنية']), 'description' => json_encode(['en' => 'Evaluate technical depth and innovation potential', 'ar' => 'تقييم العمق التقني وإمكانات الابتكار']), 'dimension' => 'Technical', 'scoring_scale' => '1-10', 'status' => 'published', 'sort_order' => 1, 'created_at' => now(), 'updated_at' => now()]);
 
         $evalCrit1 = [
             ['name' => ['en' => 'Technical Proficiency', 'ar' => 'الكفاءة التقنية'], 'desc' => ['en' => 'Technical skills depth', 'ar' => 'عمق المهارات التقنية'], 'weight' => 30],
@@ -259,7 +259,7 @@ class NaqlThon5Seeder extends Seeder
             $evalCritIds1[] = DB::table('registration_evaluation_criteria')->insertGetId(['registration_evaluation_form_id' => $evalForm1Id, 'name' => json_encode($ec['name']), 'description' => json_encode($ec['desc']), 'max_score' => 10, 'weight' => $ec['weight'], 'sort_order' => $idx + 1, 'created_at' => now(), 'updated_at' => now()]);
         }
 
-        $evalForm2Id = DB::table('registration_evaluation_forms')->insertGetId(['competition_id' => $this->competitionId, 'name' => json_encode(['en' => 'Impact & Readiness Assessment', 'ar' => 'تقييم الأثر والجاهزية']), 'description' => json_encode(['en' => 'Evaluate impact potential and execution readiness', 'ar' => 'تقييم الأثر المحتمل والجاهزية']), 'dimension' => 'Business', 'scoring_scale' => '1-10', 'status' => 'published', 'sort_order' => 2, 'created_at' => now(), 'updated_at' => now()]);
+        $evalForm2Id = DB::table('registration_evaluation_forms')->insertGetId(['program_id' => $this->programId, 'name' => json_encode(['en' => 'Impact & Readiness Assessment', 'ar' => 'تقييم الأثر والجاهزية']), 'description' => json_encode(['en' => 'Evaluate impact potential and execution readiness', 'ar' => 'تقييم الأثر المحتمل والجاهزية']), 'dimension' => 'Business', 'scoring_scale' => '1-10', 'status' => 'published', 'sort_order' => 2, 'created_at' => now(), 'updated_at' => now()]);
 
         $evalCrit2 = [
             ['name' => ['en' => 'Market Impact Potential', 'ar' => 'إمكانية التأثير'], 'desc' => ['en' => 'Impact on Saudi transport', 'ar' => 'الأثر على النقل السعودي'], 'weight' => 35],
@@ -271,7 +271,7 @@ class NaqlThon5Seeder extends Seeder
             $evalCritIds2[] = DB::table('registration_evaluation_criteria')->insertGetId(['registration_evaluation_form_id' => $evalForm2Id, 'name' => json_encode($ec['name']), 'description' => json_encode($ec['desc']), 'max_score' => 10, 'weight' => $ec['weight'], 'sort_order' => $idx + 1, 'created_at' => now(), 'updated_at' => now()]);
         }
 
-        $evaluatorId = DB::table('registration_evaluators')->insertGetId(['competition_id' => $this->competitionId, 'user_id' => $this->adminUserId, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
+        $evaluatorId = DB::table('registration_evaluators')->insertGetId(['program_id' => $this->programId, 'user_id' => $this->adminUserId, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()]);
         DB::table('registration_evaluator_sections')->insert([
             ['registration_evaluator_id' => $evaluatorId, 'registration_evaluation_form_id' => $evalForm1Id, 'created_at' => now(), 'updated_at' => now()],
             ['registration_evaluator_id' => $evaluatorId, 'registration_evaluation_form_id' => $evalForm2Id, 'created_at' => now(), 'updated_at' => now()],
@@ -316,8 +316,8 @@ class NaqlThon5Seeder extends Seeder
             $isApproved = $i < 30;
             $status = $isApproved ? 'approved' : 'rejected';
             $totalScore = $isApproved ? rand(68, 96) : rand(25, 52);
-            $appId = DB::table('competition_applications')->insertGetId([
-                'competition_id' => $this->competitionId, 'form_id' => $this->regFormId, 'participant_id' => $participantIds[$i],
+            $appId = DB::table('program_applications')->insertGetId([
+                'program_id' => $this->programId, 'form_id' => $this->regFormId, 'participant_id' => $participantIds[$i],
                 'status' => $status, 'registered_as' => 'team', 'has_team' => true,
                 'form_submissions' => json_encode($this->buildRegFormSubmissions($p)),
                 'type' => 'submission', 'is_archived' => false,
@@ -333,7 +333,7 @@ class NaqlThon5Seeder extends Seeder
             $scoreRange = $isApproved ? [6, 10] : [2, 6];
             foreach ($allEvalCritIds as $crit) {
                 DB::table('registration_evaluations')->insert([
-                    'competition_application_id' => $appId, 'registration_evaluator_id' => $evaluatorId,
+                    'program_application_id' => $appId, 'registration_evaluator_id' => $evaluatorId,
                     'registration_evaluation_form_id' => $crit['form_id'], 'registration_evaluation_criterion_id' => $crit['id'],
                     'score' => rand($scoreRange[0], $scoreRange[1]),
                     'comment' => $isApproved ? 'Strong application with clear potential.' : 'Below minimum requirements.',
@@ -363,7 +363,7 @@ class NaqlThon5Seeder extends Seeder
                 $projStatus = ($i < 25) ? 'qualified' : (($i < 28) ? 'pending' : 'qualified');
                 $projScore = $projStatus === 'pending' ? 0 : rand(65, 98);
                 $projectId = DB::table('projects')->insertGetId([
-                    'competition_id' => $this->competitionId, 'application_id' => $appId, 'team_id' => $teamId, 'form_id' => $this->projFormId,
+                    'program_id' => $this->programId, 'application_id' => $appId, 'team_id' => $teamId, 'form_id' => $this->projFormId,
                     'status' => $projStatus, 'evaluation_status' => $projStatus !== 'pending', 'total_score' => $projScore,
                     'type' => 'submission', 'form_submissions' => json_encode($this->buildProjectSubmissions($p)),
                     'ai_evaluation_response' => $projStatus !== 'pending' ? json_encode($this->generateProjectAiEval($p, $projScore)) : null,
@@ -390,7 +390,7 @@ class NaqlThon5Seeder extends Seeder
             if ($existing) { $judgeIds[] = $existing->id; continue; }
             $judgeIds[] = DB::table('judges')->insertGetId(['name' => json_encode($jd['name']), 'email' => $jd['email'], 'phone_number' => $jd['phone'], 'experience_field' => json_encode($jd['exp']), 'password' => Hash::make('password123'), 'registration_method' => 'admin-added', 'email_verified_at' => now(), 'is_archived' => false, 'created_at' => now()->subDays(20), 'updated_at' => now()]);
         }
-        foreach ($judgeIds as $jid) { DB::table('competition_judge')->updateOrInsert(['competition_id' => $this->competitionId, 'judge_id' => $jid], ['created_at' => now(), 'updated_at' => now()]); }
+        foreach ($judgeIds as $jid) { DB::table('program_judge')->updateOrInsert(['program_id' => $this->programId, 'judge_id' => $jid], ['created_at' => now(), 'updated_at' => now()]); }
 
         // ================================================================
         // 11. EVENTS
@@ -405,7 +405,7 @@ class NaqlThon5Seeder extends Seeder
             ['title' => ['en' => 'Awards Ceremony & Closing', 'ar' => 'حفل الجوائز والختام'], 'brief' => ['en' => 'Winner announcements and networking', 'ar' => 'إعلان الفائزين والتواصل'], 'badge' => 'upcoming', 'days' => 3, 'time' => '16:00:00', 'location' => 'onsite', 'speaker' => ['en' => 'TGA Leadership', 'ar' => 'قيادة هيئة النقل']],
         ];
         foreach ($eventsData as $ev) {
-            DB::table('events')->insert(['competition_id' => $this->competitionId, 'title' => json_encode($ev['title']), 'brief' => json_encode($ev['brief']), 'badge' => $ev['badge'], 'date' => Carbon::now()->addDays($ev['days'])->toDateString(), 'time' => $ev['time'], 'location' => $ev['location'], 'speakers' => json_encode([['name' => $ev['speaker'], 'experience' => ['en' => 'Expert in Saudi Transportation', 'ar' => 'خبير في النقل السعودي'], 'brief' => ['en' => 'Leading expert', 'ar' => 'خبير رائد'], 'photo' => 'events/speaker-placeholder.jpg']]), 'event_link' => null, 'is_visible' => true, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
+            DB::table('events')->insert(['program_id' => $this->programId, 'title' => json_encode($ev['title']), 'brief' => json_encode($ev['brief']), 'badge' => $ev['badge'], 'date' => Carbon::now()->addDays($ev['days'])->toDateString(), 'time' => $ev['time'], 'location' => $ev['location'], 'speakers' => json_encode([['name' => $ev['speaker'], 'experience' => ['en' => 'Expert in Saudi Transportation', 'ar' => 'خبير في النقل السعودي'], 'brief' => ['en' => 'Leading expert', 'ar' => 'خبير رائد'], 'photo' => 'events/speaker-placeholder.jpg']]), 'event_link' => null, 'is_visible' => true, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
         }
 
         // ================================================================
@@ -413,7 +413,7 @@ class NaqlThon5Seeder extends Seeder
         // ================================================================
         $guidelinesData = [['en' => 'Hackathon Rules & Code of Conduct', 'ar' => 'قواعد الهاكاثون'], ['en' => 'Technical Submission Requirements', 'ar' => 'متطلبات التسليم التقنية'], ['en' => 'Judging Criteria & Scoring', 'ar' => 'معايير التحكيم'], ['en' => 'IP Guidelines', 'ar' => 'إرشادات الملكية الفكرية'], ['en' => 'Data & API Access Guide', 'ar' => 'دليل البيانات والواجهات'], ['en' => 'Venue & Logistics', 'ar' => 'المكان واللوجستيات']];
         foreach ($guidelinesData as $gd) {
-            $gId = DB::table('guidelines')->insertGetId(['competition_id' => $this->competitionId, 'title' => json_encode($gd), 'is_visible' => true, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
+            $gId = DB::table('guidelines')->insertGetId(['program_id' => $this->programId, 'title' => json_encode($gd), 'is_visible' => true, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
             DB::table('guideline_files')->insert(['guideline_id' => $gId, 'title' => json_encode($gd), 'attachment' => 'guidelines/nt5/' . Str::slug($gd['en']) . '.pdf', 'file_type' => 'pdf', 'description' => json_encode(['en' => 'Guideline document', 'ar' => 'وثيقة إرشادية']), 'created_at' => now(), 'updated_at' => now()]);
         }
 
@@ -431,9 +431,9 @@ class NaqlThon5Seeder extends Seeder
         foreach ($mentorsData as $md) {
             $existing = DB::table('mentors')->where('email', $md['email'])->first();
             if ($existing) { $mentorIds[] = $existing->id; continue; }
-            $mId = DB::table('mentors')->insertGetId(['competition_id' => $this->competitionId, 'name' => json_encode($md['name']), 'experience' => json_encode($md['exp']), 'brief' => json_encode($md['brief']), 'image' => 'mentors/placeholder.jpg', 'email' => $md['email'], 'phone' => $md['phone'], 'status' => 'active', 'is_visible' => true, 'track_id' => $trackIds[$md['track']] ?? null, 'is_archived' => false, 'created_at' => now()->subDays(15), 'updated_at' => now()]);
+            $mId = DB::table('mentors')->insertGetId(['program_id' => $this->programId, 'name' => json_encode($md['name']), 'experience' => json_encode($md['exp']), 'brief' => json_encode($md['brief']), 'image' => 'mentors/placeholder.jpg', 'email' => $md['email'], 'phone' => $md['phone'], 'status' => 'active', 'is_visible' => true, 'track_id' => $trackIds[$md['track']] ?? null, 'is_archived' => false, 'created_at' => now()->subDays(15), 'updated_at' => now()]);
             $mentorIds[] = $mId;
-            DB::table('mentor_competitions')->insert(['mentor_id' => $mId, 'competition_id' => $this->competitionId, 'created_at' => now(), 'updated_at' => now()]);
+            DB::table('mentor_programs')->insert(['mentor_id' => $mId, 'program_id' => $this->programId, 'created_at' => now(), 'updated_at' => now()]);
         }
         $tc = 0;
         foreach ($teamIds as $teamId) {
@@ -454,12 +454,12 @@ class NaqlThon5Seeder extends Seeder
         ];
         $templateIds = [];
         foreach ($taskTemplates as $tt) {
-            $templateIds[] = DB::table('task_templates')->insertGetId(['competition_id' => $this->competitionId, 'title' => json_encode($tt['title']), 'description' => json_encode($tt['desc']), 'instructions' => json_encode(['en' => 'Follow hackathon guidelines.', 'ar' => 'اتبع إرشادات الهاكاثون.']), 'difficulty_level' => $tt['difficulty'], 'estimated_hours' => $tt['hours'], 'category' => $tt['category'], 'version' => 1, 'created_by' => $this->adminUserId, 'is_archived' => false, 'created_at' => now()->subDays(5), 'updated_at' => now()]);
+            $templateIds[] = DB::table('task_templates')->insertGetId(['program_id' => $this->programId, 'title' => json_encode($tt['title']), 'description' => json_encode($tt['desc']), 'instructions' => json_encode(['en' => 'Follow hackathon guidelines.', 'ar' => 'اتبع إرشادات الهاكاثون.']), 'difficulty_level' => $tt['difficulty'], 'estimated_hours' => $tt['hours'], 'category' => $tt['category'], 'version' => 1, 'created_by' => $this->adminUserId, 'is_archived' => false, 'created_at' => now()->subDays(5), 'updated_at' => now()]);
         }
 
         // "All" assignments
         foreach ([0, 1] as $tIdx) {
-            DB::table('task_assignments')->insert(['task_template_id' => $templateIds[$tIdx], 'competition_id' => $this->competitionId, 'stage_id' => $stageIds['ideation-nt5'], 'assignment_type' => 'all', 'title' => json_encode($taskTemplates[$tIdx]['title']), 'description' => json_encode($taskTemplates[$tIdx]['desc']), 'instructions' => json_encode(['en' => 'Complete by deadline.', 'ar' => 'أكمل قبل الموعد.']), 'due_date' => Carbon::now()->addDays(3)->toDateString(), 'status' => 'not_started', 'assigned_by' => $this->adminUserId, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
+            DB::table('task_assignments')->insert(['task_template_id' => $templateIds[$tIdx], 'program_id' => $this->programId, 'stage_id' => $stageIds['ideation-nt5'], 'assignment_type' => 'all', 'title' => json_encode($taskTemplates[$tIdx]['title']), 'description' => json_encode($taskTemplates[$tIdx]['desc']), 'instructions' => json_encode(['en' => 'Complete by deadline.', 'ar' => 'أكمل قبل الموعد.']), 'due_date' => Carbon::now()->addDays(3)->toDateString(), 'status' => 'not_started', 'assigned_by' => $this->adminUserId, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
         }
 
         // Individual team assignments with varied statuses
@@ -470,7 +470,7 @@ class NaqlThon5Seeder extends Seeder
             $appId = array_search($teamId, $teamIds);
             $pIdx = $approvedParticipantMap[$appId] ?? 0;
 
-            $aId = DB::table('task_assignments')->insertGetId(['task_template_id' => $templateIds[2], 'competition_id' => $this->competitionId, 'stage_id' => $stageIds['prototyping-nt5'], 'assignment_type' => 'team', 'team_id' => $teamId, 'title' => json_encode(['en' => 'Build MVP Prototype', 'ar' => 'بناء النموذج الأولي']), 'description' => json_encode(['en' => 'Develop your MVP.', 'ar' => 'طور نموذجك.']), 'instructions' => json_encode(['en' => 'Focus on core features.', 'ar' => 'ركز على الميزات الأساسية.']), 'due_date' => Carbon::now()->addDays(6)->toDateString(), 'status' => $st, 'assigned_by' => $this->adminUserId, 'submitted_at' => in_array($st, ['submitted', 'approved', 'revision_requested']) ? now()->subDays(rand(1, 3)) : null, 'reviewed_at' => in_array($st, ['approved', 'revision_requested']) ? now()->subDays(1) : null, 'reviewed_by' => in_array($st, ['approved', 'revision_requested']) ? $this->adminUserId : null, 'is_archived' => false, 'created_at' => now()->subDays(2), 'updated_at' => now()]);
+            $aId = DB::table('task_assignments')->insertGetId(['task_template_id' => $templateIds[2], 'program_id' => $this->programId, 'stage_id' => $stageIds['prototyping-nt5'], 'assignment_type' => 'team', 'team_id' => $teamId, 'title' => json_encode(['en' => 'Build MVP Prototype', 'ar' => 'بناء النموذج الأولي']), 'description' => json_encode(['en' => 'Develop your MVP.', 'ar' => 'طور نموذجك.']), 'instructions' => json_encode(['en' => 'Focus on core features.', 'ar' => 'ركز على الميزات الأساسية.']), 'due_date' => Carbon::now()->addDays(6)->toDateString(), 'status' => $st, 'assigned_by' => $this->adminUserId, 'submitted_at' => in_array($st, ['submitted', 'approved', 'revision_requested']) ? now()->subDays(rand(1, 3)) : null, 'reviewed_at' => in_array($st, ['approved', 'revision_requested']) ? now()->subDays(1) : null, 'reviewed_by' => in_array($st, ['approved', 'revision_requested']) ? $this->adminUserId : null, 'is_archived' => false, 'created_at' => now()->subDays(2), 'updated_at' => now()]);
 
             if (in_array($st, ['submitted', 'approved', 'revision_requested'])) {
                 DB::table('task_submissions')->insert(['task_assignment_id' => $aId, 'submitted_by' => $participantIds[$pIdx], 'files' => json_encode([['name' => 'prototype-v1.zip', 'path' => 'task_submissions/' . $aId . '/prototype.zip', 'size' => rand(500000, 5000000), 'type' => 'application/zip']]), 'notes' => 'MVP prototype submission.', 'version' => 1, 'status' => $st === 'approved' ? 'approved' : ($st === 'revision_requested' ? 'revision_requested' : 'submitted'), 'admin_feedback' => $st === 'approved' ? 'Great work!' : ($st === 'revision_requested' ? 'Please improve error handling.' : null), 'reviewed_by' => in_array($st, ['approved', 'revision_requested']) ? $this->adminUserId : null, 'reviewed_at' => in_array($st, ['approved', 'revision_requested']) ? now()->subDays(1) : null, 'submitted_at' => now()->subDays(rand(1, 3)), 'created_at' => now(), 'updated_at' => now()]);
@@ -485,14 +485,14 @@ class NaqlThon5Seeder extends Seeder
         foreach ($teams->take(5) as $tIdx => $teamId) {
             $appId = array_search($teamId, $teamIds);
             $pIdx = $approvedParticipantMap[$appId] ?? 0;
-            DB::table('task_assignments')->insert(['task_template_id' => $templateIds[3], 'competition_id' => $this->competitionId, 'stage_id' => $stageIds['prototyping-nt5'], 'assignment_type' => 'participant', 'participant_id' => $participantIds[$pIdx], 'title' => json_encode(['en' => 'Prepare Pitch Deck', 'ar' => 'إعداد العرض']), 'description' => json_encode(['en' => 'Create pitch deck.', 'ar' => 'أنشئ العرض.']), 'instructions' => json_encode(['en' => '10 slides max.', 'ar' => '10 شرائح.']), 'due_date' => Carbon::now()->addDays(5)->toDateString(), 'status' => $tIdx < 2 ? 'submitted' : 'not_started', 'assigned_by' => $this->adminUserId, 'submitted_at' => $tIdx < 2 ? now()->subDays(1) : null, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
+            DB::table('task_assignments')->insert(['task_template_id' => $templateIds[3], 'program_id' => $this->programId, 'stage_id' => $stageIds['prototyping-nt5'], 'assignment_type' => 'participant', 'participant_id' => $participantIds[$pIdx], 'title' => json_encode(['en' => 'Prepare Pitch Deck', 'ar' => 'إعداد العرض']), 'description' => json_encode(['en' => 'Create pitch deck.', 'ar' => 'أنشئ العرض.']), 'instructions' => json_encode(['en' => '10 slides max.', 'ar' => '10 شرائح.']), 'due_date' => Carbon::now()->addDays(5)->toDateString(), 'status' => $tIdx < 2 ? 'submitted' : 'not_started', 'assigned_by' => $this->adminUserId, 'submitted_at' => $tIdx < 2 ? now()->subDays(1) : null, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
         }
 
         // ================================================================
         // 15. DASHBOARD
         // ================================================================
         $this->command->info('Creating dashboard...');
-        $dashId = DB::table('dashboards')->insertGetId(['competition_id' => $this->competitionId, 'name' => json_encode(['en' => 'Naql Thon 5 Analytics Dashboard', 'ar' => 'لوحة تحليلات نقل ثون 5']), 'description' => json_encode(['en' => 'Comprehensive analytics for Naql Thon 5', 'ar' => 'تحليلات شاملة لنقل ثون 5']), 'data_sources' => json_encode(['applications', 'projects', 'tasks']), 'sort_order' => 1, 'created_by' => $this->adminUserId, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
+        $dashId = DB::table('dashboards')->insertGetId(['program_id' => $this->programId, 'name' => json_encode(['en' => 'Naql Thon 5 Analytics Dashboard', 'ar' => 'لوحة تحليلات نقل ثون 5']), 'description' => json_encode(['en' => 'Comprehensive analytics for Naql Thon 5', 'ar' => 'تحليلات شاملة لنقل ثون 5']), 'data_sources' => json_encode(['applications', 'projects', 'tasks']), 'sort_order' => 1, 'created_by' => $this->adminUserId, 'is_archived' => false, 'created_at' => now(), 'updated_at' => now()]);
 
         $widgets = [
             ['param' => 'nt5_specialization', 'agg' => 'count', 'viz' => 'pie', 'fid' => $fieldIds['nt5_specialization'], 'cfg' => ['title' => 'Participants by Specialization']],
@@ -543,7 +543,7 @@ class NaqlThon5Seeder extends Seeder
         $this->command->info('================================================');
         $this->command->info('  Naql Thon 5 Hackathon Creation Complete!');
         $this->command->info('================================================');
-        $this->command->info('  Competition ID: ' . $this->competitionId);
+        $this->command->info('  Program ID: ' . $this->programId);
         $this->command->info('  Tracks: ' . count($trackIds) . ' with ' . count($subTrackIds) . ' sub-tracks');
         $this->command->info('  Reg Form: ' . count($fieldIds) . ' fields, 3 steps');
         $this->command->info('  Project Form: ' . count($projFieldIds) . ' fields, 4 steps');

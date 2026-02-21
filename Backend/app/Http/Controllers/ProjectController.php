@@ -116,7 +116,7 @@ class ProjectController extends Controller
             
             // Check if project belongs to user through application
             if ($draft->application_id) {
-                $application = \App\Models\CompetitionApplication::find($draft->application_id);
+                $application = \App\Models\ProgramApplication::find($draft->application_id);
                 if ($application && $application->participant_id === $userId) {
                     $hasAccess = true;
                 }

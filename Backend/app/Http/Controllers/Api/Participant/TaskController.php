@@ -19,7 +19,7 @@ class TaskController extends Controller
     public function index(Request $request): JsonResponse
     {
         $participant = $request->user();
-        $competitionId = $request->query('competition_id');
+        $programId = $request->query('program_id');
 
         $query = TaskAssignment::query()
             ->where('is_archived', false)
@@ -32,10 +32,10 @@ class TaskController extends Controller
                       });
                   });
             })
-            ->with(['competition:id,title', 'stage:id,title', 'template:id,title', 'team:id,name', 'latestSubmission']);
+            ->with(['program:id,title', 'stage:id,title', 'template:id,title', 'team:id,name', 'latestSubmission']);
 
-        if ($competitionId) {
-            $query->where('competition_id', $competitionId);
+        if ($programId) {
+            $query->where('program_id', $programId);
         }
 
         // Status filter
@@ -76,7 +76,7 @@ class TaskController extends Controller
         $participant = $request->user();
 
         $task = TaskAssignment::with([
-            'competition:id,title',
+            'program:id,title',
             'stage:id,title',
             'template:id,title,form_id',
             'team:id,name',
@@ -295,9 +295,9 @@ class TaskController extends Controller
 
         // Assigned to all
         if ($task->assignment_type === 'all') {
-            // Check participant is in this competition
-            return $participant->competitionApplications()
-                ->where('competition_id', $task->competition_id)
+            // Check participant is in this program
+            return $participant->programApplications()
+                ->where('program_id', $task->program_id)
                 ->where('status', 'approved')
                 ->exists();
         }

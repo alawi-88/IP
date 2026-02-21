@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Middleware\ApprovedCompetitionApplication;
-use App\Http\Middleware\ApprovedCompetitionTab;
+use App\Http\Middleware\ApprovedProgramApplication;
+use App\Http\Middleware\ApprovedProgramTab;
 use App\Http\Middleware\CheckArchivedUser;
 use App\Http\Middleware\CheckArchivedApiUser;
 use App\Http\Middleware\CustomSanctumAuth;
@@ -28,8 +28,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies('*');
         $middleware->alias(
             [
-                'approved_competition_application' => ApprovedCompetitionApplication::class,
-                'approved_competition_tab' => ApprovedCompetitionTab::class,
+                'approved_program_application' => ApprovedProgramApplication::class,
+                'approved_program_tab' => ApprovedProgramTab::class,
                 'check.archived.user' => CheckArchivedUser::class,
                 'check.archived.api.user' => CheckArchivedApiUser::class,
                 'custom.sanctum' => CustomSanctumAuth::class,

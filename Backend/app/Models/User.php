@@ -147,11 +147,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->permissions->pluck('name')->join(', ');
     }
 
-    public function competitions(): BelongsToMany
+    public function programs(): BelongsToMany
     {
         return $this
-            ->belongsToMany(Competition::class, 'user_competitions')
-            ->using(UserCompetition::class)
+            ->belongsToMany(Program::class, 'user_programs')
+            ->using(UserProgram::class)
             ->withTimestamps();
     }
 

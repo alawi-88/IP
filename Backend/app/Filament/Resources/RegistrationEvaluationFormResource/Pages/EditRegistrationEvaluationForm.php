@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\RegistrationEvaluationFormResource\Pages;
 
 use App\Filament\Resources\RegistrationEvaluationFormResource;
-use App\Models\Competition;
+use App\Models\Program;
 use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -26,9 +26,9 @@ class EditRegistrationEvaluationForm extends EditRecord
             Forms\Components\Section::make('Evaluation Form Details / تفاصيل نموذج التقييم')
                 ->columns(2)
                 ->schema([
-                    Forms\Components\Select::make('competition_id')
+                    Forms\Components\Select::make('program_id')
                         ->label('Program / البرنامج')
-                        ->options(fn () => Competition::active()->get()->mapWithKeys(fn ($c) => [$c->id => $c->getTranslation('title', 'en')]))
+                        ->options(fn () => Program::active()->get()->mapWithKeys(fn ($c) => [$c->id => $c->getTranslation('title', 'en')]))
                         ->required()
                         ->searchable(),
 

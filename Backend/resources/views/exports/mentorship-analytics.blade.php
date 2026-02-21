@@ -143,8 +143,8 @@
     @if(!empty($filters))
     <div class="filters">
         <h3>{{ $translations['applied_filters'] ?? 'Applied Filters' }}:</h3>
-        @if(!empty($filters['competition']))
-            <div class="filter-item"><strong>{{ $translations['program'] ?? 'Program' }}:</strong> {{ $filters['competition'] }}</div>
+        @if(!empty($filters['program']))
+            <div class="filter-item"><strong>{{ $translations['program'] ?? 'Program' }}:</strong> {{ $filters['program'] }}</div>
         @endif
         @if(!empty($filters['mentor']))
             <div class="filter-item"><strong>{{ $translations['mentor'] ?? 'Mentor' }}:</strong> {{ $filters['mentor'] }}</div>
@@ -187,7 +187,7 @@
             @foreach($sessions as $session)
             <tr>
                 <td>{{ $session->id }}</td>
-                <td>{{ $session->competition_title ?? 'N/A' }}</td>
+                <td>{{ $session->program_title ?? 'N/A' }}</td>
                 <td>{{ $session->mentor_name ?? 'N/A' }}</td>
                 <td>{{ $session->participant_name ?? 'N/A' }}</td>
                 <td>{{ $session->title ?? 'N/A' }}</td>

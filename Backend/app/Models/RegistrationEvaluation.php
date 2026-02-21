@@ -11,7 +11,7 @@ class RegistrationEvaluation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'competition_application_id',
+        'program_application_id',
         'registration_evaluator_id',
         'registration_evaluation_form_id',
         'registration_evaluation_criterion_id',
@@ -26,7 +26,7 @@ class RegistrationEvaluation extends Model
     // Relationships
     public function application(): BelongsTo
     {
-        return $this->belongsTo(CompetitionApplication::class, 'competition_application_id');
+        return $this->belongsTo(ProgramApplication::class, 'program_application_id');
     }
 
     public function evaluator(): BelongsTo

@@ -12,7 +12,7 @@ use Carbon\Carbon;
  * Creates:
  * 1. Landing page with proper Builder block content (TGA-style)
  * 2. Two service pages linked to landing page
- * 3. Sandbox competition (program)
+ * 3. Sandbox program (program)
  * 4. Registration form for Sandbox (from Arabic PDF - TGA Regulatory Sandbox Application)
  * 5. Five project forms (from Car Rental Report PDF sheets)
  * 6. Form steps and project steps
@@ -32,23 +32,23 @@ class EnhancedPlatformSeeder extends Seeder
         $this->seedServices();
 
         // ─── 3. SANDBOX COMPETITION ───────────────────────────────────
-        $competitionId = $this->seedSandboxCompetition();
+        $programId = $this->seedSandboxProgram();
 
         // ─── 4. REGISTRATION FORM ─────────────────────────────────────
-        $registrationFormId = $this->seedRegistrationForm($competitionId);
+        $registrationFormId = $this->seedRegistrationForm($programId);
 
         // ─── 5. PROJECT FORMS ─────────────────────────────────────────
-        $projectFormIds = $this->seedProjectForms($competitionId);
+        $projectFormIds = $this->seedProjectForms($programId);
 
         // ─── 6. STAGES ───────────────────────────────────────────────
-        $this->seedStages($competitionId, $registrationFormId, $projectFormIds);
+        $this->seedStages($programId, $registrationFormId, $projectFormIds);
 
         // ─── 7. FORM STEPS & PROJECT STEPS ────────────────────────────
         $this->seedFormSteps($registrationFormId);
         $this->seedProjectSteps($projectFormIds);
 
         // ─── 8. REGISTRATION FORM CONFIG ──────────────────────────────
-        $this->seedRegistrationFormConfig($competitionId);
+        $this->seedRegistrationFormConfig($programId);
 
         // ─── 9. EMAIL TEMPLATES ───────────────────────────────────────
         $this->seedEmailTemplates();
@@ -290,11 +290,11 @@ class EnhancedPlatformSeeder extends Seeder
     // ═══════════════════════════════════════════════════════════════
     // 3. SANDBOX COMPETITION
     // ═══════════════════════════════════════════════════════════════
-    private function seedSandboxCompetition(): int
+    private function seedSandboxProgram(): int
     {
-        $this->command->info('  → Creating Sandbox competition...');
+        $this->command->info('  → Creating Sandbox program...');
 
-        $competitionId = DB::table('competitions')->insertGetId([
+        $programId = DB::table('programs')->insertGetId([
             'title' => json_encode(['en' => 'TGA Regulatory Sandbox 2026', 'ar' => 'البيئة التنظيمية التجريبية للهيئة العامة للنقل 2026']),
             'about' => json_encode([
                 'en' => '<p>The TGA Regulatory Sandbox is a controlled testing environment established by the Transport General Authority to enable innovative companies to test new transport technologies, services, and business models. The sandbox provides a structured pathway for innovators to demonstrate the viability and safety of their solutions under regulatory supervision.</p><p>The program consists of four stages: Application Submission (30 days), Readiness Assessment (15 days), Business Model Testing (1 calendar year), and Graduation (30 days). Successful participants will receive full operating licenses upon graduation.</p><p>This initiative aligns with Saudi Vision 2030 goals to foster innovation and technological advancement in the transport sector.</p>',
@@ -315,27 +315,27 @@ class EnhancedPlatformSeeder extends Seeder
         // Link to admin user
         $adminUser = DB::table('users')->where('email', 'admin@innovation-platform.com')->first();
         if ($adminUser) {
-            DB::table('user_competitions')->insert([
+            DB::table('user_programs')->insert([
                 'user_id' => $adminUser->id,
-                'competition_id' => $competitionId,
+                'program_id' => $programId,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
         }
 
-        $this->command->info("    ✓ Sandbox competition created (ID: {$competitionId})");
-        return $competitionId;
+        $this->command->info("    ✓ Sandbox program created (ID: {$programId})");
+        return $programId;
     }
 
     // ═══════════════════════════════════════════════════════════════
     // 4. REGISTRATION FORM (from Arabic PDF - TGA Regulatory Sandbox)
     // ═══════════════════════════════════════════════════════════════
-    private function seedRegistrationForm(int $competitionId): int
+    private function seedRegistrationForm(int $programId): int
     {
         $this->command->info('  → Creating Sandbox registration form...');
 
         $formId = DB::table('forms')->insertGetId([
-            'competition_id' => $competitionId,
+            'program_id' => $programId,
             'type' => 'registration',
             'name' => json_encode(['en' => 'Regulatory Sandbox Application Form', 'ar' => 'نموذج التقديم على البيئة التنظيمية التجريبية']),
             'description' => json_encode(['en' => 'Complete this application to apply for the TGA Regulatory Sandbox program. All fields marked as required must be completed.', 'ar' => 'أكمل هذا الطلب للتقديم على برنامج البيئة التنظيمية التجريبية للهيئة العامة للنقل. يجب إكمال جميع الحقول المطلوبة.']),
@@ -493,13 +493,13 @@ class EnhancedPlatformSeeder extends Seeder
     // ═══════════════════════════════════════════════════════════════
     // 5. PROJECT FORMS (from Car Rental Report PDF - 5 sheets)
     // ═══════════════════════════════════════════════════════════════
-    private function seedProjectForms(int $competitionId): array
+    private function seedProjectForms(int $programId): array
     {
         $this->command->info('  → Creating 5 project forms...');
         $formIds = [];
 
         // ── Form 1: Establishment Requirements Part 1 (1.1-1.10) ──
-        $formIds[] = $this->createProjectForm($competitionId, 
+        $formIds[] = $this->createProjectForm($programId, 
             ['en' => 'Establishment Requirements - Insurance & Contracts', 'ar' => 'متطلبات المنشأة - التأمين والعقود'],
             ['en' => 'Compliance report covering establishment requirements related to insurance, contracts, and financial handling (Guidelines 1.1-1.10)', 'ar' => 'تقرير الامتثال الذي يغطي متطلبات المنشأة المتعلقة بالتأمين والعقود والتعامل المالي (المبادئ التوجيهية 1.1-1.10)'],
             [
@@ -517,7 +517,7 @@ class EnhancedPlatformSeeder extends Seeder
         );
 
         // ── Form 2: Establishment Requirements Part 2 (1.11-1.21) ──
-        $formIds[] = $this->createProjectForm($competitionId,
+        $formIds[] = $this->createProjectForm($programId,
             ['en' => 'Establishment Requirements - Operations & Safety', 'ar' => 'متطلبات المنشأة - العمليات والسلامة'],
             ['en' => 'Compliance report covering establishment operational and safety requirements (Guidelines 1.11-1.21)', 'ar' => 'تقرير الامتثال الذي يغطي متطلبات التشغيل والسلامة للمنشأة (المبادئ التوجيهية 1.11-1.21)'],
             [
@@ -536,7 +536,7 @@ class EnhancedPlatformSeeder extends Seeder
         );
 
         // ── Form 3: Vehicle Requirements (2.1-2.5) ──
-        $formIds[] = $this->createProjectForm($competitionId,
+        $formIds[] = $this->createProjectForm($programId,
             ['en' => 'Vehicle Requirements Compliance', 'ar' => 'امتثال متطلبات المركبات'],
             ['en' => 'Compliance report covering vehicle registration, inspection, maintenance, GPS, and replacement requirements (Guidelines 2.1-2.5)', 'ar' => 'تقرير الامتثال الذي يغطي متطلبات تسجيل المركبات والفحص والصيانة ونظام تحديد المواقع والاستبدال (المبادئ التوجيهية 2.1-2.5)'],
             [
@@ -549,7 +549,7 @@ class EnhancedPlatformSeeder extends Seeder
         );
 
         // ── Form 4: Customer Requirements (3.1-3.10) ──
-        $formIds[] = $this->createProjectForm($competitionId,
+        $formIds[] = $this->createProjectForm($programId,
             ['en' => 'Customer Requirements Compliance', 'ar' => 'امتثال متطلبات العملاء'],
             ['en' => 'Compliance report covering customer-related requirements including age, licensing, and responsibility (Guidelines 3.1-3.10)', 'ar' => 'تقرير الامتثال الذي يغطي المتطلبات المتعلقة بالعملاء بما في ذلك العمر والترخيص والمسؤولية (المبادئ التوجيهية 3.1-3.10)'],
             [
@@ -567,7 +567,7 @@ class EnhancedPlatformSeeder extends Seeder
         );
 
         // ── Form 5: Monthly Operations & KPI Summary ──
-        $formIds[] = $this->createProjectForm($competitionId,
+        $formIds[] = $this->createProjectForm($programId,
             ['en' => 'Monthly Operations & KPI Report', 'ar' => 'تقرير العمليات الشهرية ومؤشرات الأداء'],
             ['en' => 'Monthly summary of operational metrics and key performance indicators for the sandbox period', 'ar' => 'ملخص شهري لمقاييس العمليات ومؤشرات الأداء الرئيسية لفترة البيئة التجريبية'],
             null // Custom fields below
@@ -623,10 +623,10 @@ class EnhancedPlatformSeeder extends Seeder
      * Helper: Create a project form with guideline-based fields
      * Each guideline gets: section_header, radio (adherence), text (applied limit), textarea (notes)
      */
-    private function createProjectForm(int $competitionId, array $name, array $description, ?array $guidelines): int
+    private function createProjectForm(int $programId, array $name, array $description, ?array $guidelines): int
     {
         $formId = DB::table('forms')->insertGetId([
-            'competition_id' => $competitionId,
+            'program_id' => $programId,
             'type' => 'project',
             'name' => json_encode($name),
             'description' => json_encode($description),
@@ -723,9 +723,9 @@ class EnhancedPlatformSeeder extends Seeder
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // 6. STAGES for Sandbox Competition
+    // 6. STAGES for Sandbox Program
     // ═══════════════════════════════════════════════════════════════
-    private function seedStages(int $competitionId, int $registrationFormId, array $projectFormIds): void
+    private function seedStages(int $programId, int $registrationFormId, array $projectFormIds): void
     {
         $this->command->info('  → Creating stages for Sandbox...');
 
@@ -733,7 +733,7 @@ class EnhancedPlatformSeeder extends Seeder
 
         // Stage 1: Application Submission (Registration) - 30 days
         DB::table('stages')->insert([
-            'competition_id' => $competitionId,
+            'program_id' => $programId,
             'slug' => 'registration',
             'title' => json_encode(['en' => 'Application Submission', 'ar' => 'تقديم الطلب']),
             'description' => json_encode(['en' => 'Submit your Regulatory Sandbox application with all required documents. Review period: 30 business days.', 'ar' => 'قدم طلبك للبيئة التنظيمية التجريبية مع جميع المستندات المطلوبة. فترة المراجعة: 30 يوم عمل.']),
@@ -748,7 +748,7 @@ class EnhancedPlatformSeeder extends Seeder
 
         // Stage 2: Readiness Assessment - 15 days
         DB::table('stages')->insert([
-            'competition_id' => $competitionId,
+            'program_id' => $programId,
             'slug' => 'evaluation',
             'title' => json_encode(['en' => 'Readiness Assessment', 'ar' => 'تقييم الجاهزية']),
             'description' => json_encode(['en' => 'TGA evaluates your readiness to enter the sandbox environment. Assessment period: 15 business days.', 'ar' => 'تقيّم الهيئة جاهزيتك لدخول البيئة التجريبية. فترة التقييم: 15 يوم عمل.']),
@@ -763,7 +763,7 @@ class EnhancedPlatformSeeder extends Seeder
 
         // Stage 3: Business Model Testing (Project Submission) - 1 calendar year
         DB::table('stages')->insert([
-            'competition_id' => $competitionId,
+            'program_id' => $programId,
             'slug' => 'project-submission',
             'title' => json_encode(['en' => 'Business Model Testing', 'ar' => 'اختبار نموذج العمل']),
             'description' => json_encode(['en' => 'Test your business model in a controlled environment. Submit monthly compliance reports and project updates. Duration: 1 calendar year.', 'ar' => 'اختبر نموذج عملك في بيئة خاضعة للرقابة. قدم تقارير الامتثال الشهرية وتحديثات المشروع. المدة: سنة تقويمية واحدة.']),
@@ -778,7 +778,7 @@ class EnhancedPlatformSeeder extends Seeder
 
         // Stage 4: Graduation - 30 days
         DB::table('stages')->insert([
-            'competition_id' => $competitionId,
+            'program_id' => $programId,
             'slug' => 'evaluation',
             'title' => json_encode(['en' => 'Graduation from Sandbox', 'ar' => 'التخرج من البيئة التجريبية']),
             'description' => json_encode(['en' => 'Final evaluation and graduation process. Successful participants receive full operating licenses. Duration: 30 days.', 'ar' => 'عملية التقييم النهائي والتخرج. يحصل المشاركون الناجحون على تراخيص تشغيل كاملة. المدة: 30 يومًا.']),
@@ -877,12 +877,12 @@ class EnhancedPlatformSeeder extends Seeder
     // ═══════════════════════════════════════════════════════════════
     // 8. REGISTRATION FORM CONFIG
     // ═══════════════════════════════════════════════════════════════
-    private function seedRegistrationFormConfig(int $competitionId): void
+    private function seedRegistrationFormConfig(int $programId): void
     {
         $this->command->info('  → Creating registration form config...');
 
         DB::table('registration_form_configs')->insert([
-            'competition_id' => $competitionId,
+            'program_id' => $programId,
             'registration_type' => 'individual',
             'min_age' => null,
             'max_age' => null,
@@ -932,10 +932,10 @@ class EnhancedPlatformSeeder extends Seeder
             ['key' => 'mentor.registration_pending', 'subject' => ['en' => 'Mentor Registration Received', 'ar' => 'تم استلام تسجيل المرشد'], 'body' => ['en' => '<p>Dear {{name}},</p><p>Your mentor registration has been received and is under review. We will notify you once a decision is made.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم استلام تسجيلك كمرشد وهو قيد المراجعة. سنخطرك فور اتخاذ القرار.</p>']],
 
             // Application & Project templates
-            ['key' => 'application.status_updated', 'subject' => ['en' => 'Application Status Updated', 'ar' => 'تم تحديث حالة الطلب'], 'body' => ['en' => '<p>Dear {{name}},</p><p>Your application for <strong>{{competition}}</strong> has been updated to: <strong>{{status}}</strong>.</p><p>Log in to view details.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تحديث حالة طلبك لـ <strong>{{competition}}</strong> إلى: <strong>{{status}}</strong>.</p><p>سجل الدخول لعرض التفاصيل.</p>']],
+            ['key' => 'application.status_updated', 'subject' => ['en' => 'Application Status Updated', 'ar' => 'تم تحديث حالة الطلب'], 'body' => ['en' => '<p>Dear {{name}},</p><p>Your application for <strong>{{program}}</strong> has been updated to: <strong>{{status}}</strong>.</p><p>Log in to view details.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تحديث حالة طلبك لـ <strong>{{program}}</strong> إلى: <strong>{{status}}</strong>.</p><p>سجل الدخول لعرض التفاصيل.</p>']],
             ['key' => 'application.comment_added', 'subject' => ['en' => 'New Comment on Your Application', 'ar' => 'تعليق جديد على طلبك'], 'body' => ['en' => '<p>Dear {{name}},</p><p>A new comment has been added to your application. Log in to view and respond.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تمت إضافة تعليق جديد على طلبك. سجل الدخول للعرض والرد.</p>']],
-            ['key' => 'competition.registration', 'subject' => ['en' => 'Registration Confirmation', 'ar' => 'تأكيد التسجيل في البرنامج'], 'body' => ['en' => '<p>Dear {{name}},</p><p>You have successfully registered for <strong>{{competition}}</strong>. Keep an eye on your dashboard for updates.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تسجيلك بنجاح في <strong>{{competition}}</strong>. تابع لوحة التحكم للحصول على التحديثات.</p>']],
-            ['key' => 'project.submitted', 'subject' => ['en' => 'Project Submitted Successfully', 'ar' => 'تم تقديم المشروع بنجاح'], 'body' => ['en' => '<p>Dear {{name}},</p><p>Your project <strong>{{project}}</strong> has been submitted for <strong>{{competition}}</strong>.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تقديم مشروعك <strong>{{project}}</strong> لـ <strong>{{competition}}</strong>.</p>']],
+            ['key' => 'program.registration', 'subject' => ['en' => 'Registration Confirmation', 'ar' => 'تأكيد التسجيل في البرنامج'], 'body' => ['en' => '<p>Dear {{name}},</p><p>You have successfully registered for <strong>{{program}}</strong>. Keep an eye on your dashboard for updates.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تسجيلك بنجاح في <strong>{{program}}</strong>. تابع لوحة التحكم للحصول على التحديثات.</p>']],
+            ['key' => 'project.submitted', 'subject' => ['en' => 'Project Submitted Successfully', 'ar' => 'تم تقديم المشروع بنجاح'], 'body' => ['en' => '<p>Dear {{name}},</p><p>Your project <strong>{{project}}</strong> has been submitted for <strong>{{program}}</strong>.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تقديم مشروعك <strong>{{project}}</strong> لـ <strong>{{program}}</strong>.</p>']],
             ['key' => 'project.status_updated', 'subject' => ['en' => 'Project Status Updated', 'ar' => 'تم تحديث حالة المشروع'], 'body' => ['en' => '<p>Dear {{name}},</p><p>Your project status has been updated to: <strong>{{status}}</strong>.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تحديث حالة مشروعك إلى: <strong>{{status}}</strong>.</p>']],
             ['key' => 'project.comment_added', 'subject' => ['en' => 'New Comment on Your Project', 'ar' => 'تعليق جديد على مشروعك'], 'body' => ['en' => '<p>Dear {{name}},</p><p>A new comment has been added to your project. Log in to view.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تمت إضافة تعليق جديد على مشروعك. سجل الدخول للعرض.</p>']],
             ['key' => 'project.evaluation_result', 'subject' => ['en' => 'Project Evaluation Results', 'ar' => 'نتائج تقييم المشروع'], 'body' => ['en' => '<p>Dear {{name}},</p><p>Your project evaluation results are available. Log in to view your scores and feedback.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>نتائج تقييم مشروعك متاحة. سجل الدخول لعرض درجاتك وملاحظاتك.</p>']],
@@ -953,7 +953,7 @@ class EnhancedPlatformSeeder extends Seeder
             // Approval & team templates
             ['key' => 'approval.status_changed', 'subject' => ['en' => 'Approval Request Status Changed', 'ar' => 'تم تغيير حالة طلب الموافقة'], 'body' => ['en' => '<p>Dear {{name}},</p><p>An approval request status has changed to: <strong>{{status}}</strong>.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تغيير حالة طلب الموافقة إلى: <strong>{{status}}</strong>.</p>']],
             ['key' => 'approval.assigned', 'subject' => ['en' => 'New Approval Request Assigned', 'ar' => 'تم تعيين طلب موافقة جديد'], 'body' => ['en' => '<p>Dear {{name}},</p><p>A new approval request has been assigned to you. Please review and take action.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تعيين طلب موافقة جديد لك. يرجى المراجعة واتخاذ الإجراء.</p>']],
-            ['key' => 'team.member_added', 'subject' => ['en' => 'You Have Been Added to a Team', 'ar' => 'تمت إضافتك إلى فريق'], 'body' => ['en' => '<p>Dear {{name}},</p><p>You have been added as a team member for <strong>{{competition}}</strong>. Log in to view your team.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تمت إضافتك كعضو في فريق لـ <strong>{{competition}}</strong>. سجل الدخول لعرض فريقك.</p>']],
+            ['key' => 'team.member_added', 'subject' => ['en' => 'You Have Been Added to a Team', 'ar' => 'تمت إضافتك إلى فريق'], 'body' => ['en' => '<p>Dear {{name}},</p><p>You have been added as a team member for <strong>{{program}}</strong>. Log in to view your team.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تمت إضافتك كعضو في فريق لـ <strong>{{program}}</strong>. سجل الدخول لعرض فريقك.</p>']],
             ['key' => 'mentor.participant_assigned', 'subject' => ['en' => 'New Participant Assigned', 'ar' => 'تم تعيين مشارك جديد'], 'body' => ['en' => '<p>Dear {{name}},</p><p>A new participant has been assigned to you for mentoring.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تعيين مشارك جديد لك للإرشاد.</p>']],
             ['key' => 'mentor.team_assigned', 'subject' => ['en' => 'New Team Assigned', 'ar' => 'تم تعيين فريق جديد'], 'body' => ['en' => '<p>Dear {{name}},</p><p>A new team has been assigned to you for mentoring.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم تعيين فريق جديد لك للإرشاد.</p>']],
             ['key' => 'participant.account_imported', 'subject' => ['en' => 'Your Account Has Been Imported', 'ar' => 'تم استيراد حسابك'], 'body' => ['en' => '<p>Dear {{name}},</p><p>Your participant account has been imported to the Innovation Platform. You can now log in.</p>', 'ar' => '<p>عزيزي {{name}}،</p><p>تم استيراد حسابك كمشارك إلى منصة الابتكار. يمكنك الآن تسجيل الدخول.</p>']],
@@ -991,14 +991,14 @@ class EnhancedPlatformSeeder extends Seeder
             ['key' => 'participant.password_reset', 'subject' => ['en' => 'Password Reset', 'ar' => 'إعادة تعيين كلمة المرور'], 'body' => ['en' => 'A password reset was requested for your account.', 'ar' => 'تم طلب إعادة تعيين كلمة المرور لحسابك.'], 'type' => 'notification'],
 
             // Application notifications
-            ['key' => 'application.approved', 'subject' => ['en' => 'Application Approved', 'ar' => 'تمت الموافقة على الطلب'], 'body' => ['en' => 'Your application for {{competition}} has been approved.', 'ar' => 'تمت الموافقة على طلبك لـ {{competition}}.'], 'type' => 'notification'],
-            ['key' => 'application.rejected', 'subject' => ['en' => 'Application Not Approved', 'ar' => 'لم تتم الموافقة على الطلب'], 'body' => ['en' => 'Your application for {{competition}} was not approved at this time.', 'ar' => 'لم تتم الموافقة على طلبك لـ {{competition}} في هذا الوقت.'], 'type' => 'notification'],
+            ['key' => 'application.approved', 'subject' => ['en' => 'Application Approved', 'ar' => 'تمت الموافقة على الطلب'], 'body' => ['en' => 'Your application for {{program}} has been approved.', 'ar' => 'تمت الموافقة على طلبك لـ {{program}}.'], 'type' => 'notification'],
+            ['key' => 'application.rejected', 'subject' => ['en' => 'Application Not Approved', 'ar' => 'لم تتم الموافقة على الطلب'], 'body' => ['en' => 'Your application for {{program}} was not approved at this time.', 'ar' => 'لم تتم الموافقة على طلبك لـ {{program}} في هذا الوقت.'], 'type' => 'notification'],
             ['key' => 'application.under_review', 'subject' => ['en' => 'Application Under Review', 'ar' => 'الطلب قيد المراجعة'], 'body' => ['en' => 'Your application is being reviewed by our team.', 'ar' => 'طلبك قيد المراجعة من قبل فريقنا.'], 'type' => 'notification'],
             ['key' => 'application.comment', 'subject' => ['en' => 'New Comment on Application', 'ar' => 'تعليق جديد على الطلب'], 'body' => ['en' => 'A new comment was added to your application.', 'ar' => 'تمت إضافة تعليق جديد على طلبك.'], 'type' => 'notification'],
 
-            // Competition notifications
-            ['key' => 'competition.registered', 'subject' => ['en' => 'Successfully Registered', 'ar' => 'تم التسجيل بنجاح'], 'body' => ['en' => 'You have successfully registered for {{competition}}.', 'ar' => 'تم تسجيلك بنجاح في {{competition}}.'], 'type' => 'notification'],
-            ['key' => 'competition.stage_changed', 'subject' => ['en' => 'Program Stage Updated', 'ar' => 'تم تحديث مرحلة البرنامج'], 'body' => ['en' => 'The program {{competition}} has moved to a new stage: {{stage}}.', 'ar' => 'انتقل البرنامج {{competition}} إلى مرحلة جديدة: {{stage}}.'], 'type' => 'notification'],
+            // Program notifications
+            ['key' => 'program.registered', 'subject' => ['en' => 'Successfully Registered', 'ar' => 'تم التسجيل بنجاح'], 'body' => ['en' => 'You have successfully registered for {{program}}.', 'ar' => 'تم تسجيلك بنجاح في {{program}}.'], 'type' => 'notification'],
+            ['key' => 'program.stage_changed', 'subject' => ['en' => 'Program Stage Updated', 'ar' => 'تم تحديث مرحلة البرنامج'], 'body' => ['en' => 'The program {{program}} has moved to a new stage: {{stage}}.', 'ar' => 'انتقل البرنامج {{program}} إلى مرحلة جديدة: {{stage}}.'], 'type' => 'notification'],
 
             // Project notifications
             ['key' => 'project.submitted', 'subject' => ['en' => 'Project Submitted', 'ar' => 'تم تقديم المشروع'], 'body' => ['en' => 'Your project "{{project}}" has been submitted successfully.', 'ar' => 'تم تقديم مشروعك "{{project}}" بنجاح.'], 'type' => 'notification'],
@@ -1025,8 +1025,8 @@ class EnhancedPlatformSeeder extends Seeder
             ['key' => 'session.new_time', 'subject' => ['en' => 'New Time Proposed', 'ar' => 'وقت جديد مقترح'], 'body' => ['en' => 'A new time has been proposed for your session.', 'ar' => 'تم اقتراح وقت جديد لجلستك.'], 'type' => 'notification'],
 
             // Admin notifications
-            ['key' => 'admin.new_application', 'subject' => ['en' => 'New Application Received', 'ar' => 'طلب جديد مستلم'], 'body' => ['en' => 'A new application has been submitted for {{competition}}.', 'ar' => 'تم تقديم طلب جديد لـ {{competition}}.'], 'type' => 'notification'],
-            ['key' => 'admin.new_project', 'subject' => ['en' => 'New Project Submitted', 'ar' => 'مشروع جديد مقدم'], 'body' => ['en' => 'A new project has been submitted for {{competition}}.', 'ar' => 'تم تقديم مشروع جديد لـ {{competition}}.'], 'type' => 'notification'],
+            ['key' => 'admin.new_application', 'subject' => ['en' => 'New Application Received', 'ar' => 'طلب جديد مستلم'], 'body' => ['en' => 'A new application has been submitted for {{program}}.', 'ar' => 'تم تقديم طلب جديد لـ {{program}}.'], 'type' => 'notification'],
+            ['key' => 'admin.new_project', 'subject' => ['en' => 'New Project Submitted', 'ar' => 'مشروع جديد مقدم'], 'body' => ['en' => 'A new project has been submitted for {{program}}.', 'ar' => 'تم تقديم مشروع جديد لـ {{program}}.'], 'type' => 'notification'],
             ['key' => 'admin.comment_added', 'subject' => ['en' => 'New Admin Comment', 'ar' => 'تعليق إداري جديد'], 'body' => ['en' => 'A comment was added on an application you manage.', 'ar' => 'تمت إضافة تعليق على طلب تديره.'], 'type' => 'notification'],
 
             // Approval notifications
@@ -1065,13 +1065,13 @@ class EnhancedPlatformSeeder extends Seeder
 
         // Standard CRUD resources (view, create, update, delete)
         $crudResources = [
-            'Competition', 'CompetitionApplication', 'Form', 'FormField',
+            'Program', 'ProgramApplication', 'Form', 'FormField',
             'Stage', 'Track', 'SubTrack', 'Team', 'Project',
             'ProjectEvaluation', 'Participant', 'Judge', 'Mentor',
             'MentorSession', 'Event', 'Guideline', 'Service',
             'Page', 'LandingPage', 'ContactUs', 'Satisfaction',
             'EmailTemplate', 'NotificationMessage', 'NotificationManagement',
-            'Committee', 'Winner', 'BrandingCompetition',
+            'Committee', 'Winner', 'BrandingProgram',
             'RegistrationFormConfig', 'ProjectFormConfig', 'TeamFormConfig',
             'EvaluationStageConfig', 'FormAiScoringConfig',
             'ActivityLog', 'User', 'Role', 'Permission',
@@ -1081,7 +1081,7 @@ class EnhancedPlatformSeeder extends Seeder
 
         // Archive/Restore resources
         $archiveResources = [
-            'Competition', 'CompetitionApplication', 'Form',
+            'Program', 'ProgramApplication', 'Form',
             'ContactUs', 'ProjectEvaluation', 'Event',
             'Guideline', 'Judge', 'Mentor', 'Participant',
             'Project', 'ProjectFormConfig', 'RegistrationFormConfig',

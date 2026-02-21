@@ -29,9 +29,9 @@ class ViewTaskAssignment extends ViewRecord
                     TextEntry::make('title_ar')
                         ->label('العنوان')
                         ->getStateUsing(fn ($record) => $record->getTranslation('title', 'ar')),
-                    TextEntry::make('competition.title')
+                    TextEntry::make('program.title')
                         ->label('Program')
-                        ->getStateUsing(fn ($record) => $record->competition?->getTranslation('title', 'en')),
+                        ->getStateUsing(fn ($record) => $record->program?->getTranslation('title', 'en')),
                     TextEntry::make('stage.title')
                         ->label('Stage')
                         ->getStateUsing(fn ($record) => $record->stage?->getTranslation('title', 'en') ?? 'N/A'),

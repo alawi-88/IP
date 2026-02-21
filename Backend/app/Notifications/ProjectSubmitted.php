@@ -45,23 +45,23 @@ class ProjectSubmitted extends Notification
      */
     // public function toMail(object $notifiable): MailMessage
     // {
-    //     $competition = $this->project->form->competition;
-    //     $competitionName = $competition->title;
+    //     $program = $this->project->form->program;
+    //     $programName = $program->title;
 
     //     return (new MailMessage)
     //         ->subject(__('project_submitted.Project Submitted Successfully'))
     //         ->greeting(__('project_submitted.Dear Participant,'))
     //         ->line(__('project_submitted.project_submitted_message', [
-    //             'competition' => $competitionName
+    //             'program' => $programName
     //         ]))
     //         ->line(__('project_submitted.review_process_message'))
     //         ->line(__('project_submitted.Innovation Platform Team'));
     // }
     public function toMail(object $notifiable): MailMessage
     {
-        $competition = $this->project->form->competition;
-        $competitionName = $competition->title;
-        $data = $this->renderEmailTemplate('user.project_submitted', ['competition' => $competitionName, 'name' => $notifiable->name]);
+        $program = $this->project->form->program;
+        $programName = $program->title;
+        $data = $this->renderEmailTemplate('user.project_submitted', ['program' => $programName, 'name' => $notifiable->name]);
         
         if ($data && !empty($data['body']) && $data['body'] !== null) {
             $body = $data['body'];
@@ -80,7 +80,7 @@ class ProjectSubmitted extends Notification
             //->salutation(' ')
             ->greeting(__('project_submitted.Dear Participant,'))
             ->line(__('project_submitted.project_submitted_message', [
-                'competition' => $competitionName
+                'program' => $programName
             ]))
             ->line(__('project_submitted.review_process_message'))
             ->line(__('project_submitted.Innovation Platform Team', [
@@ -100,9 +100,9 @@ class ProjectSubmitted extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        $competition = $this->project->form->competition;
-        $competitionName = $competition->title;
-        $data = $this->renderNotificationMessage('user.project_submitted', ['competition' => $competitionName]);
+        $program = $this->project->form->program;
+        $programName = $program->title;
+        $data = $this->renderNotificationMessage('user.project_submitted', ['program' => $programName]);
         
         if ($data) {
             $subject = [
@@ -117,17 +117,17 @@ class ProjectSubmitted extends Notification
             $subject = getMultilingualTranslation('project_submitted.Project Submitted Successfully');
             $body = [
                 'ar' => getTranslationForLocale('project_submitted.project_submitted_message', 'ar', [
-                    'competition' => $competitionName
+                    'program' => $programName
                 ]) . ' ' . getTranslationForLocale('project_submitted.review_process_message', 'ar'),
                 'en' => getTranslationForLocale('project_submitted.project_submitted_message', 'en', [
-                    'competition' => $competitionName
+                    'program' => $programName
                 ]) . ' ' . getTranslationForLocale('project_submitted.review_process_message', 'en')
             ];
         }
         return [
             'project_id' => $this->project->id,
-            'competition_id' => $this->project->form->competition_id,
-            'competition_name' => $competitionName,
+            'program_id' => $this->project->form->program_id,
+            'program_name' => $programName,
             'title' => $subject,
             'body' => $body,
             'status' => 'submitted',

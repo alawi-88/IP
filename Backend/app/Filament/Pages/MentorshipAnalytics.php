@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Resources\MentorResource\Widgets\MentorshipStatsWidget;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Mentor;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -35,23 +35,23 @@ class MentorshipAnalytics extends BaseDashboard
         return $form->schema([
             Section::make(__('analytics.filters'))
                 ->schema([
-                    Select::make('competition_id')
+                    Select::make('program_id')
                         ->label(__('analytics.program'))
                         ->placeholder(__('analytics.select_program'))
                         ->options(function () {
-                            $competitions = Competition::all();
+                            $programs = Program::all();
 
-                            if ($competitions->isEmpty()) {
+                            if ($programs->isEmpty()) {
                                 return ['' => __('analytics.no_data_available_for_selection')];
                             }
 
                             $options = ['' => __('analytics.all_programs')]; // "All Programs" option
 
-                            return $options + $competitions->mapWithKeys(function ($competition) {
-                                $title = is_array($competition->title)
-                                    ? ($competition->title[app()->getLocale()] ?? $competition->title['en'] ?? '')
-                                    : $competition->title;
-                                return [$competition->id => $title];
+                            return $options + $programs->mapWithKeys(function ($program) {
+                                $title = is_array($program->title)
+                                    ? ($program->title[app()->getLocale()] ?? $program->title['en'] ?? '')
+                                    : $program->title;
+                                return [$program->id => $title];
                             })->toArray();
                         })
                         ->searchable()
@@ -166,11 +166,11 @@ class MentorshipAnalytics extends BaseDashboard
                 ->color('success')
                 ->action(function () {
                     try {
-                        $query = \App\Models\MentorSession::query()->with(['competition', 'mentor', 'participant']);
+                        $query = \App\Models\MentorSession::query()->with(['program', 'mentor', 'participant']);
 
                         // Apply filters (empty string means "all")
-                        if (($competitionId = $this->filters['competition_id'] ?? null) && $competitionId !== '') {
-                            $query->where('competition_id', $competitionId);
+                        if (($programId = $this->filters['program_id'] ?? null) && $programId !== '') {
+                            $query->where('program_id', $programId);
                         }
                         if (($mentorId = $this->filters['mentor_id'] ?? null) && $mentorId !== '') {
                             $query->where('mentor_id', $mentorId);
@@ -199,10 +199,10 @@ class MentorshipAnalytics extends BaseDashboard
                         ];
 
                         foreach ($sessions as $session) {
-                            $competitionTitle = $session->competition
-                                ? (is_array($session->competition->title)
-                                    ? ($session->competition->title[app()->getLocale()] ?? $session->competition->title['en'] ?? 'N/A')
-                                    : $session->competition->title)
+                            $programTitle = $session->program
+                                ? (is_array($session->program->title)
+                                    ? ($session->program->title[app()->getLocale()] ?? $session->program->title['en'] ?? 'N/A')
+                                    : $session->program->title)
                                 : 'N/A';
 
                             $mentorName = $session->mentor
@@ -221,7 +221,7 @@ class MentorshipAnalytics extends BaseDashboard
 
                             $csvData[] = [
                                 $session->id,
-                                $competitionTitle,
+                                $programTitle,
                                 $mentorName,
                                 $participantName,
                                 $session->title ?? 'N/A',
@@ -269,7 +269,7 @@ class MentorshipAnalytics extends BaseDashboard
 
         // Reset form fields explicitly
         $this->filtersForm->fill([
-            'competition_id' => null,
+            'program_id' => null,
             'mentor_id' => null,
             'start_date' => null,
             'end_date' => null,
@@ -286,11 +286,11 @@ class MentorshipAnalytics extends BaseDashboard
 
     public function hasActiveFilters(): bool
     {
-        $competitionId = $this->filters['competition_id'] ?? null;
+        $programId = $this->filters['program_id'] ?? null;
         $mentorId = $this->filters['mentor_id'] ?? null;
 
         // Empty string means "all", so it's not an active filter
-        return (filled($competitionId) && $competitionId !== '')
+        return (filled($programId) && $programId !== '')
             || (filled($mentorId) && $mentorId !== '')
             || filled($this->filters['start_date'] ?? null)
             || filled($this->filters['end_date'] ?? null);

@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\FormResource\Pages;
 
-use App\Events\FormCompetitionStagesCreated;
+use App\Events\FormProgramStagesCreated;
 use App\Filament\Resources\FormResource;
 use App\Services\FormApprovalService;
 use Filament\Resources\Pages\CreateRecord;
@@ -127,7 +127,7 @@ class CreateForm extends CreateRecord
 
     protected function afterCreate(): void
     {
-        event(new FormCompetitionStagesCreated($this->record));
+        event(new FormProgramStagesCreated($this->record));
     }
 
     /**

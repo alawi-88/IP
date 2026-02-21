@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\CompetitionApplication;
-use App\Models\Competition;
+use App\Models\ProgramApplication;
+use App\Models\Program;
 use App\Models\ApprovalRequest;
 use App\Models\ApprovalWorkflow;
 use App\Models\ApprovalRequestLevel;
@@ -18,7 +18,7 @@ class ApplicationApprovalService
     /**
      * Check if an approval workflow exists for the given action
      */
-    public function hasWorkflowForAction(string $actionType, string $modelType = 'CompetitionApplication'): bool
+    public function hasWorkflowForAction(string $actionType, string $modelType = 'ProgramApplication'): bool
     {
         return ApprovalWorkflow::where('action', "{$modelType}.{$actionType}")
             ->where('is_active', true)
@@ -28,7 +28,7 @@ class ApplicationApprovalService
     /**
      * Get the approval workflow for the given action
      */
-    public function getWorkflowForAction(string $actionType, string $modelType = 'CompetitionApplication'): ?ApprovalWorkflow
+    public function getWorkflowForAction(string $actionType, string $modelType = 'ProgramApplication'): ?ApprovalWorkflow
     {
         return ApprovalWorkflow::where('action', "{$modelType}.{$actionType}")
             ->where('is_active', true)
@@ -44,7 +44,7 @@ class ApplicationApprovalService
         ?int $applicationId = null,
         string $reason = null,
         int $requestedBy = null,
-        string $modelType = 'CompetitionApplication'
+        string $modelType = 'ProgramApplication'
     ): ?ApprovalRequest {
         $requestedBy = $requestedBy ?? auth()->id();
         
@@ -65,7 +65,7 @@ class ApplicationApprovalService
         }
 
         // Determine target type and class
-        $targetType = $modelType === 'Competition' ? Competition::class : CompetitionApplication::class;
+        $targetType = $modelType === 'Program' ? Program::class : ProgramApplication::class;
 
         try {
             DB::beginTransaction();
@@ -173,27 +173,27 @@ class ApplicationApprovalService
         string $actionType,
         array $actionData,
         ?int $applicationId = null,
-        string $modelType = 'CompetitionApplication'
+        string $modelType = 'ProgramApplication'
     ): bool {
         try {
-            if ($modelType === 'Competition') {
+            if ($modelType === 'Program') {
                 switch ($actionType) {
                     case 'create':
-                        Competition::create($actionData);
+                        Program::create($actionData);
                         break;
                     case 'update':
                         if ($applicationId) {
-                            Competition::findOrFail($applicationId)->update($actionData);
+                            Program::findOrFail($applicationId)->update($actionData);
                         }
                         break;
                     case 'delete':
                         if ($applicationId) {
-                            Competition::findOrFail($applicationId)->delete();
+                            Program::findOrFail($applicationId)->delete();
                         }
                         break;
                     case 'archive':
                         if ($applicationId) {
-                            Competition::findOrFail($applicationId)->archive();
+                            Program::findOrFail($applicationId)->archive();
                         }
                         break;
                     default:
@@ -202,21 +202,21 @@ class ApplicationApprovalService
             } else {
                 switch ($actionType) {
                     case 'create':
-                        CompetitionApplication::create($actionData);
+                        ProgramApplication::create($actionData);
                         break;
                     case 'update':
                         if ($applicationId) {
-                            CompetitionApplication::findOrFail($applicationId)->update($actionData);
+                            ProgramApplication::findOrFail($applicationId)->update($actionData);
                         }
                         break;
                     case 'delete':
                         if ($applicationId) {
-                            CompetitionApplication::findOrFail($applicationId)->delete();
+                            ProgramApplication::findOrFail($applicationId)->delete();
                         }
                         break;
                     case 'archive':
                         if ($applicationId) {
-                            CompetitionApplication::findOrFail($applicationId)->archive();
+                            ProgramApplication::findOrFail($applicationId)->archive();
                         }
                         break;
                     default:
@@ -239,7 +239,7 @@ class ApplicationApprovalService
         ?int $applicationId = null,
         string $reason = null,
         int $requestedBy = null,
-        string $modelType = 'CompetitionApplication'
+        string $modelType = 'ProgramApplication'
     ): array {
         $requestedBy = $requestedBy ?? auth()->id();
 
@@ -282,7 +282,7 @@ class ApplicationApprovalService
     public function executeApprovedActions(): int
     {
         $approvedRequests = ApprovalRequest::where('status', 'approved')
-            ->where('target_type', CompetitionApplication::class)
+            ->where('target_type', ProgramApplication::class)
             ->whereNull('executed_at')
             ->get();
 
@@ -320,23 +320,23 @@ class ApplicationApprovalService
             
             switch ($actionType) {
                 case 'create':
-                    $application = CompetitionApplication::create($actionData);
+                    $application = ProgramApplication::create($actionData);
                     // Update the approval request with the created application ID
                     $request->update(['target_id' => $application->id]);
                     break;
                 case 'update':
                     if ($request->target_id) {
-                        CompetitionApplication::findOrFail($request->target_id)->update($actionData);
+                        ProgramApplication::findOrFail($request->target_id)->update($actionData);
                     }
                     break;
                 case 'delete':
                     if ($request->target_id) {
-                        CompetitionApplication::findOrFail($request->target_id)->delete();
+                        ProgramApplication::findOrFail($request->target_id)->delete();
                     }
                     break;
                 case 'archive':
                     if ($request->target_id) {
-                        CompetitionApplication::findOrFail($request->target_id)->archive();
+                        ProgramApplication::findOrFail($request->target_id)->archive();
                     }
                     break;
                 default:

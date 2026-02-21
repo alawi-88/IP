@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Competition;
+use App\Models\Program;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -20,10 +20,10 @@ class EventFactory extends Factory
     {
         $date = $this->faker->dateTimeBetween('-1 year', '+1 year')->format('Y-m-d');
 
-        $competitionId = Competition::first()->id;
+        $programId = Program::first()->id;
 
         return [
-            'competition_id' => $competitionId,
+            'program_id' => $programId,
             'title' => [
                 'en' => $this->faker->word,
                 'ar' => $this->faker->word,

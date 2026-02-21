@@ -38,7 +38,7 @@ class ApprovalWorkflowSeeder extends Seeder
         // Create sample approval workflows
         $workflows = [
             [
-                'action' => 'Competition.update',
+                'action' => 'Program.update',
                 'levels' => 2,
                 'is_active' => true,
                 'levels_data' => [

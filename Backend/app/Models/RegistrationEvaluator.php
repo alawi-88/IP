@@ -13,7 +13,7 @@ class RegistrationEvaluator extends Model
     use HasFactory;
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'user_id',
         'is_active',
     ];
@@ -23,9 +23,9 @@ class RegistrationEvaluator extends Model
     ];
 
     // Relationships
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function user(): BelongsTo
@@ -63,7 +63,7 @@ class RegistrationEvaluator extends Model
     public function getEvaluationScoreForApplication(int $applicationId): float
     {
         return $this->evaluations()
-            ->where('competition_application_id', $applicationId)
+            ->where('program_application_id', $applicationId)
             ->sum('score');
     }
 
@@ -75,7 +75,7 @@ class RegistrationEvaluator extends Model
         )->count();
 
         $scoredCriteria = $this->evaluations()
-            ->where('competition_application_id', $applicationId)
+            ->where('program_application_id', $applicationId)
             ->count();
 
         return $totalCriteria > 0 && $scoredCriteria >= $totalCriteria;

@@ -6,7 +6,7 @@ use App\Models\Mentor;
 use App\Models\MentorSession;
 use App\Models\MentorAvailability;
 use App\Models\Participant;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Services\VideoToolIntegrationService;
 use App\Notifications\Mentor\SessionScheduledNotification as MentorSessionScheduledNotification;
 use App\Notifications\Mentor\SessionUpdatedNotification as MentorSessionUpdatedNotification;
@@ -40,7 +40,7 @@ class SessionSchedulingService
             // This ensures only one booking process can access the mentor's availability at a time
             $mentor = Mentor::lockForUpdate()->findOrFail($data['mentor_id']);
         $participant = Participant::findOrFail($data['participant_id']);
-        $competition = Competition::findOrFail($data['competition_id']);
+        $program = Program::findOrFail($data['program_id']);
 
         // Convert scheduled_at to Carbon instance if it's a string
         // CRITICAL: If no timezone is provided, assume the time is in Asia/Riyadh (Saudi Arabia timezone)
@@ -109,7 +109,7 @@ class SessionSchedulingService
         $session = MentorSession::create([
             'mentor_id' => $mentor->id,
             'participant_id' => $participant->id,
-            'competition_id' => $competition->id,
+            'program_id' => $program->id,
             'title' => $data['title'] ?? 'Mentor Session', // Ensure title is never null
             'description' => $data['description'] ?? null,
             'scheduled_at' => $scheduledAt->format('Y-m-d H:i:s'),
@@ -188,7 +188,7 @@ class SessionSchedulingService
             DB::afterCommit(function () use ($sessionId, $sessionStatus, $locale, $serviceInstance) {
                 try {
                     // Refresh session to get latest status (confirmed if video meeting was created)
-                    $freshSession = MentorSession::with(['mentor', 'participant', 'competition'])->find($sessionId);
+                    $freshSession = MentorSession::with(['mentor', 'participant', 'program'])->find($sessionId);
                     if ($freshSession) {
                         $serviceInstance->sendSessionNotifications($freshSession, $locale);
                     }
@@ -343,7 +343,7 @@ class SessionSchedulingService
 
                 // Send update notifications after transaction commits to ensure data is persisted
                 DB::afterCommit(function () use ($sessionId, $sessionChanges, $notificationLocale) {
-                    $freshSession = MentorSession::with(['mentor', 'participant', 'competition'])->find($sessionId);
+                    $freshSession = MentorSession::with(['mentor', 'participant', 'program'])->find($sessionId);
                     if ($freshSession) {
                         $this->sendSessionUpdateNotifications($freshSession, $sessionChanges, $notificationLocale);
                     }
@@ -812,8 +812,8 @@ class SessionSchedulingService
             if (!$session->relationLoaded('participant')) {
                 $session->load('participant');
             }
-            if (!$session->relationLoaded('competition')) {
-                $session->load('competition');
+            if (!$session->relationLoaded('program')) {
+                $session->load('program');
             }
 
             // Notify mentor about new booking

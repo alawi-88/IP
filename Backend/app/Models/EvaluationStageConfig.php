@@ -12,7 +12,7 @@ class EvaluationStageConfig extends Model
     use LogsActivity, HasActivityLog;
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'number_of_stages',
         'stages',
         'is_active',
@@ -32,17 +32,17 @@ class EvaluationStageConfig extends Model
         'number_of_stages',
         'stages',
         'is_active',
-        'competition.title',
-        'competition_id',
+        'program.title',
+        'program_id',
     ];
 
     protected string $moduleName = 'Evaluation Stage Config';
     protected string $logName = 'evaluation_stage_config';
 
     // Relationships
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
 

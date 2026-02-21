@@ -4,9 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TeamFormConfigResource\Pages;
 use App\Filament\Resources\TeamFormConfigResource\RelationManagers;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\TeamFormConfig;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -19,7 +19,7 @@ class TeamFormConfigResource extends Resource
 {
     protected static ?string $model = TeamFormConfig::class;
 
-    // Managed via Competition Hub
+    // Managed via Program Hub
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-plus';
@@ -39,20 +39,20 @@ class TeamFormConfigResource extends Resource
 
                     Section::make('Program Settings')
                         ->schema([
-                            Select::make('competition_id')
+                            Select::make('program_id')
                                 ->label('Program')
                                 ->options(function () {
                                     $user = auth()->user();
 
                                     if ($user->isSuperAdmin()) {
-                                        return Competition::pluck('title', 'id')->toArray();
+                                        return Program::pluck('title', 'id')->toArray();
                                     }
 
-                                    $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                                        ->pluck('competition_id')
+                                    $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                                        ->pluck('program_id')
                                         ->toArray();
 
-                                    return Competition::whereIn('id', $supervisorCompetitions)
+                                    return Program::whereIn('id', $supervisorPrograms)
                                         ->pluck('title', 'id')
                                         ->toArray();
                                 })                                ->searchable()
@@ -119,14 +119,14 @@ class TeamFormConfigResource extends Resource
                 if ($user->isSuperAdmin()) {
                     return $query;
                 }
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereIn('competition_id', $supervisorCompetitions);
+                return $query->whereIn('program_id', $supervisorPrograms);
             })
             ->columns([
-                Tables\Columns\TextColumn::make('competition.title')
+                Tables\Columns\TextColumn::make('program.title')
                     ->label('Program')
                     ->searchable()
                     ->sortable(),
@@ -177,46 +177,46 @@ class TeamFormConfigResource extends Resource
     }
 
     /**
-     * IDOR prevention: verify user has access to the competition.
+     * IDOR prevention: verify user has access to the program.
      */
     public static function canEdit(Model $record): bool
     {
         if ($record->isArchived() || !auth()->user()?->can('update TeamFormConfig')) {
             return false;
         }
-        return $record->competition && $record->competition->canAccessProgram();
+        return $record->program && $record->program->canAccessProgram();
     }
 
     /**
-     * IDOR prevention: verify user has access to the competition.
+     * IDOR prevention: verify user has access to the program.
      */
     public static function canDelete(Model $record): bool
     {
         if (!auth()->user()?->can('delete TeamFormConfig')) {
             return false;
         }
-        return $record->competition && $record->competition->canAccessProgram();
+        return $record->program && $record->program->canAccessProgram();
     }
 
     /**
-     * IDOR prevention: verify user has access to the competition.
+     * IDOR prevention: verify user has access to the program.
      */
     public static function canArchive(Model $record): bool
     {
         if (!auth()->user()?->can('archive TeamFormConfig') || $record->isArchived()) {
             return false;
         }
-        return $record->competition && $record->competition->canAccessProgram();
+        return $record->program && $record->program->canAccessProgram();
     }
 
     /**
-     * IDOR prevention: verify user has access to the competition.
+     * IDOR prevention: verify user has access to the program.
      */
     public static function canRestore(Model $record): bool
     {
         if (!auth()->user()?->can('restore TeamFormConfig') || !$record->isArchived()) {
             return false;
         }
-        return $record->competition && $record->competition->canAccessProgram();
+        return $record->program && $record->program->canAccessProgram();
     }
 }

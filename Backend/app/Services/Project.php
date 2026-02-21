@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Project as ProjectModel;
 use App\Models\Form;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Notifications\ProjectSubmitted;
 use App\Jobs\ProcessProjectAiEvaluation;
 use App\Models\FormAiScoringConfig;

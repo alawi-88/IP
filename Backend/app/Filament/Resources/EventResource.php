@@ -42,7 +42,7 @@ class EventResource extends Resource
             return false;
         }
 
-        return ! empty(currentCompetitionId());
+        return ! empty(currentProgramId());
     }
 
     public static function canEdit(Model $record): bool

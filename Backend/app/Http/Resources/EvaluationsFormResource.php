@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Competition;
+use App\Models\Program;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -50,7 +50,7 @@ class EvaluationsFormResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'competition' => new CompetitionResource($this->competition),
+            'program' => new ProgramResource($this->program),
             'type' => $this->type,
             'name' => $this->name,
             'description' => ! empty($this->description) ? $this->description : null,

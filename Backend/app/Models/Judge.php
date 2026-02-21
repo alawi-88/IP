@@ -27,7 +27,7 @@ class Judge extends Authenticatable
     public array $translatable = ['name', 'experience_field'];
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'name',
         'email',
         'phone_number',
@@ -73,8 +73,8 @@ class Judge extends Authenticatable
         'email',
         'phone_number',
         'experience_field',
-        'competition.title',
-        'competition_id',
+        'program.title',
+        'program_id',
         'is_archived',
         'archived_at',
     ];
@@ -108,14 +108,14 @@ class Judge extends Authenticatable
         });
     }
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
-    public function competitions(): BelongsToMany
+    public function programs(): BelongsToMany
     {
-        return $this->belongsToMany(Competition::class, 'competition_judge')->withTimestamps();
+        return $this->belongsToMany(Program::class, 'program_judge')->withTimestamps();
     }
 
     public function projects(): BelongsToMany
@@ -126,9 +126,9 @@ class Judge extends Authenticatable
             ->withPivot(['id', 'evaluation_score']);
     }
 
-    public function getAssignedCompetitionsCountAttribute(): int
+    public function getAssignedProgramsCountAttribute(): int
     {
-        return $this->competitions()->count();
+        return $this->programs()->count();
     }
 
     public function getAssignedProjectsCountAttribute(): int
@@ -186,9 +186,9 @@ class Judge extends Authenticatable
                 ->placeholder('Not Verified')
                 ->color(fn($state) => $state ? 'success' : 'danger'),
 
-            Tables\Columns\TextColumn::make('assigned_competitions_count')
+            Tables\Columns\TextColumn::make('assigned_programs_count')
                 ->label('Programs Count')
-                ->counts('competitions'),
+                ->counts('programs'),
 
             Tables\Columns\TextColumn::make('assigned_projects_count')
                 ->label('Projects Count')
@@ -236,35 +236,35 @@ class Judge extends Authenticatable
                 ->extraFieldWrapperAttributes(['class' => 'text-right'])
                 ->required(),
 
-            Forms\Components\Select::make('competitions')
+            Forms\Components\Select::make('programs')
                 ->label('Programs')
                 ->multiple()
                 ->required()
                 ->relationship(
-                    name: 'competitions',
+                    name: 'programs',
                     titleAttribute: 'title',
                     modifyQueryUsing: function ($query) {
                         $user = auth()->user();
                         if (! $user->isSuperAdmin()) {
-                            $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                                ->pluck('competition_id');
-                            $query->whereIn('competitions.id', $supervisorCompetitions);
+                            $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                                ->pluck('program_id');
+                            $query->whereIn('programs.id', $supervisorPrograms);
                         }
                     }
                 )
                 ->getSearchResultsUsing(function (string $search) {
                     $user = auth()->user();
 
-                    $query = Competition::query()
-                        ->where('competitions.title', 'like', "%{$search}%");
+                    $query = Program::query()
+                        ->where('programs.title', 'like', "%{$search}%");
 
                     if (! $user->isSuperAdmin()) {
-                        $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                            ->pluck('competition_id');
-                        $query->whereIn('competitions.id', $supervisorCompetitions);
+                        $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                            ->pluck('program_id');
+                        $query->whereIn('programs.id', $supervisorPrograms);
                     }
 
-                    return $query->limit(50)->pluck('competitions.title', 'competitions.id');
+                    return $query->limit(50)->pluck('programs.title', 'programs.id');
                 })
                 ->columnSpanFull(),
 
@@ -290,11 +290,11 @@ class Judge extends Authenticatable
                             $pendingCount = $totalProjects - $completedCount;
                             return "{$pendingCount} Pending, {$completedCount} Completed";
                         }),
-                    TextEntry::make('competitions')
+                    TextEntry::make('programs')
                         ->label('Programs')
                         ->getStateUsing(function ($record) {
-                            return $record->competitions->map(function ($competition) {
-                                return "<a href='" . route('competitions.show', $competition->id) . "' target='_blank'>" . $competition->title . "</a>";
+                            return $record->programs->map(function ($program) {
+                                return "<a href='" . route('programs.show', $program->id) . "' target='_blank'>" . $program->title . "</a>";
                             })->join(', ');
                         })
                         ->html(),

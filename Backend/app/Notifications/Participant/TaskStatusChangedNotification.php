@@ -25,13 +25,13 @@ class TaskStatusChangedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $taskTitle = $this->assignment->getTranslation('title', 'en');
-        $competitionTitle = $this->assignment->competition?->getTranslation('title', 'en') ?? 'Unknown Program';
+        $programTitle = $this->assignment->program?->getTranslation('title', 'en') ?? 'Unknown Program';
         $statusLabel = ucwords(str_replace('_', ' ', $this->newStatus));
 
         $mail = (new MailMessage)
-            ->subject("Task Update: {$statusLabel} - {$competitionTitle}")
+            ->subject("Task Update: {$statusLabel} - {$programTitle}")
             ->greeting('Dear Participant,')
-            ->line("Your task **{$taskTitle}** in **{$competitionTitle}** has been updated.")
+            ->line("Your task **{$taskTitle}** in **{$programTitle}** has been updated.")
             ->line("**New Status:** {$statusLabel}");
 
         if ($this->newStatus === 'revision_requested') {
@@ -72,7 +72,7 @@ class TaskStatusChangedNotification extends Notification implements ShouldQueue
                 'ar' => "تم تحديث مهمتك \"{$this->assignment->getTranslation('title', 'ar')}\" إلى {$label['ar']}.",
             ],
             'task_assignment_id' => $this->assignment->id,
-            'competition_id' => $this->assignment->competition_id,
+            'program_id' => $this->assignment->program_id,
             'new_status' => $this->newStatus,
         ];
     }

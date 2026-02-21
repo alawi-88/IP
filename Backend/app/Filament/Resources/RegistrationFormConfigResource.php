@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RegistrationFormConfigResource\Pages;
 use App\Models\RegistrationFormConfig;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -17,7 +17,7 @@ class RegistrationFormConfigResource extends Resource
 {
     protected static ?string $model = RegistrationFormConfig::class;
 
-    // Managed via Competition Hub
+    // Managed via Program Hub
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
@@ -39,11 +39,11 @@ class RegistrationFormConfigResource extends Resource
                 if ($user->isSuperAdmin()) {
                     return $query;
                 }
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereIn('competition_id', $supervisorCompetitions);
+                return $query->whereIn('program_id', $supervisorPrograms);
             })
             ->columns(RegistrationFormConfig::table())
             ->actions([
@@ -86,46 +86,46 @@ class RegistrationFormConfigResource extends Resource
     }
 
     /**
-     * IDOR prevention: verify user has access to the competition.
+     * IDOR prevention: verify user has access to the program.
      */
     public static function canEdit(Model $record): bool
     {
         if ($record->isArchived() || !auth()->user()?->can('update RegistrationFormConfig')) {
             return false;
         }
-        return $record->competition && $record->competition->canAccessProgram();
+        return $record->program && $record->program->canAccessProgram();
     }
 
     /**
-     * IDOR prevention: verify user has access to the competition.
+     * IDOR prevention: verify user has access to the program.
      */
     public static function canDelete(Model $record): bool
     {
         if (!auth()->user()?->can('delete RegistrationFormConfig')) {
             return false;
         }
-        return $record->competition && $record->competition->canAccessProgram();
+        return $record->program && $record->program->canAccessProgram();
     }
 
     /**
-     * IDOR prevention: verify user has access to the competition.
+     * IDOR prevention: verify user has access to the program.
      */
     public static function canArchive(Model $record): bool
     {
         if (!auth()->user()?->can('archive RegistrationFormConfig') || $record->isArchived()) {
             return false;
         }
-        return $record->competition && $record->competition->canAccessProgram();
+        return $record->program && $record->program->canAccessProgram();
     }
 
     /**
-     * IDOR prevention: verify user has access to the competition.
+     * IDOR prevention: verify user has access to the program.
      */
     public static function canRestore(Model $record): bool
     {
         if (!auth()->user()?->can('restore RegistrationFormConfig') || !$record->isArchived()) {
             return false;
         }
-        return $record->competition && $record->competition->canAccessProgram();
+        return $record->program && $record->program->canAccessProgram();
     }
 }

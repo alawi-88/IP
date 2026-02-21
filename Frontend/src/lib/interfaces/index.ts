@@ -1,6 +1,6 @@
 // program
-export interface Program {
-  data: Competition[];
+export interface ProgramList {
+  data: Program[];
   programs_types: any[];
 }
 
@@ -33,7 +33,7 @@ export interface Stage {
 }
 
 // Competition
-export interface Competition {
+export interface Program {
   id: number;
   title: string;
   type?: {
@@ -50,7 +50,7 @@ export interface Competition {
   stages: Stage[];
   hub?: {
     id: number;
-    competition_id: number;
+    program_id: number;
     tab: string;
     is_visible: boolean;
   }[];
@@ -88,7 +88,7 @@ export interface DynamicForm {
   is_published: boolean;
   created_at: string;
   updated_at: string;
-  competition?: Competition;
+  program?: Program;
   fields: Field[];
   steps: any[];
   team?: {
@@ -101,14 +101,14 @@ export interface DynamicForm {
   evaluation_config?: EvaluationConfig;
 }
 
-// MyProgram
-export interface MyProgram {
-  data: MyCompetition[];
+// ProgramApplicationList
+export interface ProgramApplicationList {
+  data: ProgramApplication[];
   programs_types: any[];
 }
 
-// MyCompetition
-export interface MyCompetition {
+// ProgramApplication
+export interface ProgramApplication {
   id: number;
   status: string;
   submit_type: string;
@@ -116,7 +116,7 @@ export interface MyCompetition {
   is_evaluated?: boolean;
   participant_id?: number;
   participant_name?: string;
-  competition: Competition;
+  program: Program;
   form_id: number;
   form: DynamicForm;
   team_metadata?: {
@@ -344,7 +344,7 @@ export interface Participant {
 
 export interface Judge {
   id: number;
-  competition: null;
+  program: null;
   name: string;
   email: string;
   phone_number: string;
@@ -354,7 +354,7 @@ export interface Judge {
 
 export interface Mentor {
   id: number;
-  competition: Competition;
+  program: Program;
   track: string | null;
   name: string;
   experience: string;
@@ -408,7 +408,7 @@ export interface Session {
   is_cancelled: boolean;
   mentor: Mentor;
   participant: Participant;
-  competition: Competition;
+  program: Program;
   created_at: string;
   updated_at: string;
 }

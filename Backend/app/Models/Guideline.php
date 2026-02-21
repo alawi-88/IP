@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\CompetitionApplicationScope;
-use App\Traits\Competition\FilterByCompetition;
+use App\Models\Scopes\ProgramApplicationScope;
+use App\Traits\Program\FilterByProgram;
 use App\Traits\HasActivityLog;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -19,20 +19,20 @@ use Filament\Forms;
 use Filament\Tables;
 
 /**
- * @method static byCompetition()
+ * @method static byProgram()
  */
-#[ScopedBy([CompetitionApplicationScope::class])]
+#[ScopedBy([ProgramApplicationScope::class])]
 class Guideline extends Model
 {
-    use HasTranslations, FilterByCompetition, LogsActivity, HasActivityLog;
+    use HasTranslations, FilterByProgram, LogsActivity, HasActivityLog;
 
     protected array $logFields = [
         'title',
         'is_visible',
         'is_archived',
         'archived_at',
-        'competition.title',
-        'competition_id'
+        'program.title',
+        'program_id'
     ];
 
     protected string $moduleName = 'Guideline';
@@ -42,7 +42,7 @@ class Guideline extends Model
         'title',
     ];
 
-    protected $fillable = ['competition_id', 'title', 'is_visible', 'is_archived', 'archived_at'];
+    protected $fillable = ['program_id', 'title', 'is_visible', 'is_archived', 'archived_at'];
 
     protected $casts = [
         'is_visible' => 'boolean',
@@ -57,13 +57,13 @@ class Guideline extends Model
         parent::boot();
 
         static::creating(function ($mentor) {
-            $mentor->competition_id = currentCompetitionId();
+            $mentor->program_id = currentProgramId();
         });
     }
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function files(): HasMany
@@ -148,7 +148,7 @@ class Guideline extends Model
     public static function columns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('competition.title')
+            Tables\Columns\TextColumn::make('program.title')
                 ->label('Program'),
 
             Tables\Columns\TextColumn::make('title')
@@ -189,7 +189,7 @@ class Guideline extends Model
             Section::make('Guideline Details')
                 ->columns(3)
                 ->schema([
-                    TextEntry::make('competition.title')
+                    TextEntry::make('program.title')
                         ->label('Program'),
 
                     TextEntry::make('title')

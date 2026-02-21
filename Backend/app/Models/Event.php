@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\CompetitionApplicationScope;
-use App\Traits\Competition\FilterByCompetition;
+use App\Models\Scopes\ProgramApplicationScope;
+use App\Traits\Program\FilterByProgram;
 use App\Traits\HasActivityLog;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\Section;
@@ -18,10 +18,10 @@ use Spatie\Translatable\HasTranslations;
 use Filament\Forms;
 use Filament\Tables;
 
-#[ScopedBy([CompetitionApplicationScope::class])]
+#[ScopedBy([ProgramApplicationScope::class])]
 class Event extends Model
 {
-    use HasTranslations, HasFactory, FilterByCompetition, LogsActivity, HasActivityLog;
+    use HasTranslations, HasFactory, FilterByProgram, LogsActivity, HasActivityLog;
 
     protected array $logFields = [
         'title',
@@ -35,8 +35,8 @@ class Event extends Model
         'is_visible',
         'is_archived',
         'archived_at',
-        'competition.title',
-        'competition_id'
+        'program.title',
+        'program_id'
     ];
 
     protected string $moduleName = 'Event';
@@ -48,7 +48,7 @@ class Event extends Model
     ];
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'title',
         'brief',
         'badge',
@@ -85,7 +85,7 @@ class Event extends Model
         parent::boot();
 
         static::saving(function ($event) {
-            $event->competition_id = currentCompetitionId();
+            $event->program_id = currentProgramId();
             $event->date = $event->date->format('Y-m-d') . ' ' . $event->time->format('H:i:s');
             $event->badge = $event->date->isFuture() ? 'upcoming' : 'completed';
 
@@ -96,9 +96,9 @@ class Event extends Model
         });
     }
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function isUpcoming(): bool

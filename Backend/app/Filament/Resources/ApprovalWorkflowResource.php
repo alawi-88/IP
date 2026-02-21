@@ -78,19 +78,19 @@ class ApprovalWorkflowResource extends Resource
                         Forms\Components\Select::make('action')
                             ->label('Action / الإجراء')
                             ->options([
-                                // Competition/Program Actions
-                                'Competition.create' => 'Create Program / إنشاء برنامج',
-                                'Competition.update' => 'Update Program / تحديث برنامج',
-                                'Competition.delete' => 'Delete Program / حذف برنامج',
-                                'Competition.archive' => 'Archive Program / أرشفة برنامج',
-                                'Competition.restore' => 'Restore Program / استعادة برنامج',
+                                // Program/Program Actions
+                                'Program.create' => 'Create Program / إنشاء برنامج',
+                                'Program.update' => 'Update Program / تحديث برنامج',
+                                'Program.delete' => 'Delete Program / حذف برنامج',
+                                'Program.archive' => 'Archive Program / أرشفة برنامج',
+                                'Program.restore' => 'Restore Program / استعادة برنامج',
 
-                                // Competition Application Actions
-                                'CompetitionApplication.create' => 'Create Application / إنشاء طلب',
-                                'CompetitionApplication.update' => 'Update Application / تحديث طلب',
-                                'CompetitionApplication.delete' => 'Delete Application / حذف طلب',
-                                'CompetitionApplication.archive' => 'Archive Application / أرشفة طلب',
-                                'CompetitionApplication.restore' => 'Restore Application / استعادة طلب',
+                                // Program Application Actions
+                                'ProgramApplication.create' => 'Create Application / إنشاء طلب',
+                                'ProgramApplication.update' => 'Update Application / تحديث طلب',
+                                'ProgramApplication.delete' => 'Delete Application / حذف طلب',
+                                'ProgramApplication.archive' => 'Archive Application / أرشفة طلب',
+                                'ProgramApplication.restore' => 'Restore Application / استعادة طلب',
 
                                 // Form Actions
                                 'Form.create' => 'Create Form / إنشاء نموذج',
@@ -175,7 +175,7 @@ class ApprovalWorkflowResource extends Resource
 
                                 // Branding Actions
                                 'BrandingSetting.update' => 'Update Platform Branding / تحديث هوية المنصة',
-                                'BrandingCompetition.update' => 'Update Program Branding / تحديث هوية البرنامج',
+                                'BrandingProgram.update' => 'Update Program Branding / تحديث هوية البرنامج',
 
                                 // Evaluation Actions
                                 'ProjectEvaluation.create' => 'Create Evaluation / إنشاء تقييم',

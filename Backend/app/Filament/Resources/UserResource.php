@@ -3,11 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers\CompetitionsRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\ProgramsRelationManager;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\User;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -28,20 +28,20 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('competitions')
+                Forms\Components\Select::make('programs')
                     ->label('Programs')
                     ->multiple()
-                    ->relationship('competitions', 'title')
+                    ->relationship('programs', 'title')
                     ->options(function () {
                         $user = auth()->user();
                         if ($user->isSuperAdmin()) {
-                            return Competition::pluck('title', 'id');
+                            return Program::pluck('title', 'id');
                         }
 
-                        $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                            ->pluck('competition_id');
+                        $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                            ->pluck('program_id');
 
-                        return Competition::whereIn('id', $supervisorCompetitions)
+                        return Program::whereIn('id', $supervisorPrograms)
                             ->pluck('title', 'id');
                     })
                     ->columnSpanFull(),
@@ -81,12 +81,12 @@ class UserResource extends Resource
                     return $query;
                 }
 
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereHas('competitions', function ($q) use ($supervisorCompetitions) {
-                    $q->whereIn('competitions.id', $supervisorCompetitions);
+                return $query->whereHas('programs', function ($q) use ($supervisorPrograms) {
+                    $q->whereIn('programs.id', $supervisorPrograms);
                 });
             })
             ->columns([
@@ -103,9 +103,9 @@ class UserResource extends Resource
                     ->badge()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('competitions_count')
+                Tables\Columns\TextColumn::make('programs_count')
                     ->label('Programs Count')
-                    ->counts('competitions')
+                    ->counts('programs')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('last_login_at')
@@ -137,7 +137,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            CompetitionsRelationManager::class,
+            ProgramsRelationManager::class,
             RolesRelationManager::class,
         ];
     }

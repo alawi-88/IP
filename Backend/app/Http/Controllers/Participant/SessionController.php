@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Participant\BookSessionRequest;
 use App\Http\Requests\Participant\RescheduleSessionRequest;
 use App\Http\Resources\MentorSessionResource;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\Mentor;
 use App\Models\MentorSession;
 use App\Services\SessionSchedulingService;
@@ -35,8 +35,8 @@ class SessionController extends Controller
      * - 'canceled': All canceled sessions regardless of date
      * - No filter: Returns all sessions
      *
-     * If application_id is provided, filters sessions for that specific competition.
-     * If application_id is not provided, returns sessions from all competitions.
+     * If application_id is provided, filters sessions for that specific program.
+     * If application_id is not provided, returns sessions from all programs.
      */
     public function index(Request $request): JsonResponse
     {
@@ -49,11 +49,11 @@ class SessionController extends Controller
 
             // Query sessions for this participant
             $query = MentorSession::where('participant_id', $participant->id)
-                ->with(['mentor', 'competition']);
+                ->with(['mentor', 'program']);
 
-            // Filter by competition if application_id is provided
+            // Filter by program if application_id is provided
             if ($applicationId) {
-                $application = CompetitionApplication::find($applicationId);
+                $application = ProgramApplication::find($applicationId);
                 if (!$application) {
                     return response()->json([
                         'success' => false,
@@ -69,8 +69,8 @@ class SessionController extends Controller
                     ], 404);
                 }
 
-                $competitionId = $application->competition_id;
-                $query->where('competition_id', $competitionId);
+                $programId = $application->program_id;
+                $query->where('program_id', $programId);
             }
 
             // Filter by category (upcoming, past, canceled)
@@ -166,7 +166,7 @@ class SessionController extends Controller
             ], 404);
         }
 
-        $session->load(['mentor', 'competition']);
+        $session->load(['mentor', 'program']);
 
         return response()->json([
             'success' => true,
@@ -190,8 +190,8 @@ class SessionController extends Controller
                 ], 400);
             }
 
-            // Get competition_id from application
-            $application = CompetitionApplication::find($applicationId);
+            // Get program_id from application
+            $application = ProgramApplication::find($applicationId);
             if (!$application) {
                 return response()->json([
                     'success' => false,
@@ -207,15 +207,15 @@ class SessionController extends Controller
                 ], 404);
             }
 
-            $competitionId = $application->competition_id;
+            $programId = $application->program_id;
 
             // Fetch mentor with visibility and approval constraints
             $mentor = Mentor::query()
                 ->where('id', $mentorId)
                 ->where('is_visible', true)
                 ->where('status', 'approved')
-                ->whereHas('competitions', function ($q) use ($competitionId) {
-                    $q->where('competitions.id', $competitionId);
+                ->whereHas('programs', function ($q) use ($programId) {
+                    $q->where('programs.id', $programId);
                 })
                 ->active()
                 ->first();
@@ -227,11 +227,11 @@ class SessionController extends Controller
                 ], 404);
             }
 
-            // Query sessions for this participant with this mentor in this competition
+            // Query sessions for this participant with this mentor in this program
             $query = MentorSession::where('participant_id', $participant->id)
                 ->where('mentor_id', $mentor->id)
-                ->where('competition_id', $competitionId)
-                ->with(['mentor', 'competition']);
+                ->where('program_id', $programId)
+                ->with(['mentor', 'program']);
 
             // Filter by status
             if ($request->has('status')) {
@@ -268,14 +268,14 @@ class SessionController extends Controller
         $request->validate([
             'date' => 'required_without:day|date',
             'duration_minutes' => 'integer|min:15|max:480',
-            'application_id' => 'required|exists:competition_applications,id',
+            'application_id' => 'required|exists:program_applications,id',
             'day' => 'required_without:date|string|in:Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday',
         ]);
 
         try {
             $participant = Auth::user();
             $applicationId = $request->input('application_id');
-            $application = CompetitionApplication::findOrFail($applicationId);
+            $application = ProgramApplication::findOrFail($applicationId);
             
             // IDOR Prevention: Verify that the application belongs to the authenticated user
             if ($application->participant_id !== $participant->id) {
@@ -285,15 +285,15 @@ class SessionController extends Controller
                 ], 404);
             }
             
-            $competitionId = $application->competition_id;
+            $programId = $application->program_id;
 
             // Fetch mentor with visibility and approval constraints
             $mentor = Mentor::query()
                 ->where('id', $mentorId)
                 ->where('is_visible', true)
                 ->where('status', 'approved')
-                ->whereHas('competitions', function ($q) use ($competitionId) {
-                    $q->where('competitions.id', $competitionId);
+                ->whereHas('programs', function ($q) use ($programId) {
+                    $q->where('programs.id', $programId);
                 })
                 ->active()
                 ->first();
@@ -398,8 +398,8 @@ class SessionController extends Controller
             $participant = Auth::user();
             $data = $request->validated();
 
-            // Get competition_id from application
-            $application = CompetitionApplication::findOrFail($data['application_id']);
+            // Get program_id from application
+            $application = ProgramApplication::findOrFail($data['application_id']);
             
             // IDOR Prevention: Verify that the application belongs to the authenticated user
             if ($application->participant_id !== $participant->id) {
@@ -409,16 +409,16 @@ class SessionController extends Controller
                 ], 404);
             }
             
-            $data['competition_id'] = $application->competition_id;
-            $competitionId = $application->competition_id;
+            $data['program_id'] = $application->program_id;
+            $programId = $application->program_id;
 
             // Fetch mentor with visibility and approval constraints
             $mentor = Mentor::query()
                 ->where('id', $mentorId)
                 ->where('is_visible', true)
                 ->where('status', 'approved')
-                ->whereHas('competitions', function ($q) use ($competitionId) {
-                    $q->where('competitions.id', $competitionId);
+                ->whereHas('programs', function ($q) use ($programId) {
+                    $q->where('programs.id', $programId);
                 })
                 ->active()
                 ->first();
@@ -584,7 +584,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_booked_successfully'),
-                'data' => new MentorSessionResource($session->load(['mentor', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['mentor', 'program'])),
             ], 201);
 
         } catch (\Exception $e) {
@@ -727,7 +727,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_rescheduled_successfully'),
-                'data' => new MentorSessionResource($updatedSession->load(['mentor', 'competition'])),
+                'data' => new MentorSessionResource($updatedSession->load(['mentor', 'program'])),
             ]);
 
         } catch (\Exception $e) {
@@ -804,7 +804,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_cancelled'),
-                'data' => new MentorSessionResource($session->load(['mentor', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['mentor', 'program'])),
             ]);
 
         } catch (\Exception $e) {
@@ -829,11 +829,11 @@ class SessionController extends Controller
                 ->whereNotNull('scheduled_at')
                 ->whereRaw('DATE_ADD(scheduled_at, INTERVAL COALESCE(duration_minutes, 30) MINUTE) < NOW()');
 
-            // Filter by competition if application_id is provided
+            // Filter by program if application_id is provided
             if ($applicationId) {
-                $application = CompetitionApplication::find($applicationId);
+                $application = ProgramApplication::find($applicationId);
                 if ($application) {
-                    $query->where('competition_id', $application->competition_id);
+                    $query->where('program_id', $application->program_id);
                 }
             }
 

@@ -15,8 +15,8 @@ class ParticipantExporter extends Exporter
     {
         return [
             ExportColumn::make('id'),
-            ExportColumn::make('competitions')->label('Programs')
-            ->formatStateUsing(fn ($record) => $record->applications->map(fn ($application) => $application->competition->title)->join(', ')),
+            ExportColumn::make('programs')->label('Programs')
+            ->formatStateUsing(fn ($record) => $record->applications->map(fn ($application) => $application->program->title)->join(', ')),
             ExportColumn::make('serial_number'),
             ExportColumn::make('name'),
             ExportColumn::make('phone'),

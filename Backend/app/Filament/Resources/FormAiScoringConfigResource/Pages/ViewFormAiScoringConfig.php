@@ -43,7 +43,7 @@ class ViewFormAiScoringConfig extends ViewRecord
             ->schema([
                 Section::make('Form Information / معلومات النموذج')
                     ->schema([
-                        TextEntry::make('form.competition.title')
+                        TextEntry::make('form.program.title')
                             ->label('Program / البرنامج'),
                         TextEntry::make('form.type')
                             ->label('Form Type / نوع النموذج')

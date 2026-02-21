@@ -19,19 +19,19 @@ class ProjectExporter extends BaseExporter
 
     /**
      * Get project form fields to use as dynamic export columns.
-     * Uses current competition from session when set; otherwise all forms that have projects.
+     * Uses current program from session when set; otherwise all forms that have projects.
      */
     protected static function getFormFieldsForExport(): \Illuminate\Support\Collection
     {
-        $currentCompetitionId = session('current_competition_id');
-        if (!$currentCompetitionId && function_exists('request') && request()->hasSession()) {
-            $currentCompetitionId = request()->session()->get('current_competition_id');
+        $currentProgramId = session('current_program_id');
+        if (!$currentProgramId && function_exists('request') && request()->hasSession()) {
+            $currentProgramId = request()->session()->get('current_program_id');
         }
 
-        if ($currentCompetitionId) {
-            $competition = \App\Models\Competition::find($currentCompetitionId);
-            if ($competition) {
-                $projectStage = $competition->projectStage();
+        if ($currentProgramId) {
+            $program = \App\Models\Program::find($currentProgramId);
+            if ($program) {
+                $projectStage = $program->projectStage();
                 if ($projectStage?->form_id) {
                     $form = Form::where('id', $projectStage->form_id)
                         ->projectType()
@@ -48,7 +48,7 @@ class ProjectExporter extends BaseExporter
                 $projectForms = Form::projectType()
                     ->published()
                     ->active()
-                    ->where('competition_id', $currentCompetitionId)
+                    ->where('program_id', $currentProgramId)
                     ->get();
                 if ($projectForms->isNotEmpty()) {
                     $allFields = collect();

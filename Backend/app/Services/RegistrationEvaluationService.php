@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\RegistrationEvaluation;
 use App\Models\RegistrationEvaluationCriterion;
 use App\Models\RegistrationEvaluationForm;
@@ -19,7 +19,7 @@ class RegistrationEvaluationService
      */
     public function calculateFinalScore(int $applicationId): float
     {
-        $evaluations = RegistrationEvaluation::where('competition_application_id', $applicationId)->get();
+        $evaluations = RegistrationEvaluation::where('program_application_id', $applicationId)->get();
 
         if ($evaluations->isEmpty()) {
             return 0;
@@ -57,7 +57,7 @@ class RegistrationEvaluationService
     {
         $score = $this->calculateFinalScore($applicationId);
 
-        $application = CompetitionApplication::find($applicationId);
+        $application = ProgramApplication::find($applicationId);
         if ($application) {
             $application->update(['final_evaluation_score' => $score]);
         }
@@ -71,10 +71,10 @@ class RegistrationEvaluationService
      */
     public function meetsMinimumThreshold(int $applicationId): bool
     {
-        $application = CompetitionApplication::find($applicationId);
+        $application = ProgramApplication::find($applicationId);
         if (!$application) return false;
 
-        $threshold = $this->getMinimumThreshold($application->competition_id);
+        $threshold = $this->getMinimumThreshold($application->program_id);
         if ($threshold === null) return true; // No threshold set
 
         $score = $application->final_evaluation_score ?? $this->calculateFinalScore($applicationId);
@@ -83,12 +83,12 @@ class RegistrationEvaluationService
     }
 
     /**
-     * Get the minimum score threshold for a competition.
+     * Get the minimum score threshold for a program.
      */
-    public function getMinimumThreshold(int $competitionId): ?float
+    public function getMinimumThreshold(int $programId): ?float
     {
-        // Check competition_applications table first
-        $config = RegistrationFormConfig::where('competition_id', $competitionId)->first();
+        // Check program_applications table first
+        $config = RegistrationFormConfig::where('program_id', $programId)->first();
         if ($config && $config->minimum_score_threshold !== null) {
             return (float) $config->minimum_score_threshold;
         }
@@ -102,22 +102,22 @@ class RegistrationEvaluationService
      */
     public function getScoreBreakdown(int $applicationId): array
     {
-        $application = CompetitionApplication::find($applicationId);
+        $application = ProgramApplication::find($applicationId);
         if (!$application) return [];
 
-        $competitionId = $application->competition_id;
-        $forms = RegistrationEvaluationForm::where('competition_id', $competitionId)
+        $programId = $application->program_id;
+        $forms = RegistrationEvaluationForm::where('program_id', $programId)
             ->where('status', 'published')
             ->with('criteria')
             ->orderBy('sort_order')
             ->get();
 
-        $evaluators = RegistrationEvaluator::where('competition_id', $competitionId)
+        $evaluators = RegistrationEvaluator::where('program_id', $programId)
             ->where('is_active', true)
             ->with('user')
             ->get();
 
-        $evaluations = RegistrationEvaluation::where('competition_application_id', $applicationId)
+        $evaluations = RegistrationEvaluation::where('program_application_id', $applicationId)
             ->get()
             ->groupBy(['registration_evaluator_id', 'registration_evaluation_criterion_id']);
 
@@ -171,7 +171,7 @@ class RegistrationEvaluationService
 
         // Calculate overall totals
         $totalScore = $this->calculateFinalScore($applicationId);
-        $threshold = $this->getMinimumThreshold($competitionId);
+        $threshold = $this->getMinimumThreshold($programId);
 
         return [
             'application_id' => $applicationId,
@@ -186,9 +186,9 @@ class RegistrationEvaluationService
     /**
      * Get all evaluators who have completed evaluation for an application.
      */
-    public function getCompletedEvaluators(int $applicationId, int $competitionId): Collection
+    public function getCompletedEvaluators(int $applicationId, int $programId): Collection
     {
-        return RegistrationEvaluator::where('competition_id', $competitionId)
+        return RegistrationEvaluator::where('program_id', $programId)
             ->where('is_active', true)
             ->get()
             ->filter(fn ($evaluator) => $evaluator->hasCompletedEvaluation($applicationId));
@@ -197,9 +197,9 @@ class RegistrationEvaluationService
     /**
      * Check if all evaluators have completed their evaluation for an application.
      */
-    public function isFullyEvaluated(int $applicationId, int $competitionId): bool
+    public function isFullyEvaluated(int $applicationId, int $programId): bool
     {
-        $evaluators = RegistrationEvaluator::where('competition_id', $competitionId)
+        $evaluators = RegistrationEvaluator::where('program_id', $programId)
             ->where('is_active', true)
             ->get();
 

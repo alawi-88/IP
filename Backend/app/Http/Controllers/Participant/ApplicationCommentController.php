@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Participant;
 
 use App\Http\Controllers\Controller;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\ApplicationComment;
 use App\Models\User;
 use App\Notifications\ParticipantApplicationReply;
@@ -16,7 +16,7 @@ use Filament\Notifications\Notification;
 
 class ApplicationCommentController extends Controller
 {
-    public function index(CompetitionApplication $application): JsonResponse
+    public function index(ProgramApplication $application): JsonResponse
     {
         $this->authorizeApplication($application);
 
@@ -58,7 +58,7 @@ class ApplicationCommentController extends Controller
         return response()->json($comments);
     }
 
-    public function store(Request $request, CompetitionApplication $application): JsonResponse
+    public function store(Request $request, ProgramApplication $application): JsonResponse
     {
         $this->authorizeApplication($application);
 
@@ -106,11 +106,11 @@ class ApplicationCommentController extends Controller
                 }
             } else {
                 // This is a participant comment, notify admins assigned to this program
-                $competition = $application->competition;
+                $program = $application->program;
                 
-                if ($competition) {
-                    // Get admins assigned to this competition
-                    $assignedAdminIds = \App\Models\UserCompetition::where('competition_id', $competition->id)
+                if ($program) {
+                    // Get admins assigned to this program
+                    $assignedAdminIds = \App\Models\UserProgram::where('program_id', $program->id)
                         ->pluck('user_id');
                     
                     // Get super admins (they should always be notified)
@@ -126,7 +126,7 @@ class ApplicationCommentController extends Controller
                         ->where('is_archived', false)
                         ->get();
                 } else {
-                    // Fallback: if no competition found, use permission-based approach
+                    // Fallback: if no program found, use permission-based approach
                     $adminsToNotify = \App\Models\User::permission('create ApplicationComment')
                         ->where('is_archived', false)
                         ->get();
@@ -137,11 +137,11 @@ class ApplicationCommentController extends Controller
                     $admin->notify(new ParticipantApplicationReply($comment));
                     
                     // Send Filament database notification for admin panel
-                    $competitionName = $application->competition->title ?? 'Competition';
+                    $programName = $application->program->title ?? 'Program';
                     $participantName = $comment->author?->name ?? __('A participant');
                     $admin->notify(
                         Notification::make()
-                            ->title('New reply on application: ' . $competitionName)
+                            ->title('New reply on application: ' . $programName)
                             ->body('"' . $participantName . '" replied to your comment on their application: "' . $comment->comment . '"')
                             ->icon('heroicon-o-chat-bubble-left-right')
                             ->color('success')
@@ -189,7 +189,7 @@ class ApplicationCommentController extends Controller
         return response()->json($formattedComment);
     }
 
-    public function markRead(CompetitionApplication $application): JsonResponse
+    public function markRead(ProgramApplication $application): JsonResponse
     {
         $this->authorizeApplication($application);
 
@@ -200,7 +200,7 @@ class ApplicationCommentController extends Controller
     }
 
 
-    private function authorizeApplication(CompetitionApplication $application): void
+    private function authorizeApplication(ProgramApplication $application): void
     {
         // Check if participant is archived
         $participant = auth()->user();

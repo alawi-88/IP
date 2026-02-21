@@ -9,12 +9,12 @@ class AdminChatbot extends Component
     public bool $isOpen = false;
     public string $userMessage = '';
     public array $messages = [];
-    public int $competitionId;
+    public int $programId;
     public string $activeTab = 'overview';
 
-    public function mount(int $competitionId, string $activeTab = 'overview')
+    public function mount(int $programId, string $activeTab = 'overview')
     {
-        $this->competitionId = $competitionId;
+        $this->programId = $programId;
         $this->activeTab = $activeTab;
 
         // Welcome message

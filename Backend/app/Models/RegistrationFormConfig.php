@@ -16,7 +16,7 @@ class RegistrationFormConfig extends Model
     use HasTranslations, LogsActivity, HasActivityLog;
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'registration_type',
         'min_age',
         'max_age',
@@ -71,16 +71,16 @@ class RegistrationFormConfig extends Model
         'is_archived',
         'archived_at',
         'scoring_enabled',
-        'competition.title',
-        'competition_id',
+        'program.title',
+        'program_id',
     ];
 
     protected string $moduleName = 'Registration Form Config';
     protected string $logName = 'registration_form_config';
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     /**
@@ -100,20 +100,20 @@ class RegistrationFormConfig extends Model
 
             Forms\Components\Section::make('Registration Configuration')
                 ->schema([
-                    Forms\Components\Select::make('competition_id')
+                    Forms\Components\Select::make('program_id')
                         ->label('Program')
                         ->options(function () {
                             $user = auth()->user();
 
                             if ($user->isSuperAdmin()) {
-                                return Competition::pluck('title', 'id')->toArray();
+                                return Program::pluck('title', 'id')->toArray();
                             }
 
-                            $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                                ->pluck('competition_id')
+                            $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                                ->pluck('program_id')
                                 ->toArray();
 
-                            return Competition::whereIn('id', $supervisorCompetitions)
+                            return Program::whereIn('id', $supervisorPrograms)
                                 ->pluck('title', 'id')
                                 ->toArray();
                         })
@@ -385,7 +385,7 @@ class RegistrationFormConfig extends Model
     public static function table(): array
     {
         return [
-            Tables\Columns\TextColumn::make('competition.title')
+            Tables\Columns\TextColumn::make('program.title')
                 ->label('Program')
                 ->searchable()
                 ->sortable(),

@@ -20,7 +20,7 @@ trait HasNotificationMessage
         $body_en = $template?->body['en'] ;
         $body_ar = $template?->body['ar'] ;
 
-        // استبدال المتغيرات مثل {{name}} , {{competition}}
+        // استبدال المتغيرات مثل {{name}} , {{program}}
         foreach ($vars as $k => $v) {
             $body_en = str_replace('{{'.$k.'}}', $v, $body_en);
             $body_ar = str_replace('{{'.$k.'}}', $v, $body_ar);

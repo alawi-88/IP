@@ -173,7 +173,7 @@ class Participant extends Authenticatable implements MustVerifyEmail
 
     public function applications(): HasMany
     {
-        return $this->hasMany(CompetitionApplication::class)->submission()->active();
+        return $this->hasMany(ProgramApplication::class)->submission()->active();
     }
 
     public function team(): HasOneThrough
@@ -204,7 +204,7 @@ class Participant extends Authenticatable implements MustVerifyEmail
     public function mentors(): BelongsToMany
     {
         return $this->belongsToMany(Mentor::class, 'mentor_participant')
-            ->withPivot(['assigned_by', 'assigned_at', 'notes', 'competition_id'])
+            ->withPivot(['assigned_by', 'assigned_at', 'notes', 'program_id'])
             ->withTimestamps();
     }
 
@@ -342,9 +342,9 @@ class Participant extends Authenticatable implements MustVerifyEmail
         ];
     }
 
-    public function competitionApplications()
+    public function programApplications()
     {
-        return $this->hasMany(CompetitionApplication::class, 'participant_id');
+        return $this->hasMany(ProgramApplication::class, 'participant_id');
     }
 
     public static function namesByIds(array $ids): array

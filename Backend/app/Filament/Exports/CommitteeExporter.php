@@ -15,7 +15,7 @@ class CommitteeExporter extends Exporter
     {
         return [
             ExportColumn::make('id'),
-            ExportColumn::make('competition.title')->label('Program'),
+            ExportColumn::make('program.title')->label('Program'),
             ExportColumn::make('title'),
             ExportColumn::make('judges')->getStateUsing(function ($record) {
                 return $record->judges->pluck('name')->join(', ');

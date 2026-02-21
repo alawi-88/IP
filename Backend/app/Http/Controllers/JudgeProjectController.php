@@ -24,7 +24,7 @@ class JudgeProjectController extends Controller
         }
 
         $type = $request->query('type');
-        $competitionId = $request->query('competition_id');
+        $programId = $request->query('program_id');
         $stageId = $request->query('stage_id');
 
         $projectsQuery = $judge->projects()
@@ -42,9 +42,9 @@ class JudgeProjectController extends Controller
             });
         }
 
-        if ($competitionId) {
-            $projectsQuery->whereHas('application', function ($q) use ($competitionId) {
-                $q->where('competition_id', $competitionId);
+        if ($programId) {
+            $projectsQuery->whereHas('application', function ($q) use ($programId) {
+                $q->where('program_id', $programId);
             });
         }
 

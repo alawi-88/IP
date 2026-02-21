@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\ApprovalRequest;
 use App\Models\ApprovalWorkflow;
 use App\Models\ApprovalRequestLevel;
@@ -18,7 +18,7 @@ class ProgramApprovalService
      */
     public function hasWorkflowForAction(string $actionType): bool
     {
-        return ApprovalWorkflow::where('action', "Competition.{$actionType}")
+        return ApprovalWorkflow::where('action', "Program.{$actionType}")
             ->where('is_active', true)
             ->exists();
     }
@@ -28,7 +28,7 @@ class ProgramApprovalService
      */
     public function getWorkflowForAction(string $actionType): ?ApprovalWorkflow
     {
-        return ApprovalWorkflow::where('action', "Competition.{$actionType}")
+        return ApprovalWorkflow::where('action', "Program.{$actionType}")
             ->where('is_active', true)
             ->first();
     }
@@ -65,8 +65,8 @@ class ProgramApprovalService
             DB::beginTransaction();
 
             $request = ApprovalRequest::create([
-                'action' => "Competition.{$actionType}",
-                'target_type' => Competition::class,
+                'action' => "Program.{$actionType}",
+                'target_type' => Program::class,
                 'target_id' => $programId,
                 'requested_by' => $requestedBy,
                 'approval_workflow_id' => $workflow->id,
@@ -124,21 +124,21 @@ class ProgramApprovalService
         try {
             switch ($actionType) {
                 case 'create':
-                    Competition::create($actionData);
+                    Program::create($actionData);
                     break;
                 case 'update':
                     if ($programId) {
-                        Competition::findOrFail($programId)->update($actionData);
+                        Program::findOrFail($programId)->update($actionData);
                     }
                     break;
                 case 'delete':
                     if ($programId) {
-                        Competition::findOrFail($programId)->delete();
+                        Program::findOrFail($programId)->delete();
                     }
                     break;
                 case 'archive':
                     if ($programId) {
-                        Competition::findOrFail($programId)->update(['is_archived' => true]);
+                        Program::findOrFail($programId)->update(['is_archived' => true]);
                     }
                     break;
                 default:
@@ -201,7 +201,7 @@ class ProgramApprovalService
     public function executeApprovedActions(): int
     {
         $approvedRequests = ApprovalRequest::where('status', 'approved')
-            ->where('target_type', Competition::class)
+            ->where('target_type', Program::class)
             ->whereNull('executed_at')
             ->get();
 

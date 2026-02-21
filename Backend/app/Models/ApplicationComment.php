@@ -42,7 +42,7 @@ class ApplicationComment extends Model
 
     public function application(): BelongsTo
     {
-        return $this->belongsTo(CompetitionApplication::class);
+        return $this->belongsTo(ProgramApplication::class);
     }
 
     public function user(): BelongsTo

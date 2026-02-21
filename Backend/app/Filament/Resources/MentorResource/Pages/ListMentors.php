@@ -31,7 +31,7 @@ class ListMentors extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->query(Mentor::byCompetition())
+            ->query(Mentor::byProgram())
             ->columns(Mentor::columns())
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -437,7 +437,7 @@ class ListMentors extends ListRecords
 
     public function getTabs(): array
     {
-        $baseQuery = Mentor::byCompetition();
+        $baseQuery = Mentor::byProgram();
 
         $tabs = [
             'all' => Tab::make('All')

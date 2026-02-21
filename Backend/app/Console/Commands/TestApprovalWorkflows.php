@@ -62,7 +62,7 @@ class TestApprovalWorkflows extends Command
         $this->line("   Available actions: " . implode(', ', array_keys($actions)));
         
         // Test workflow existence
-        $testAction = 'Competition.update';
+        $testAction = 'Program.update';
         $hasWorkflow = $service->hasWorkflowForAction($testAction);
         $this->line("   Has workflow for '{$testAction}': " . ($hasWorkflow ? 'Yes' : 'No'));
         

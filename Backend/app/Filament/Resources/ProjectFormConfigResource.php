@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectFormConfigResource\Pages;
 use App\Models\ProjectFormConfig;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -16,7 +16,7 @@ class ProjectFormConfigResource extends Resource
 {
     protected static ?string $model = ProjectFormConfig::class;
 
-    // Managed via Competition Hub
+    // Managed via Program Hub
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
@@ -48,17 +48,17 @@ class ProjectFormConfigResource extends Resource
 
                                     if ($user->isSuperAdmin()) {
                                         return $query
-                                            ->where('competition_id', currentCompetitionId())
+                                            ->where('program_id', currentProgramId())
                                             ->pluck('name', 'id');
                                     }
 
-                                    $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                                        ->pluck('competition_id')
+                                    $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                                        ->pluck('program_id')
                                         ->toArray();
 
                                     return $query
-                                        ->whereIn('competition_id', $supervisorCompetitions)
-                                        ->where('competition_id', currentCompetitionId())
+                                        ->whereIn('program_id', $supervisorPrograms)
+                                        ->where('program_id', currentProgramId())
                                         ->pluck('name', 'id');
                                 })
                                 ->getOptionLabelUsing(function ($value) {
@@ -95,12 +95,12 @@ class ProjectFormConfigResource extends Resource
                 if ($user->isSuperAdmin()) {
                     return $query;
                 }
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereHas('form', function ($q) use ($supervisorCompetitions) {
-                    $q->whereIn('competition_id', $supervisorCompetitions);
+                return $query->whereHas('form', function ($q) use ($supervisorPrograms) {
+                    $q->whereIn('program_id', $supervisorPrograms);
                 });
             })
             ->columns([
@@ -168,7 +168,7 @@ class ProjectFormConfigResource extends Resource
             return false;
         }
         $form = $record->form;
-        return $form && $form->competition && $form->competition->canAccessProgram();
+        return $form && $form->program && $form->program->canAccessProgram();
     }
 
     /**
@@ -180,7 +180,7 @@ class ProjectFormConfigResource extends Resource
             return false;
         }
         $form = $record->form;
-        return $form && $form->competition && $form->competition->canAccessProgram();
+        return $form && $form->program && $form->program->canAccessProgram();
     }
 
     /**
@@ -192,7 +192,7 @@ class ProjectFormConfigResource extends Resource
             return false;
         }
         $form = $record->form;
-        return $form && $form->competition && $form->competition->canAccessProgram();
+        return $form && $form->program && $form->program->canAccessProgram();
     }
 
     /**
@@ -204,6 +204,6 @@ class ProjectFormConfigResource extends Resource
             return false;
         }
         $form = $record->form;
-        return $form && $form->competition && $form->competition->canAccessProgram();
+        return $form && $form->program && $form->program->canAccessProgram();
     }
 }

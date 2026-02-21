@@ -45,12 +45,12 @@ class TaskAssignmentResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->can('view CompetitionApplication') ?? false;
+        return auth()->user()?->can('view ProgramApplication') ?? false;
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()?->can('view CompetitionApplication') ?? false;
+        return auth()->user()?->can('view ProgramApplication') ?? false;
     }
 
     public static function canView(Model $record): bool
@@ -58,7 +58,7 @@ class TaskAssignmentResource extends Resource
         $user = auth()->user();
         if (!$user) return false;
         if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) return true;
-        if ($record->competition) return $record->competition->canAccessProgram();
+        if ($record->program) return $record->program->canAccessProgram();
         return false;
     }
 

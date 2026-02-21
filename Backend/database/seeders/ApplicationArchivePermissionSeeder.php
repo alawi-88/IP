@@ -13,8 +13,8 @@ class ApplicationArchivePermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            'archive CompetitionApplication',
-            'restore CompetitionApplication',
+            'archive ProgramApplication',
+            'restore ProgramApplication',
         ];
 
         foreach ($permissions as $permission) {

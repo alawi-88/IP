@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Participant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LeaderboardResource;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\FormEvaluationScore;
 use App\Models\Project;
 use App\Models\Stage;
@@ -14,33 +14,33 @@ use Illuminate\Http\Request;
 class LeaderboardController extends Controller
 {
     /**
-     * Display the leaderboard for the current competition.
+     * Display the leaderboard for the current program.
      */
     public function index(Request $request): JsonResponse
     {
         try {
             $participantId = auth()->id();
 
-            // Prefer competition_id from request, then fallback to session
-            $competitionId = $request->query('competition_id');
+            // Prefer program_id from request, then fallback to session
+            $programId = $request->query('program_id');
 
-            if (!$competitionId) {
+            if (!$programId) {
                 return response()->json([
                     'success' => false,
-                    'message' => __('leaderboard.competition_not_found'),
+                    'message' => __('leaderboard.program_not_found'),
                 ], 404);
             }
 
-            // Get all approved applications for this competition
-            $applications = CompetitionApplication::where('competition_id', $competitionId)
+            // Get all approved applications for this program
+            $applications = ProgramApplication::where('program_id', $programId)
                 ->where('status', 'approved')
                 ->where('is_archived', false)
                 ->where('type', 'submission')
                 ->with(['participant', 'team'])
                 ->get();
 
-            // Get all stages for this competition (excluding registration and team-formation stages)
-            $stages = Stage::where('competition_id', $competitionId)
+            // Get all stages for this program (excluding registration and team-formation stages)
+            $stages = Stage::where('program_id', $programId)
                 ->where('is_visible', true)
                 ->where('slug', '!=', 'registration')
                 ->where('slug', '!=', 'team-formation')

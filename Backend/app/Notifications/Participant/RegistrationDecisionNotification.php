@@ -2,7 +2,7 @@
 
 namespace App\Notifications\Participant;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -13,7 +13,7 @@ class RegistrationDecisionNotification extends Notification implements ShouldQue
     use Queueable;
 
     public function __construct(
-        protected CompetitionApplication $application,
+        protected ProgramApplication $application,
         protected string $decision,
         protected ?string $reason = null
     ) {}
@@ -25,17 +25,17 @@ class RegistrationDecisionNotification extends Notification implements ShouldQue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $competitionTitle = $this->application->competition?->getTranslation('title', 'en') ?? 'Unknown Program';
+        $programTitle = $this->application->program?->getTranslation('title', 'en') ?? 'Unknown Program';
         $isApproved = $this->decision === 'approved';
 
         $mail = (new MailMessage)
             ->subject($isApproved
-                ? "Application Approved - {$competitionTitle}"
-                : "Application Update - {$competitionTitle}")
+                ? "Application Approved - {$programTitle}"
+                : "Application Update - {$programTitle}")
             ->greeting('Dear Participant,')
             ->line($isApproved
-                ? "Your application for **{$competitionTitle}** has been approved!"
-                : "Your application for **{$competitionTitle}** has been reviewed.");
+                ? "Your application for **{$programTitle}** has been approved!"
+                : "Your application for **{$programTitle}** has been reviewed.");
 
         if (!$isApproved && $this->reason) {
             $mail->line("**Reason:** {$this->reason}");
@@ -50,7 +50,7 @@ class RegistrationDecisionNotification extends Notification implements ShouldQue
 
     public function toArray(object $notifiable): array
     {
-        $competitionTitle = $this->application->competition?->title;
+        $programTitle = $this->application->program?->title;
 
         return [
             'title' => [
@@ -63,14 +63,14 @@ class RegistrationDecisionNotification extends Notification implements ShouldQue
             ],
             'body' => [
                 'en' => $this->decision === 'approved'
-                    ? "Your application for " . (is_array($competitionTitle) ? ($competitionTitle['en'] ?? '') : $competitionTitle) . " has been approved."
-                    : "Your application for " . (is_array($competitionTitle) ? ($competitionTitle['en'] ?? '') : $competitionTitle) . " has been reviewed. " . ($this->reason ? "Reason: {$this->reason}" : ''),
+                    ? "Your application for " . (is_array($programTitle) ? ($programTitle['en'] ?? '') : $programTitle) . " has been approved."
+                    : "Your application for " . (is_array($programTitle) ? ($programTitle['en'] ?? '') : $programTitle) . " has been reviewed. " . ($this->reason ? "Reason: {$this->reason}" : ''),
                 'ar' => $this->decision === 'approved'
-                    ? "تم قبول طلبك في " . (is_array($competitionTitle) ? ($competitionTitle['ar'] ?? '') : $competitionTitle)
-                    : "تمت مراجعة طلبك في " . (is_array($competitionTitle) ? ($competitionTitle['ar'] ?? '') : $competitionTitle) . ($this->reason ? ". السبب: {$this->reason}" : ''),
+                    ? "تم قبول طلبك في " . (is_array($programTitle) ? ($programTitle['ar'] ?? '') : $programTitle)
+                    : "تمت مراجعة طلبك في " . (is_array($programTitle) ? ($programTitle['ar'] ?? '') : $programTitle) . ($this->reason ? ". السبب: {$this->reason}" : ''),
             ],
             'application_id' => $this->application->id,
-            'competition_id' => $this->application->competition_id,
+            'program_id' => $this->application->program_id,
             'decision' => $this->decision,
         ];
     }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\WinnerResource;
 use App\Models\Winner;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -17,7 +17,7 @@ class WinnerController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-      $application = CompetitionApplication::findOrFail($request->application_id);
+      $application = ProgramApplication::findOrFail($request->application_id);
       
       // IDOR Prevention: Verify that the application belongs to the authenticated user
       $userId = auth()->id();
@@ -26,8 +26,8 @@ class WinnerController extends Controller
       }
 
         $winners = Winner::with('track')
-            ->whereHas('competition', function ($query) use ($application) {
-                $query->where('id', $application->competition_id);
+            ->whereHas('program', function ($query) use ($application) {
+                $query->where('id', $application->program_id);
             })
             ->visible()
             ->orderBy('rank')
@@ -37,7 +37,7 @@ class WinnerController extends Controller
         $data = $winners->map(function ($winner) use ($lang) {          
             return [
             'id' => $winner->id,
-            'competition_id' => $winner->competition_id,
+            'program_id' => $winner->program_id,
             'track_id' => $winner->track_id,
             'rank' => $winner->rank,
             'name' => $winner->name[$lang] ?? null,

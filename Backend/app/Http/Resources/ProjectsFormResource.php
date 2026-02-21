@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Competition;
+use App\Models\Program;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -74,7 +74,7 @@ class ProjectsFormResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'competition' => new CompetitionResource($this->competition, $this->project_id, $this->application_id),
+            'program' => new ProgramResource($this->program, $this->project_id, $this->application_id),
             'metadata' => $this->metadata,
             'submit_type' => $this->submit_type,
             'type' => $this->type,

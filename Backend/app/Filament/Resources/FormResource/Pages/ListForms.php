@@ -22,8 +22,8 @@ class ListForms extends ListRecords
 
     public function getTabs(): array
     {
-        // IDOR prevention: scope forms to current competition only
-        $baseQuery = Form::byCompetition();
+        // IDOR prevention: scope forms to current program only
+        $baseQuery = Form::byProgram();
 
         $tabs = [
             'all' => Tab::make('All')
@@ -47,7 +47,7 @@ class ListForms extends ListRecords
 
     protected function getTableQuery(): Builder
     {
-        // IDOR prevention: scope forms to current competition only
-        return parent::getTableQuery()->byCompetition();
+        // IDOR prevention: scope forms to current program only
+        return parent::getTableQuery()->byProgram();
     }
 }
