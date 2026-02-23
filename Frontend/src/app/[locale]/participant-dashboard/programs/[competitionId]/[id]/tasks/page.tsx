@@ -16,15 +16,24 @@ import {
   BsUpload,
 } from "react-icons/bs";
 import dayjs from "dayjs";
+// Helper to extract locale value from bilingual objects {ar, en} or plain strings
+function localizedValue(value: any, locale: string): string {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "object" && value !== null) {
+    return value[locale] || value["en"] || value["ar"] || "";
+  }
+  return String(value);
+}
 
 interface TaskAssignment {
   id: number;
-  title: string;
-  description: string;
-  instructions: string;
+  title: string | { ar: string; en: string };
+  description: string | { ar: string; en: string };
+  instructions: string | { ar: string; en: string };
   due_date: string | null;
   status: string;
-  stage: { id: number; title: string } | null;
+  stage: { id: number; title: string | { ar: string; en: string } } | null;
   allowed_file_formats: string[] | null;
   max_file_size_mb: number | null;
   assignment_notes: string;
@@ -165,7 +174,7 @@ export default function TasksPage() {
           setNotes("");
           setFileList([]);
         }}
-        title={selectedTask?.title}
+        title={selectedTask ? localizedValue(selectedTask.title, locale) : undefined}
         footer={[
           <Button
             key="cancel"
@@ -191,7 +200,7 @@ export default function TasksPage() {
                 {t("instructions") || "Instructions"}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                {selectedTask.instructions}
+                {localizedValue(selectedTask.instructions, locale)}
               </p>
             </div>
           )}
@@ -268,7 +277,7 @@ function TaskCard({
     <Card className="!rounded-xl" hoverable>
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-start">
-          <h4 className="font-semibold text-base text-foreground">{task.title}</h4>
+          <h4 className="font-semibold text-base text-foreground">{localizedValue(task.title, locale)}</h4>
           <Tag color={config.color} icon={config.icon}>
             {t(task.status) || task.status.replace(/_/g, " ")}
           </Tag>
@@ -276,13 +285,13 @@ function TaskCard({
 
         {task.description && (
           <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">
-            {task.description}
+            {localizedValue(task.description, locale)}
           </p>
         )}
 
         {task.stage && (
           <div className="text-xs text-gray-400">
-            {t("stage") || "Stage"}: {task.stage.title}
+            {t("stage") || "Stage"}: {localizedValue(task.stage.title, locale)}
           </div>
         )}
 

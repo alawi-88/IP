@@ -93,7 +93,7 @@ export default function DashboardMenu({
             onClick: closeDrawer,
             label: (
               <Link
-                href={`${dashboardPrefix}/my-competitions`}
+                href={`${dashboardPrefix}/programs`}
                 className="flex items-center gap-x-2"
               >
                 <FaList className="flex-shrink-0" size={20} />
@@ -371,7 +371,7 @@ export default function DashboardMenu({
     ) {
       return currentProgramType;
     }
-    if (path === `${dashboardPrefix}/my-competitions`) return "my-competition";
+    if (path === `${dashboardPrefix}/programs`) return "my-competition";
     if (
       path === `${dashboardPrefix}/my-schedule/times` ||
       path === `${dashboardPrefix}/my-schedule/settings`
