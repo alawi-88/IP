@@ -79,25 +79,25 @@ export default function DashboardMenu({
       ? [
           ...programsTypesItems,
           // {
-          //   key: "program",
+          //   key: "competition",
           //   onClick: closeDrawer,
           //   label: (
           //     <Link href={dashboardPrefix} className="flex items-center gap-x-2">
           //       <GoTrophy className="flex-shrink-0" size={20} />
-          //       {t("programs")}
+          //       {t("competitions")}
           //     </Link>
           //   ),
           // },
           {
-            key: "my-program",
+            key: "my-competition",
             onClick: closeDrawer,
             label: (
               <Link
-                href={`${dashboardPrefix}/my-programs`}
+                href={`${dashboardPrefix}/programs`}
                 className="flex items-center gap-x-2"
               >
                 <FaList className="flex-shrink-0" size={20} />
-                {t("my-programs")}
+                {t("my-competitions")}
               </Link>
             ),
           },
@@ -371,7 +371,7 @@ export default function DashboardMenu({
     ) {
       return currentProgramType;
     }
-    if (path === `${dashboardPrefix}/my-programs`) return "my-program";
+    if (path === `${dashboardPrefix}/programs`) return "my-competition";
     if (
       path === `${dashboardPrefix}/my-schedule/times` ||
       path === `${dashboardPrefix}/my-schedule/settings`
