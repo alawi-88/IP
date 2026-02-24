@@ -21,6 +21,12 @@ class TaskController extends Controller
         $participant = $request->user();
         $programId = $request->query('program_id');
 
+        // Support application_id param (sent by frontend) to derive competition_id
+        if (!$competitionId && $request->query('application_id')) {
+            $application = \App\Models\CompetitionApplication::find($request->query('application_id'));
+            $competitionId = $application?->competition_id;
+        }
+
         $query = TaskAssignment::query()
             ->where('is_archived', false)
             ->where(function ($q) use ($participant) {
@@ -60,7 +66,7 @@ class TaskController extends Controller
             $query->orderBy($sortBy, $sortDir === 'asc' ? 'asc' : 'desc');
         }
 
-        $tasks = $query->paginate($request->query('per_page', 15));
+        $tasks = $query->get();
 
         return response()->json([
             'success' => true,

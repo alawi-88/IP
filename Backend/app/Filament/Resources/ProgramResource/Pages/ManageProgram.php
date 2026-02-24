@@ -1266,6 +1266,279 @@ class ManageProgram extends Page implements HasForms
             'aiScoringForm',
             'regEvalForm',
             'labelsForm',
+            'stagesForm',
+            'tracksForm',
         ];
     }
+
+    // --- Stages Tab (CRUD) ---
+
+    protected function fillStagesForm(): void
+    {
+        $stages = $this->record->stages()->orderBy('id')->get();
+        $this->stagesForm->fill([
+            'stages' => $stages->map(function ($stage) {
+                return [
+                    'id' => $stage->id,
+                    'slug' => $stage->slug,
+                    'title_en' => $stage->getTranslation('title', 'en'),
+                    'title_ar' => $stage->getTranslation('title', 'ar'),
+                    'description_en' => $stage->getTranslation('description', 'en'),
+                    'description_ar' => $stage->getTranslation('description', 'ar'),
+                    'starts_at' => $stage->starts_at?->format('Y-m-d H:i:s'),
+                    'ends_at' => $stage->ends_at?->format('Y-m-d H:i:s'),
+                    'is_visible' => $stage->is_visible ?? false,
+                    'form_id' => $stage->form_id,
+                    'form_ids' => $stage->form_ids ?? [],
+                ];
+            })->toArray(),
+        ]);
+    }
+
+    public function stagesForm(FilamentForm $form): FilamentForm
+    {
+        $competitionId = $this->record->id;
+        return $form
+            ->schema([
+                Forms\Components\Section::make('Program Stages')
+                    ->icon('heroicon-o-bars-3-bottom-left')
+                    ->description('Manage the stages of this program.')
+                    ->schema([
+                        Forms\Components\Repeater::make('stages')
+                            ->label('')
+                            ->schema([
+                                Forms\Components\Hidden::make('id'),
+                                Forms\Components\Select::make('slug')
+                                    ->label('Stage Type')
+                                    ->options([
+                                        'registration' => 'Registration',
+                                        'team-formation' => 'Team Formation',
+                                        'project-submission' => 'Project Submission',
+                                        'evaluation' => 'Evaluation',
+                                    ])
+                                    ->required()
+                                    ->reactive()
+                                    ->afterStateUpdated(function (callable $set) {
+                                        $set('form_id', null);
+                                        $set('form_ids', []);
+                                    })
+                                    ->columnSpanFull(),
+                                Forms\Components\Grid::make(2)->schema([
+                                    Forms\Components\TextInput::make('title_en')
+                                        ->label('Title (English)')->required(),
+                                    Forms\Components\TextInput::make('title_ar')
+                                        ->label('Title (Arabic)')->required(),
+                                ]),
+                                Forms\Components\Grid::make(2)->schema([
+                                    Forms\Components\Textarea::make('description_en')
+                                        ->label('Description (English)')->rows(2),
+                                    Forms\Components\Textarea::make('description_ar')
+                                        ->label('Description (Arabic)')->rows(2),
+                                ]),
+                                Forms\Components\Grid::make(2)->schema([
+                                    Forms\Components\DateTimePicker::make('starts_at')
+                                        ->label('Starts At')->displayFormat('d/m/Y H:i')->seconds(false),
+                                    Forms\Components\DateTimePicker::make('ends_at')
+                                        ->label('Ends At')->displayFormat('d/m/Y H:i')->seconds(false),
+                                ]),
+                                Forms\Components\Toggle::make('is_visible')
+                                    ->label('Visible to participants')->default(false),
+                                Forms\Components\Select::make('form_id')
+                                    ->label('Registration Form')
+                                    ->options(function () use ($competitionId) {
+                                        return \App\Models\Form::where('competition_id', $competitionId)
+                                            ->where('type', 'registration')->get()
+                                            ->mapWithKeys(fn ($f) => [$f->id => (is_array($f->name) ? ($f->name['en'] ?? reset($f->name)) : $f->name) ?: "Form #{$f->id}"])
+                                            ->toArray();
+                                    })
+                                    ->visible(fn (callable $get) => $get('slug') === 'registration')
+                                    ->reactive()->columnSpanFull(),
+                                Forms\Components\Select::make('form_ids')
+                                    ->label('Forms')
+                                    ->multiple(fn (callable $get) => $get('slug') === 'project-submission' || (is_string($get('slug')) && str_starts_with($get('slug'), 'project-')))
+                                    ->options(function (callable $get) use ($competitionId) {
+                                        $slug = $get('slug');
+                                        $query = \App\Models\Form::where('competition_id', $competitionId);
+                                        if ($slug === 'evaluation') { $query->where('type', 'evaluation'); }
+                                        elseif ($slug === 'project-submission') { $query->where('type', 'project'); }
+                                        else { return []; }
+                                        return $query->get()->mapWithKeys(fn ($f) => [$f->id => (is_array($f->name) ? ($f->name['en'] ?? reset($f->name)) : $f->name) ?: "Form #{$f->id}"])->toArray();
+                                    })
+                                    ->visible(fn (callable $get) => in_array($get('slug'), ['project-submission', 'evaluation']))
+                                    ->reactive()->searchable()->preload()->columnSpanFull(),
+                            ])
+                            ->addActionLabel('Add Stage')->maxItems(7)->reorderable(false)->collapsible()
+                            ->itemLabel(fn (array $state): ?string => ($state['title_en'] ?? '') ?: ($state['slug'] ?? 'New Stage'))
+                            ->columnSpanFull(),
+                    ]),
+            ])
+            ->statePath('stagesData');
+    }
+
+    public function saveStages(): void
+    {
+        if ($this->record->isArchived()) {
+            Notification::make()->title('Cannot edit archived program')->danger()->send();
+            return;
+        }
+        $data = $this->stagesForm->getState();
+        $stages = $data['stages'] ?? [];
+        $existingIds = $this->record->stages()->pluck('id')->toArray();
+        $keepIds = [];
+        foreach ($stages as $stageData) {
+            $stageFields = [
+                'title' => ['en' => $stageData['title_en'] ?? '', 'ar' => $stageData['title_ar'] ?? ''],
+                'description' => ['en' => $stageData['description_en'] ?? '', 'ar' => $stageData['description_ar'] ?? ''],
+                'slug' => $stageData['slug'] ?? null,
+                'starts_at' => $stageData['starts_at'] ?? null,
+                'ends_at' => $stageData['ends_at'] ?? null,
+                'is_visible' => $stageData['is_visible'] ?? false,
+                'form_id' => $stageData['form_id'] ?? null,
+                'form_ids' => $stageData['form_ids'] ?? null,
+            ];
+            if (!empty($stageData['id']) && in_array($stageData['id'], $existingIds)) {
+                $stage = Stage::find($stageData['id']);
+                if ($stage) { $stage->update($stageFields); $keepIds[] = $stage->id; }
+            } else {
+                $stageFields['competition_id'] = $this->record->id;
+                $newStage = Stage::create($stageFields);
+                $keepIds[] = $newStage->id;
+            }
+        }
+        $toDelete = array_diff($existingIds, $keepIds);
+        foreach ($toDelete as $deleteId) {
+            $stage = Stage::find($deleteId);
+            if ($stage) {
+                if ($stage->slug === 'team-formation') continue;
+                if (!empty($stage->getFormIds())) continue;
+                $stage->delete();
+            }
+        }
+        $this->record->refresh();
+        $this->fillStagesForm();
+        Notification::make()->title('Stages Saved')->success()->send();
+    }
+
+    // --- Tracks Tab (CRUD) ---
+
+    protected function fillTracksForm(): void
+    {
+        $tracks = $this->record->tracks()->with('subTracks')->orderBy('order')->get();
+        $this->tracksForm->fill([
+            'tracks' => $tracks->map(function ($track) {
+                return [
+                    'id' => $track->id,
+                    'name_en' => is_array($track->name) ? ($track->name['en'] ?? '') : $track->name,
+                    'name_ar' => is_array($track->name) ? ($track->name['ar'] ?? '') : '',
+                    'order' => $track->order ?? 0,
+                    'sub_tracks' => $track->subTracks->map(function ($sub) {
+                        return [
+                            'id' => $sub->id,
+                            'name_en' => is_array($sub->name) ? ($sub->name['en'] ?? '') : $sub->name,
+                            'name_ar' => is_array($sub->name) ? ($sub->name['ar'] ?? '') : '',
+                            'order' => $sub->order ?? 0,
+                        ];
+                    })->toArray(),
+                ];
+            })->toArray(),
+        ]);
+    }
+
+    public function tracksForm(FilamentForm $form): FilamentForm
+    {
+        return $form
+            ->schema([
+                Forms\Components\Section::make('Tracks & Sub-Tracks')
+                    ->icon('heroicon-o-rectangle-stack')
+                    ->description('Manage the competition tracks and their sub-tracks.')
+                    ->schema([
+                        Forms\Components\Repeater::make('tracks')
+                            ->label('')
+                            ->schema([
+                                Forms\Components\Hidden::make('id'),
+                                Forms\Components\Grid::make(3)->schema([
+                                    Forms\Components\TextInput::make('name_en')
+                                        ->label('Track Name (English)')->required(),
+                                    Forms\Components\TextInput::make('name_ar')
+                                        ->label('Track Name (Arabic)'),
+                                    Forms\Components\TextInput::make('order')
+                                        ->label('Order')->numeric()->default(0)->minValue(0),
+                                ]),
+                                Forms\Components\Repeater::make('sub_tracks')
+                                    ->label('Sub-Tracks')
+                                    ->schema([
+                                        Forms\Components\Hidden::make('id'),
+                                        Forms\Components\Grid::make(3)->schema([
+                                            Forms\Components\TextInput::make('name_en')
+                                                ->label('Sub-Track Name (English)')->required(),
+                                            Forms\Components\TextInput::make('name_ar')
+                                                ->label('Sub-Track Name (Arabic)'),
+                                            Forms\Components\TextInput::make('order')
+                                                ->label('Order')->numeric()->default(0)->minValue(0),
+                                        ]),
+                                    ])
+                                    ->addActionLabel('Add Sub-Track')->reorderable(false)->collapsible()
+                                    ->itemLabel(fn (array $state): ?string => ($state['name_en'] ?? '') ?: 'New Sub-Track')
+                                    ->columnSpanFull(),
+                            ])
+                            ->addActionLabel('Add Track')->reorderable(false)->collapsible()
+                            ->itemLabel(fn (array $state): ?string => ($state['name_en'] ?? '') ?: 'New Track')
+                            ->columnSpanFull(),
+                    ]),
+            ])
+            ->statePath('tracksData');
+    }
+
+    public function saveTracks(): void
+    {
+        if ($this->record->isArchived()) {
+            Notification::make()->title('Cannot edit archived program')->danger()->send();
+            return;
+        }
+        $data = $this->tracksForm->getState();
+        $tracks = $data['tracks'] ?? [];
+        $existingTrackIds = $this->record->tracks()->pluck('id')->toArray();
+        $keepTrackIds = [];
+        foreach ($tracks as $trackData) {
+            $trackFields = [
+                'name' => ['en' => $trackData['name_en'] ?? '', 'ar' => $trackData['name_ar'] ?? ''],
+                'order' => $trackData['order'] ?? 0,
+            ];
+            if (!empty($trackData['id']) && in_array($trackData['id'], $existingTrackIds)) {
+                $track = Track::find($trackData['id']);
+                if ($track) { $track->update($trackFields); $keepTrackIds[] = $track->id; }
+            } else {
+                $trackFields['competition_id'] = $this->record->id;
+                $track = Track::create($trackFields);
+                $keepTrackIds[] = $track->id;
+            }
+            if ($track) {
+                $existingSubIds = $track->subTracks()->pluck('id')->toArray();
+                $keepSubIds = [];
+                foreach (($trackData['sub_tracks'] ?? []) as $subData) {
+                    $subFields = [
+                        'name' => ['en' => $subData['name_en'] ?? '', 'ar' => $subData['name_ar'] ?? ''],
+                        'order' => $subData['order'] ?? 0,
+                    ];
+                    if (!empty($subData['id']) && in_array($subData['id'], $existingSubIds)) {
+                        SubTrack::where('id', $subData['id'])->update($subFields);
+                        $keepSubIds[] = $subData['id'];
+                    } else {
+                        $subFields['track_id'] = $track->id;
+                        $newSub = SubTrack::create($subFields);
+                        $keepSubIds[] = $newSub->id;
+                    }
+                }
+                $track->subTracks()->whereNotIn('id', $keepSubIds)->delete();
+            }
+        }
+        foreach (array_diff($existingTrackIds, $keepTrackIds) as $deleteId) {
+            $track = Track::find($deleteId);
+            if ($track) { $track->subTracks()->delete(); $track->delete(); }
+        }
+        $this->record->refresh();
+        $this->fillTracksForm();
+        Notification::make()->title('Tracks & Sub-Tracks Saved')->success()->send();
+    }
+
 }
