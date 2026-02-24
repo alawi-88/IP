@@ -7,11 +7,12 @@
                 @php
                     $tabs = [
                         'setup' => ['label' => 'Setup', 'icon' => 'heroicon-o-cog-6-tooth'],
-                        'stages_tracks' => ['label' => 'Stages & Tracks', 'icon' => 'heroicon-o-bars-3-bottom-left'],
+                        'stages_tracks' => ['label' => 'Stages \& Tracks', 'icon' => 'heroicon-o-bars-3-bottom-left'],
                         'registration' => ['label' => 'Registration & Teams', 'icon' => 'heroicon-o-clipboard-document-list'],
                         'forms' => ['label' => 'Forms & Submissions', 'icon' => 'heroicon-o-document-text'],
                         'scoring' => ['label' => 'Scoring & Evaluation', 'icon' => 'heroicon-o-sparkles'],
                         'people' => ['label' => 'People & Content', 'icon' => 'heroicon-o-users'],
+                        'hub' => ['label' => 'Participation Hub', 'icon' => 'heroicon-o-squares-2x2'],
                         'labels' => ['label' => 'Labels', 'icon' => 'heroicon-o-language'],
                     ];
                 @endphp
@@ -44,10 +45,21 @@
         {{-- TAB 1: SETUP --}}
         {{-- ═══════════════════════════════════════════════════════════ --}}
         <div x-show="activeTab === 'setup'" x-cloak>
-            
-        {{-- \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 --}}
+            {{-- Overview Form --}}
+            <form wire:submit="saveOverview">
+                {{ $this->overviewForm }}
+
+                @unless ($isArchived)
+                    <div class="mt-6 flex justify-end">
+                        <x-filament::button type="submit" icon="heroicon-o-check">
+                            Save Program Details
+                        </x-filament::button>
+                    </div>
+                @endunless
+            </form>
+        </div>
+
         {{-- TAB: STAGES & TRACKS --}}
-        {{-- \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 --}}
         <div x-show="activeTab === 'stages_tracks'" x-cloak>
             {{-- Stages Form --}}
             <form wire:submit="saveStages">
@@ -78,20 +90,8 @@
             </div>
         </div>
 
-        {{-- Overview Form --}}
-            <form wire:submit="saveOverview">
-                {{ $this->overviewForm }}
 
-                @unless ($isArchived)
-                    <div class="mt-6 flex justify-end">
-                        <x-filament::button type="submit" icon="heroicon-o-check">
-                            Save Program Details
-                        </x-filament::button>
-                    </div>
-                @endunless
-            </form>
-        </div>
-
+        {{-- ═══════════════════════════════════════════════════════════ --}}
         {{-- TAB 2: REGISTRATION & TEAMS --}}
         {{-- ═══════════════════════════════════════════════════════════ --}}
         <div x-show="activeTab === 'registration'" x-cloak>
@@ -373,6 +373,75 @@
                         </div>
                     @endif
                 </div>
+            </div>
+        </div>
+
+
+        {{-- TAB: PARTICIPATION HUB --}}
+        <div x-show="activeTab === 'hub'" x-cloak>
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <x-heroicon-o-squares-2x2 class="h-5 w-5 text-primary-500" />
+                        Participation Hub
+                    </h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        Control which tabs participants see in their hub.
+                    </p>
+                </div>
+
+                @if (count($hubTabs) === 0)
+                    <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                        <x-heroicon-o-squares-2x2 class="h-10 w-10 mx-auto mb-2 opacity-50" />
+                        <p class="font-medium">No hub tabs found</p>
+                        <p class="text-sm mt-1">Hub tabs are automatically created when a program is created.</p>
+                    </div>
+                @else
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50 dark:bg-gray-700/50">
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tab</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Label (EN)</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Label (AR)</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Visible</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @foreach ($hubTabs as $index => $hubTab)
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+                                    <td class="px-6 py-3">
+                                        <span class="text-sm font-medium text-gray-900 dark:text-white capitalize">
+                                            {{ match($hubTab['tab']) {
+                                                'my-team' => 'Your Team',
+                                                'projects' => 'Project',
+                                                default => str_replace('-', ' ', $hubTab['tab'])
+                                            } }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-3">
+                                        <input type="text" wire:model.lazy="hubTabs.{{ $index }}.label_en" placeholder="Default" maxlength="50" class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500 px-3 py-1.5" @if ($isArchived) disabled @endif />
+                                    </td>
+                                    <td class="px-6 py-3">
+                                        <input type="text" wire:model.lazy="hubTabs.{{ $index }}.label_ar" placeholder="" maxlength="50" dir="rtl" class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500 px-3 py-1.5" @if ($isArchived) disabled @endif />
+                                    </td>
+                                    <td class="px-6 py-3 text-center">
+                                        <button type="button" wire:click="toggleHubTab({{ $index }})" @if ($isArchived) disabled @endif class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 {{ $hubTab['is_visible'] ? 'bg-primary-600' : 'bg-gray-200 dark:bg-gray-600' }} {{ $isArchived ? 'opacity-50 cursor-not-allowed' : '' }}" role="switch" aria-checked="{{ $hubTab['is_visible'] ? 'true' : 'false' }}">
+                                            <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $hubTab['is_visible'] ? 'translate-x-5' : 'translate-x-0' }}"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                    @unless ($isArchived)
+                        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/30 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                            <x-filament::button wire:click="saveHubTabs" icon="heroicon-o-check">
+                                Save Hub Settings
+                            </x-filament::button>
+                        </div>
+                    @endunless
+                @endif
             </div>
         </div>
 
