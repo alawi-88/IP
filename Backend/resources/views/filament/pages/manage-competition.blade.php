@@ -7,6 +7,7 @@
                 @php
                     $tabs = [
                         'setup' => ['label' => 'Setup', 'icon' => 'heroicon-o-cog-6-tooth'],
+                        'stages_tracks' => ['label' => 'Stages & Tracks', 'icon' => 'heroicon-o-bars-3-bottom-left'],
                         'registration' => ['label' => 'Registration & Teams', 'icon' => 'heroicon-o-clipboard-document-list'],
                         'forms' => ['label' => 'Forms & Submissions', 'icon' => 'heroicon-o-document-text'],
                         'scoring' => ['label' => 'Scoring & Evaluation', 'icon' => 'heroicon-o-sparkles'],
@@ -40,10 +41,44 @@
         @endif
 
         {{-- ═══════════════════════════════════════════════════════════ --}}
-        {{-- TAB 1: SETUP (Overview + Stages & Tracks) --}}
+        {{-- TAB 1: SETUP --}}
         {{-- ═══════════════════════════════════════════════════════════ --}}
         <div x-show="activeTab === 'setup'" x-cloak>
-            {{-- Overview Form --}}
+            
+        {{-- \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 --}}
+        {{-- TAB: STAGES & TRACKS --}}
+        {{-- \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 --}}
+        <div x-show="activeTab === 'stages_tracks'" x-cloak>
+            {{-- Stages Form --}}
+            <form wire:submit="saveStages">
+                {{ $this->stagesForm }}
+
+                @unless ($isArchived)
+                    <div class="mt-6 flex justify-end">
+                        <x-filament::button type="submit" icon="heroicon-o-check">
+                            Save Stages
+                        </x-filament::button>
+                    </div>
+                @endunless
+            </form>
+
+            {{-- Tracks Form --}}
+            <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <form wire:submit="saveTracks">
+                    {{ $this->tracksForm }}
+
+                    @unless ($isArchived)
+                        <div class="mt-6 flex justify-end">
+                            <x-filament::button type="submit" icon="heroicon-o-check">
+                                Save Tracks & Sub-Tracks
+                            </x-filament::button>
+                        </div>
+                    @endunless
+                </form>
+            </div>
+        </div>
+
+        {{-- Overview Form --}}
             <form wire:submit="saveOverview">
                 {{ $this->overviewForm }}
 
@@ -55,88 +90,8 @@
                     </div>
                 @endunless
             </form>
-
-            {{-- Stages & Tracks (read-only cards) --}}
-            <div class="mt-8">
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2 mb-4">
-                    <x-heroicon-o-bars-3-bottom-left class="h-5 w-5 text-primary-500" />
-                    Stages & Tracks
-                </h3>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {{-- Stages --}}
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                        <h4 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-                            Program Stages
-                        </h4>
-                        @if ($stages->isEmpty())
-                            <div class="text-center py-6 text-gray-500 dark:text-gray-400">
-                                <x-heroicon-o-bars-3-bottom-left class="h-8 w-8 mx-auto mb-2 opacity-50" />
-                                <p class="text-sm">No stages configured yet.</p>
-                            </div>
-                        @else
-                            <div class="space-y-2">
-                                @foreach ($stages as $stage)
-                                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-100 dark:border-gray-600">
-                                        <div class="flex items-center justify-between">
-                                            <div>
-                                                <h5 class="font-medium text-gray-900 dark:text-white text-sm">
-                                                    {{ $stage->getTranslation('title', 'en') }}
-                                                </h5>
-                                                @if ($stage->starts_at || $stage->ends_at)
-                                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                                        {{ $stage->starts_at?->format('M d, Y') }} — {{ $stage->ends_at?->format('M d, Y') }}
-                                                    </p>
-                                                @endif
-                                            </div>
-                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium
-                                                {{ $stage->is_visible ? 'bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-300' : 'bg-gray-100 text-gray-600 dark:bg-gray-600/30 dark:text-gray-400' }}">
-                                                {{ $stage->is_visible ? 'Visible' : 'Hidden' }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-
-                    {{-- Tracks --}}
-                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
-                        <h4 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-                            Tracks & Sub-Tracks
-                        </h4>
-                        @if ($tracks->isEmpty())
-                            <div class="text-center py-6 text-gray-500 dark:text-gray-400">
-                                <x-heroicon-o-rectangle-stack class="h-8 w-8 mx-auto mb-2 opacity-50" />
-                                <p class="text-sm">No tracks configured yet.</p>
-                            </div>
-                        @else
-                            <div class="space-y-2">
-                                @foreach ($tracks as $track)
-                                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-100 dark:border-gray-600">
-                                        <h5 class="font-medium text-gray-900 dark:text-white text-sm">
-                                            {{ is_array($track->name) ? ($track->name['en'] ?? '') : $track->name }}
-                                        </h5>
-                                        @if ($track->subTracks->isNotEmpty())
-                                            <div class="mt-1.5 flex flex-wrap gap-1">
-                                                @foreach ($track->subTracks as $sub)
-                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300">
-                                                        {{ is_array($sub->name) ? ($sub->name['en'] ?? '') : $sub->name }}
-                                                    </span>
-                                                @endforeach
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-
         </div>
 
-        {{-- ═══════════════════════════════════════════════════════════ --}}
         {{-- TAB 2: REGISTRATION & TEAMS --}}
         {{-- ═══════════════════════════════════════════════════════════ --}}
         <div x-show="activeTab === 'registration'" x-cloak>
