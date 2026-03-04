@@ -40,6 +40,9 @@ services:
       DB_USERNAME: innovation
       DB_PASSWORD: innovation
       REDIS_HOST: redis
+      AI_PROVIDER: ${AI_PROVIDER:-mock}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-}
     depends_on:
       db:
         condition: service_healthy
