@@ -2,7 +2,7 @@
 
 import { Form, Input, Button, Spin, message } from "antd";
 import { useTranslations } from "next-intl";
-import { useParams } from "@/i18n/routing";
+import { useParams } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState, useCallback, useEffect } from "react";
 import VaPageLayout from "@/components/va/VaPageLayout";
@@ -21,11 +21,16 @@ export default function OverviewPage() {
     queryKey: ["startup", startupId, "foundation", "overview"],
     queryFn: () =>
       startupApi.getVaPage(startupId, "foundation", "overview"),
-    onSuccess: (data) => {
-      form.setFieldsValue(data.content || {});
-      setIsCompleted(!!data.completedAt);
-    },
   });
+
+  useEffect(() => {
+    if (page?.content) {
+      form.setFieldsValue(page.content);
+    }
+    if (page) {
+      setIsCompleted(Number(page.completion_percentage) >= 100);
+    }
+  }, [page, form]);
 
   const updateMutation = useMutation({
     mutationFn: (content: any) =>
@@ -98,7 +103,6 @@ export default function OverviewPage() {
     <VaPageLayout
       title={t("va.overview", "Overview")}
       breadcrumbs={[
-        { title: t("va.startups", "Startups") },
         { title: t("va.foundation", "Foundation") },
         { title: t("va.overview", "Overview") },
       ]}

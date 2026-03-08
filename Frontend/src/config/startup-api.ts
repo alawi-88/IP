@@ -1,6 +1,8 @@
 import axiosInstance from "@/axios";
 import { Startup } from "@/store/startup";
 
+const BASE = "/participants/startups";
+
 export interface VaPage {
   id: string;
   sectionId: string;
@@ -37,7 +39,7 @@ export interface AiGeneration {
 
 // Startup CRUD Operations
 export const getStartups = async (): Promise<Startup[]> => {
-  const response = await axiosInstance.get("/startups");
+  const response = await axiosInstance.get(BASE);
   return response.data.data || [];
 };
 
@@ -50,7 +52,7 @@ export const createStartup = async (data: StartupData): Promise<Startup> => {
     formData.append("logo", data.logo);
   }
 
-  const response = await axiosInstance.post("/startups", formData, {
+  const response = await axiosInstance.post(BASE, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return response.data.data;
@@ -59,7 +61,7 @@ export const createStartup = async (data: StartupData): Promise<Startup> => {
 export const getStartup = async (
   startupId: string
 ): Promise<Startup & { sections: VaSection[] }> => {
-  const response = await axiosInstance.get(`/startups/${startupId}`);
+  const response = await axiosInstance.get(`${BASE}/${startupId}`);
   return response.data.data;
 };
 
@@ -75,14 +77,20 @@ export const updateStartup = async (
     formData.append("logo", data.logo);
   }
 
-  const response = await axiosInstance.patch(`/startups/${startupId}`, formData, {
+  const response = await axiosInstance.patch(`${BASE}/${startupId}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return response.data.data;
 };
 
 export const deleteStartup = async (startupId: string): Promise<void> => {
-  await axiosInstance.delete(`/startups/${startupId}`);
+  await axiosInstance.delete(`${BASE}/${startupId}`);
+};
+
+// AI-Powered Startup Creation
+export const generateStartup = async (prompt: string, name: string): Promise<Startup> => {
+  const response = await axiosInstance.post(`${BASE}/generate`, { prompt, name });
+  return response.data.data;
 };
 
 // VA Section Operations
@@ -91,7 +99,7 @@ export const getVaSection = async (
   sectionId: string
 ): Promise<VaSection> => {
   const response = await axiosInstance.get(
-    `/startups/${startupId}/va-sections/${sectionId}`
+    `${BASE}/${startupId}/sections/${sectionId}`
   );
   return response.data.data;
 };
@@ -103,7 +111,7 @@ export const getVaPage = async (
   pageId: string
 ): Promise<VaPage> => {
   const response = await axiosInstance.get(
-    `/startups/${startupId}/va-sections/${sectionId}/pages/${pageId}`
+    `${BASE}/${startupId}/sections/${sectionId}/pages/${pageId}`
   );
   return response.data.data;
 };
@@ -115,7 +123,7 @@ export const updateVaPage = async (
   content: Record<string, any>
 ): Promise<VaPage> => {
   const response = await axiosInstance.patch(
-    `/startups/${startupId}/va-sections/${sectionId}/pages/${pageId}`,
+    `${BASE}/${startupId}/sections/${sectionId}/pages/${pageId}`,
     { content }
   );
   return response.data.data;
@@ -127,7 +135,7 @@ export const completeVaPage = async (
   pageId: string
 ): Promise<VaPage> => {
   const response = await axiosInstance.post(
-    `/startups/${startupId}/va-sections/${sectionId}/pages/${pageId}/complete`
+    `${BASE}/${startupId}/sections/${sectionId}/pages/${pageId}/complete`
   );
   return response.data.data;
 };
@@ -141,7 +149,7 @@ export const generateAi = async (
   prompt: string
 ): Promise<AiGeneration> => {
   const response = await axiosInstance.post(
-    `/startups/${startupId}/va-sections/${sectionId}/pages/${pageId}/ai-generate`,
+    `${BASE}/${startupId}/sections/${sectionId}/pages/${pageId}/ai-generate`,
     { fieldKey, prompt }
   );
   return response.data.data;
@@ -153,7 +161,7 @@ export const acceptAi = async (
   generationId: string
 ): Promise<AiGeneration> => {
   const response = await axiosInstance.post(
-    `/startups/${startupId}/va-sections/${sectionId}/ai-generations/${generationId}/accept`
+    `${BASE}/${startupId}/sections/${sectionId}/ai-generations/${generationId}/accept`
   );
   return response.data.data;
 };
@@ -165,7 +173,7 @@ export const modifyAi = async (
   modifiedContent: string
 ): Promise<AiGeneration> => {
   const response = await axiosInstance.patch(
-    `/startups/${startupId}/va-sections/${sectionId}/ai-generations/${generationId}`,
+    `${BASE}/${startupId}/sections/${sectionId}/ai-generations/${generationId}`,
     { modifiedContent }
   );
   return response.data.data;
@@ -177,6 +185,12 @@ export const dismissAi = async (
   generationId: string
 ): Promise<void> => {
   await axiosInstance.delete(
-    `/startups/${startupId}/va-sections/${sectionId}/ai-generations/${generationId}`
+    `${BASE}/${startupId}/sections/${sectionId}/ai-generations/${generationId}`
   );
+};
+
+// Get all sections with nested pages for a startup
+export const getSections = async (startupId: string): Promise<any[]> => {
+  const response = await axiosInstance.get(`${BASE}/${startupId}/sections`);
+  return response.data.data || [];
 };

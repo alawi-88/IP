@@ -83,4 +83,19 @@ class VaPage extends Model
         // Update section completion
         $this->vaSection->calculateCompletion();
     }
+
+
+    /**
+     * Resolve route binding by ID or page_key
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if ($field) {
+            return $this->where($field, $value)->firstOrFail();
+        }
+        if (is_numeric($value)) {
+            return $this->where("id", $value)->firstOrFail();
+        }
+        return $this->where("page_key", $value)->firstOrFail();
+    }
 }

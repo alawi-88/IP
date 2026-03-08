@@ -7,16 +7,19 @@ use App\Http\Requests\StoreStartupRequest;
 use App\Http\Requests\UpdateStartupRequest;
 use App\Models\Startup;
 use App\Services\VaInitializationService;
+use App\Services\AiGenerationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class StartupController extends Controller
 {
     private VaInitializationService $vaInitializationService;
+    private AiGenerationService $aiGenerationService;
 
-    public function __construct(VaInitializationService $vaInitializationService)
+    public function __construct(VaInitializationService $vaInitializationService, AiGenerationService $aiGenerationService)
     {
         $this->vaInitializationService = $vaInitializationService;
+        $this->aiGenerationService = $aiGenerationService;
     }
 
     /**
@@ -101,6 +104,66 @@ class StartupController extends Controller
                 'name' => $startup->name,
                 'status' => $startup->status,
                 'completion_percentage' => $startup->completion_percentage,
+            ],
+        ], 201);
+    }
+
+    /**
+     * Create a new startup with AI-generated content for all VA sections
+     */
+    public function generateWithAi(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        // Check startup limit
+        $startupCount = Startup::forUser($user->id)->count();
+        if ($startupCount >= 10) {
+            return response()->json([
+                'success' => false,
+                'message' => __('startup.max_startups_reached'),
+            ], 422);
+        }
+
+        $validated = $request->validate([
+            'prompt' => ['required', 'string', 'max:2000'],
+            'name' => ['required', 'string', 'max:255'],
+        ]);
+
+        // Create the startup
+        $startup = Startup::create([
+            'user_id' => $user->id,
+            'name' => $validated['name'],
+            'description' => $validated['prompt'],
+            'status' => 'draft',
+        ]);
+
+        // Initialize VA sections and pages
+        $this->vaInitializationService->initializeForStartup($startup);
+
+        // Generate AI content for all pages
+        $results = $this->aiGenerationService->generateForStartup($startup, $validated['prompt']);
+
+        // Reload to get fresh data
+        $startup->refresh();
+        $startup->load('vaSections');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Startup created with AI-generated content',
+            'data' => [
+                'id' => $startup->id,
+                'name' => $startup->name,
+                'status' => $startup->status,
+                'completion_percentage' => $startup->completion_percentage,
+                'sections' => $startup->vaSections->map(function ($section) {
+                    return [
+                        'id' => $section->id,
+                        'section_key' => $section->section_key,
+                        'title_en' => $section->title_en,
+                        'completion_percentage' => $section->completion_percentage,
+                    ];
+                }),
+                'generation_results' => $results,
             ],
         ], 201);
     }

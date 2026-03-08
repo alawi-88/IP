@@ -2,9 +2,9 @@
 
 import { Form, Input, Button, Spin, message } from "antd";
 import { useTranslations } from "next-intl";
-import { useParams } from "@/i18n/routing";
+import { useParams } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import VaPageLayout from "@/components/va/VaPageLayout";
 import AiGenerateButton from "@/components/va/AiGenerateButton";
 import * as startupApi from "@/config/startup-api";
@@ -20,16 +20,18 @@ export default function MarketAnalysisPage() {
   const { data: page, isLoading } = useQuery({
     queryKey: ["startup", startupId, "foundation", "market-analysis"],
     queryFn: () =>
-      startupApi.getVaPage(startupId, "foundation", "market-analysis"),
-    onSuccess: (data) => {
-      form.setFieldsValue(data.content || {});
-      setIsCompleted(!!data.completedAt);
-    },
-  });
+      startupApi.getVaPage(startupId, "foundation", "market-analysis")});
+
+  useEffect(() => {
+    if (page) {
+      form.setFieldsValue(page.content || {});
+      setIsCompleted(Number(page.completion_percentage) >= 100);
+    }
+  }, [page, form]);
 
   const updateMutation = useMutation({
     mutationFn: (content: any) =>
-      startupApi.updateVaPage(startupId, "foundation", "market-analysis", content),
+      startupApi.updateVaPage(startupId, "foundation", "market-analysis", content)
   });
 
   const completeMutation = useMutation({
@@ -38,7 +40,7 @@ export default function MarketAnalysisPage() {
     onSuccess: () => {
       setIsCompleted(true);
       message.success(t("va.markedComplete", "Marked as complete!"));
-    },
+    }
   });
 
   const aiGenerateMutation = useMutation({
@@ -49,7 +51,7 @@ export default function MarketAnalysisPage() {
         "market-analysis",
         data.fieldKey,
         data.prompt
-      ),
+      )
   });
 
   const handleFieldChange = useCallback(
@@ -71,7 +73,7 @@ export default function MarketAnalysisPage() {
       try {
         const result = await aiGenerateMutation.mutateAsync({
           fieldKey,
-          prompt,
+          prompt
         });
         return result.generatedContent;
       } catch (error) {
@@ -117,7 +119,7 @@ export default function MarketAnalysisPage() {
           rules={[
             {
               required: true,
-              message: t("required-field", "This field is required"),
+              message: t("required-field", "This field is required")
             },
           ]}
         >

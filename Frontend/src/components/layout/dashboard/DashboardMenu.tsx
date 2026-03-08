@@ -14,6 +14,7 @@ import { MdHelpOutline, MdHistory } from "react-icons/md";
 import { GoHome } from "react-icons/go";
 import { TbCalendarTime } from "react-icons/tb";
 import { LuListChecks } from "react-icons/lu";
+
 import { useRouter, useSearchParams } from "next/navigation";
 import { programsTypes } from "@/lib/constants";
 import { logoutAndRedirect } from "@/lib/utils/logout";
@@ -78,16 +79,19 @@ export default function DashboardMenu({
     type === "participant"
       ? [
           ...programsTypesItems,
-          // {
-          //   key: "competition",
-          //   onClick: closeDrawer,
-          //   label: (
-          //     <Link href={dashboardPrefix} className="flex items-center gap-x-2">
-          //       <GoTrophy className="flex-shrink-0" size={20} />
-          //       {t("competitions")}
-          //     </Link>
-          //   ),
-          // },
+          {
+            key: "my-startups",
+            onClick: closeDrawer,
+            label: (
+              <Link
+                href={`${dashboardPrefix}/startups`}
+                className="flex items-center gap-x-2"
+              >
+                <GoTrophy className="flex-shrink-0" size={20} />
+                {t("va.startups", "My Startups")}
+              </Link>
+            ),
+          },
           {
             key: "my-competition",
             onClick: closeDrawer,
@@ -371,6 +375,7 @@ export default function DashboardMenu({
     ) {
       return currentProgramType;
     }
+    if (path.startsWith(`${dashboardPrefix}/startups`)) return "my-startups";
     if (path === `${dashboardPrefix}/programs`) return "my-competition";
     if (
       path === `${dashboardPrefix}/my-schedule/times` ||

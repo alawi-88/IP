@@ -2,7 +2,8 @@
 
 import { Card, Row, Col, Statistic, Progress, Button, Spin } from "antd";
 import { useTranslations } from "next-intl";
-import { useRouter, useParams } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
+import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import * as startupApi from "@/config/startup-api";
 import { FiArrowRight } from "react-icons/fi";
@@ -48,31 +49,31 @@ export default function StartupDashboard() {
 
       {/* Stats Cards */}
       <Row gutter={[16, 16]}>
-        <Col xs={24} sm={12} lg={6}>
+        <Col xs={24} sm={12}>
           <Card>
             <Statistic
               title={t("va.overallProgress", "Overall Progress")}
-              value={startup.completionPercentage}
+              value={startup.completionPercentage ?? 0}
               suffix="%"
               prefix={
                 <Progress
                   type="circle"
-                  percent={startup.completionPercentage}
-                  width={40}
+                  percent={startup.completionPercentage ?? 0}
+                  size={40}
                 />
               }
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
+        <Col xs={24} sm={12}>
           <Card>
             <Statistic
-              title={t("va.activeApplications", "Active Applications")}
+              title={t("va.sections", "Sections")}
               value={sections.length}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
+        <Col xs={24} sm={12}>
           <Card>
             <Statistic
               title={t("va.teamMembers", "Team Members")}
@@ -80,7 +81,7 @@ export default function StartupDashboard() {
             />
           </Card>
         </Col>
-        <Col xs={24} sm={12} lg={6}>
+        <Col xs={24} sm={12}>
           <Card>
             <Statistic
               title={t("va.lastUpdated", "Last Updated")}

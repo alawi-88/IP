@@ -29,7 +29,7 @@ export default function StartupSelector({
           <div className="flex flex-col gap-0">
             <span className="font-medium">{startup.name}</span>
             <span className="text-xs text-gray-500">
-              {startup.completionPercentage}% {t("va.complete", "complete")}
+              {startup.completionPercentage ?? 0}% {t("va.complete", "complete")}
             </span>
           </div>
         </Space>
@@ -75,7 +75,7 @@ export default function StartupSelector({
             <div className="flex flex-col gap-0">
               <span className="font-medium text-sm">{currentStartup.name}</span>
               <span className="text-xs text-gray-500">
-                {currentStartup.completionPercentage}%
+                {currentStartup.completionPercentage ?? 0}%
               </span>
             </div>
           </Space>

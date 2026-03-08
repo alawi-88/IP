@@ -99,11 +99,12 @@ Route::prefix('participants')->group(function () {
             Route::post('competition-applications/reset-draft', [CompetitionApplicationController::class, 'resetDraft'])->name('competition-applications.reset-draft');
 
             // Startup Management & Venture Analysis
+            Route::post('startups/generate', [\App\Http\Controllers\Api\Participant\StartupController::class, 'generateWithAi']);
             Route::apiResource('startups', \App\Http\Controllers\Api\Participant\StartupController::class);
             Route::post('startups/{startup}/restore', [\App\Http\Controllers\Api\Participant\StartupController::class, 'restore']);
             Route::post('startups/{startup}/export', [\App\Http\Controllers\Api\Participant\StartupController::class, 'export']);
 
-            Route::prefix('startups/{startup}')->group(function () {
+            Route::prefix('startups/{startup}')->scopeBindings()->group(function () {
                 Route::apiResource('sections', \App\Http\Controllers\Api\Participant\VaSectionController::class)->only(['index', 'show']);
                 Route::prefix('sections/{section}')->group(function () {
                     Route::apiResource('pages', \App\Http\Controllers\Api\Participant\VaPageController::class)->only(['show', 'update']);

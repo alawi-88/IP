@@ -22,9 +22,9 @@ export default function ProgressBar({
     <div className="flex items-center gap-2">
       <Progress
         type="line"
-        percent={percentage}
+        percent={percentage ?? 0}
         strokeColor={strokeColor}
-        format={() => showLabel ? `${percentage}%` : null}
+        format={() => showLabel ? `${percentage ?? 0}%` : null}
         size={size === "small" ? "small" : "default"}
       />
     </div>

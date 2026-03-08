@@ -2,9 +2,9 @@
 
 import { Form, Input, Button, Spin, message, Row, Col, Card, Space } from "antd";
 import { useTranslations } from "next-intl";
-import { useParams } from "@/i18n/routing";
+import { useParams } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import VaPageLayout from "@/components/va/VaPageLayout";
 import AiGenerateButton from "@/components/va/AiGenerateButton";
 import * as startupApi from "@/config/startup-api";
@@ -21,18 +21,20 @@ export default function SwotPage() {
   const { data: page, isLoading } = useQuery({
     queryKey: ["startup", startupId, "strategic-frameworks", "swot"],
     queryFn: () =>
-      startupApi.getVaPage(startupId, "strategic-frameworks", "swot"),
-    onSuccess: (data) => {
+      startupApi.getVaPage(startupId, "strategic-frameworks", "swot")});
+
+  useEffect(() => {
+    if (page) {
       const swotData = {
-        strengths: data.content?.strengths || ["", "", ""],
-        weaknesses: data.content?.weaknesses || ["", "", ""],
-        opportunities: data.content?.opportunities || ["", "", ""],
-        threats: data.content?.threats || ["", "", ""],
+        strengths: page.content?.strengths || ["", "", ""],
+        weaknesses: page.content?.weaknesses || ["", "", ""],
+        opportunities: page.content?.opportunities || ["", "", ""],
+        threats: page.content?.threats || ["", "", ""],
       };
       form.setFieldsValue(swotData);
-      setIsCompleted(!!data.completedAt);
-    },
-  });
+      setIsCompleted(Number(page.completion_percentage) >= 100);
+    }
+  }, [page, form]);
 
   const updateMutation = useMutation({
     mutationFn: (content: any) =>
@@ -41,7 +43,7 @@ export default function SwotPage() {
         "strategic-frameworks",
         "swot",
         content
-      ),
+      )
   });
 
   const completeMutation = useMutation({
@@ -50,7 +52,7 @@ export default function SwotPage() {
     onSuccess: () => {
       setIsCompleted(true);
       message.success(t("va.markedComplete", "Marked as complete!"));
-    },
+    }
   });
 
   const aiGenerateMutation = useMutation({
@@ -61,7 +63,7 @@ export default function SwotPage() {
         "swot",
         data.fieldKey,
         data.prompt
-      ),
+      )
   });
 
   const handleFieldChange = useCallback(
@@ -83,7 +85,7 @@ export default function SwotPage() {
       try {
         const result = await aiGenerateMutation.mutateAsync({
           fieldKey,
-          prompt,
+          prompt
         });
         return result.generatedContent;
       } catch (error) {
@@ -124,7 +126,7 @@ export default function SwotPage() {
   const SwotQuadrant = ({
     title,
     quadrant,
-    color,
+    color
   }: {
     title: string;
     quadrant: string;

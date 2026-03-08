@@ -2,10 +2,11 @@
 
 import { Form, Input, Spin, message } from "antd";
 import { useTranslations } from "next-intl";
-import { useParams } from "@/i18n/routing";
+import { useParams } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import VaPageLayout from "@/components/va/VaPageLayout";
+import AiGenerateButton from "@/components/va/AiGenerateButton";
 import * as startupApi from "@/config/startup-api";
 
 export default function Value-propositionPage() {
@@ -19,12 +20,14 @@ export default function Value-propositionPage() {
   const { data: page, isLoading } = useQuery({
     queryKey: ["startup", startupId, "gtm-strategy", "value-proposition"],
     queryFn: () =>
-      startupApi.getVaPage(startupId, "gtm-strategy", "value-proposition"),
-    onSuccess: (data) => {
-      form.setFieldsValue(data.content || {});
-      setIsCompleted(!!data.completedAt);
-    },
-  });
+      startupApi.getVaPage(startupId, "gtm-strategy", "value-proposition")});
+
+  useEffect(() => {
+    if (page) {
+      form.setFieldsValue(page.content || {});
+      setIsCompleted(Number(page.completion_percentage) >= 100);
+    }
+  }, [page, form]);
 
   const updateMutation = useMutation({
     mutationFn: (content: any) =>
@@ -33,7 +36,7 @@ export default function Value-propositionPage() {
         "gtm-strategy",
         "value-proposition",
         content
-      ),
+      )
   });
 
   const completeMutation = useMutation({
@@ -42,8 +45,43 @@ export default function Value-propositionPage() {
     onSuccess: () => {
       setIsCompleted(true);
       message.success(t("va.markedComplete", "Marked as complete!"));
-    },
+    }
   });
+
+  const aiGenerateMutation = useMutation({
+    mutationFn: (data: any) =>
+      startupApi.generateAi(
+        startupId,
+        "gtm-strategy",
+        "value-proposition",
+        data.fieldKey,
+        data.prompt
+      )
+  });
+
+  const handleAiGenerate = useCallback(
+    async (fieldKey: string, prompt: string) => {
+      try {
+        const result = await aiGenerateMutation.mutateAsync({
+          fieldKey,
+          prompt
+        });
+        return result.generatedContent;
+      } catch (error) {
+        throw error;
+      }
+    },
+    [aiGenerateMutation]
+  );
+
+  const handleAiAccept = useCallback(
+    (fieldKey: string, content: string) => {
+      form.setFieldValue(fieldKey, content);
+      const values = form.getFieldsValue();
+      updateMutation.mutate(values);
+    },
+    [form, updateMutation]
+  );
 
   const handleFieldChange = useCallback(
     (changedValues: any) => {
@@ -82,7 +120,7 @@ export default function Value-propositionPage() {
       >
         <Form.Item
           name="content"
-          label={t("va.content", "Content")}
+          label={<div className="flex items-center justify-between w-full"><span>{t("va.content", "Content")}</span><AiGenerateButton fieldLabel={t("va.content", "Content")} onGenerate={(prompt) => handleAiGenerate("content", prompt)} onAccept={(content) => handleAiAccept("content", content)} /></div>}
         >
           <Input.TextArea
             rows={6}

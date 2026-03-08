@@ -1,15 +1,17 @@
 "use client";
 
-import { Button, Card, Empty, Modal, Form, Input, Upload, Spin, message, Grid } from "antd";
+import { Button, Card, Empty, Modal, Form, Input, Upload, Spin, message, Grid, Steps, Typography, Progress } from "antd";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "@/i18n/routing";
 import { useStartupStore } from "@/store/startup";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { FiPlus, FiTrash2, FiEdit3 } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiEdit3, FiZap, FiFileText } from "react-icons/fi";
 import * as startupApi from "@/config/startup-api";
 import ProgressBar from "@/components/va/ProgressBar";
+
+const { Paragraph } = Typography;
 
 export default function StartupsPage() {
   const t = useTranslations();
@@ -17,8 +19,11 @@ export default function StartupsPage() {
   const router = useRouter();
   const { setStartups, setCurrentStartup } = useStartupStore();
   const queryClient = useQueryClient();
-  const [form] = Form.useForm();
+  // No useForm() — destroyOnClose handles form reset automatically
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"ai" | "simple">("ai");
+  const [aiStep, setAiStep] = useState(0);
+  const [generationProgress, setGenerationProgress] = useState(0);
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const screens = Grid.useBreakpoint();
 
@@ -26,19 +31,37 @@ export default function StartupsPage() {
   const { data: startups = [], isLoading } = useQuery({
     queryKey: ["startups"],
     queryFn: startupApi.getStartups,
-    onSuccess: (data) => {
-      setStartups(data);
+  });
+
+  // AI generate startup mutation
+  const generateMutation = useMutation({
+    mutationFn: (data: { prompt: string; name: string }) =>
+      startupApi.generateStartup(data.prompt, data.name),
+    onSuccess: (newStartup) => {
+      message.success(t("va.startupGeneratedSuccess", "Startup created with AI-generated content!"));
+      setAiStep(0);
+      setGenerationProgress(0);
+      setIsModalOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["startups"] });
+      setCurrentStartup(newStartup);
+      router.push(`/participant-dashboard/startups/${newStartup.id}`);
+    },
+    onError: (error) => {
+      message.error(t("va.generationFailed", "Failed to generate startup content"));
+      setAiStep(0);
+      setGenerationProgress(0);
+      console.error(error);
     },
   });
 
-  // Create startup mutation
+  // Simple create startup mutation
   const createMutation = useMutation({
     mutationFn: startupApi.createStartup,
     onSuccess: (newStartup) => {
       message.success(t("va.createdSuccessfully", "Startup created successfully"));
-      form.resetFields();
       setLogoFile(null);
       setIsModalOpen(false);
+      setModalMode("ai");
       queryClient.invalidateQueries({ queryKey: ["startups"] });
       setCurrentStartup(newStartup);
       router.push(`/participant-dashboard/startups/${newStartup.id}`);
@@ -61,7 +84,28 @@ export default function StartupsPage() {
     },
   });
 
-  const handleCreate = async (values: any) => {
+  const handleAiGenerate = async (values: any) => {
+    setAiStep(1);
+    // Simulate progress animation
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress > 90) progress = 90;
+      setGenerationProgress(Math.round(progress));
+    }, 500);
+
+    try {
+      await generateMutation.mutateAsync({
+        prompt: values.prompt,
+        name: values.name,
+      });
+    } finally {
+      clearInterval(interval);
+      setGenerationProgress(100);
+    }
+  };
+
+  const handleSimpleCreate = async (values: any) => {
     await createMutation.mutateAsync({
       name: values.name,
       tagline: values.tagline,
@@ -81,6 +125,14 @@ export default function StartupsPage() {
         deleteMutation.mutate(startupId);
       },
     });
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalMode("ai");
+    setAiStep(0);
+    setGenerationProgress(0);
+    setLogoFile(null);
   };
 
   if (isLoading) {
@@ -146,17 +198,15 @@ export default function StartupsPage() {
                     <p className="text-sm text-gray-600">{startup.tagline}</p>
                   )}
                 </div>
-
                 <div className="space-y-2">
                   <ProgressBar
-                    percentage={startup.completionPercentage}
+                    percentage={startup.completionPercentage ?? 0}
                     showLabel={true}
                   />
                   <p className="text-xs text-gray-500">
-                    {t("va.status", "Status")}: {t(`va.${startup.status}`)}
+                    {t("va.status", "Status")}: {t(`va.${startup.status}`, startup.status || "Active")}
                   </p>
                 </div>
-
                 <div className="flex gap-2 pt-2 border-t">
                   <Button
                     type="text"
@@ -164,9 +214,7 @@ export default function StartupsPage() {
                     icon={<FiEdit3 size={14} />}
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(
-                        `/participant-dashboard/startups/${startup.id}`
-                      );
+                      router.push(`/participant-dashboard/startups/${startup.id}`);
                     }}
                   >
                     {t("edit", "Edit")}
@@ -191,84 +239,133 @@ export default function StartupsPage() {
         </div>
       )}
 
-      {/* Create Startup Modal */}
+      {/* Create Startup Modal - AI-Powered */}
       <Modal
-        title={t("va.createStartup", "Create Startup")}
+        title={
+          modalMode === "ai"
+            ? t("va.createWithAi", "Create Startup with AI")
+            : t("va.createStartup", "Create Startup")
+        }
         open={isModalOpen}
-        onCancel={() => {
-          setIsModalOpen(false);
-          form.resetFields();
-          setLogoFile(null);
-        }}
+        onCancel={closeModal}
         footer={null}
-        width={600}
+        width={650}
+        destroyOnClose
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleCreate}
-          className="mt-6"
-        >
-          <Form.Item
-            name="name"
-            label={t("va.startupName", "Startup Name")}
-            rules={[
-              {
-                required: true,
-                message: t("required-field", "This field is required"),
-              },
-            ]}
-          >
-            <Input placeholder="Enter startup name" />
-          </Form.Item>
+        {modalMode === "ai" ? (
+          <div className="mt-4">
+            {aiStep === 0 ? (
+              <>
+                <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FiZap className="text-blue-600" size={20} />
+                    <span className="font-semibold text-blue-900">
+                      {t("va.aiPowered", "AI-Powered Creation")}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    {t("va.aiDescription", "Describe your startup idea and AI will generate content for all venture analysis sections — business overview, market analysis, SWOT, financial model, and more.")}
+                  </p>
+                </div>
 
-          <Form.Item
-            name="tagline"
-            label={t("va.tagline", "Tagline")}
-          >
-            <Input placeholder="Enter a short tagline" />
-          </Form.Item>
+                <Form layout="vertical" onFinish={handleAiGenerate}>
+                  <Form.Item
+                    name="name"
+                    label={t("va.startupName", "Startup Name")}
+                    rules={[{ required: true, message: t("required-field", "This field is required") }]}
+                  >
+                    <Input placeholder={t("va.enterStartupName", "Enter startup name")} />
+                  </Form.Item>
 
-          <Form.Item
-            name="description"
-            label={t("va.description", "Description")}
-          >
-            <Input.TextArea
-              rows={4}
-              placeholder="Describe your startup"
-            />
-          </Form.Item>
+                  <Form.Item
+                    name="prompt"
+                    label={t("va.describeYourIdea", "Describe Your Startup Idea")}
+                    rules={[
+                      { required: true, message: t("required-field", "This field is required") },
+                      { min: 20, message: t("va.promptMinLength", "Please provide at least 20 characters") },
+                    ]}
+                  >
+                    <Input.TextArea
+                      rows={5}
+                      maxLength={2000}
+                      showCount
+                      placeholder={t("va.aiPromptPlaceholder", "e.g., A platform that connects freelance designers with small businesses needing affordable branding and design services. It uses AI to match designers with projects based on style preferences and budget...")}
+                    />
+                  </Form.Item>
 
-          <Form.Item
-            label={t("va.uploadLogo", "Upload Logo")}
-            name="logo"
-          >
-            <Upload
-              maxCount={1}
-              beforeUpload={(file) => {
-                setLogoFile(file);
-                return false;
-              }}
-              onRemove={() => setLogoFile(null)}
-              accept="image/*"
-            >
-              <Button>
-                {t("upload", "Upload")} {t("image", "Image")}
+                  <div className="flex gap-3">
+                    <Button type="primary" htmlType="submit" block icon={<FiZap size={16} />} loading={generateMutation.isPending}>
+                      {t("va.generateWithAi", "Generate with AI")}
+                    </Button>
+                  </div>
+                </Form>
+
+                <div className="mt-4 text-center">
+                  <Button type="link" onClick={() => setModalMode("simple")} icon={<FiFileText size={14} />}>
+                    {t("va.createWithoutAi", "Create without AI")}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              /* Step 2: Generating Progress */
+              <div className="text-center py-8">
+                <div className="mb-6">
+                  <Progress
+                    type="circle"
+                    percent={generationProgress}
+                    size={120}
+                    strokeColor={{ "0%": "#1677ff", "100%": "#722ed1" }}
+                  />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">
+                  {t("va.generatingStartup", "Generating Your Startup...")}
+                </h3>
+                <p className="text-gray-500 text-sm">
+                  {t("va.generatingDescription", "AI is creating content for all venture analysis sections. This may take a moment.")}
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          /* Simple creation form */
+          <div className="mt-4">
+            <Form layout="vertical" onFinish={handleSimpleCreate}>
+              <Form.Item
+                name="name"
+                label={t("va.startupName", "Startup Name")}
+                rules={[{ required: true, message: t("required-field", "This field is required") }]}
+              >
+                <Input placeholder={t("va.enterStartupName", "Enter startup name")} />
+              </Form.Item>
+              <Form.Item name="tagline" label={t("va.tagline", "Tagline")}>
+                <Input placeholder={t("va.enterTagline", "Enter a short tagline")} />
+              </Form.Item>
+              <Form.Item name="description" label={t("va.description", "Description")}>
+                <Input.TextArea rows={4} placeholder={t("va.describeStartup", "Describe your startup")} />
+              </Form.Item>
+              <Form.Item label={t("va.uploadLogo", "Upload Logo")} name="logo">
+                <Upload
+                  maxCount={1}
+                  beforeUpload={(file) => { setLogoFile(file); return false; }}
+                  onRemove={() => setLogoFile(null)}
+                  accept="image/*"
+                >
+                  <Button>{t("upload", "Upload")} {t("image", "Image")}</Button>
+                </Upload>
+              </Form.Item>
+              <Form.Item className="mb-2">
+                <Button type="primary" htmlType="submit" block loading={createMutation.isPending}>
+                  {t("va.createStartup", "Create Startup")}
+                </Button>
+              </Form.Item>
+            </Form>
+            <div className="text-center">
+              <Button type="link" onClick={() => setModalMode("ai")} icon={<FiZap size={14} />}>
+                {t("va.backToAiCreation", "Back to AI-powered creation")}
               </Button>
-            </Upload>
-          </Form.Item>
-
-          <Form.Item className="mb-0">
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              loading={createMutation.isPending}
-            >
-              {t("va.createStartup", "Create Startup")}
-            </Button>
-          </Form.Item>
-        </Form>
+            </div>
+          </div>
+        )}
       </Modal>
     </div>
   );

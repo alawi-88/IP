@@ -2,7 +2,8 @@
 
 import { Card, Row, Col, Button, Progress } from "antd";
 import { useTranslations } from "next-intl";
-import { useRouter, useParams } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
+import { useParams } from "next/navigation";
 import { FiArrowRight } from "react-icons/fi";
 
 export default function GtmStrategyHub() {

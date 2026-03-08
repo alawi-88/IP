@@ -61,4 +61,31 @@ class VaSection extends Model
         // Update parent startup completion
         $this->startup->calculateCompletion();
     }
+
+
+    /**
+     * Resolve route binding by ID or section_key
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if ($field) {
+            return $this->where($field, $value)->firstOrFail();
+        }
+        if (is_numeric($value)) {
+            return $this->where("id", $value)->firstOrFail();
+        }
+        return $this->where("section_key", $value)->firstOrFail();
+    }
+
+
+    /**
+     * Scope child route bindings (pages) to this section
+     */
+    public function resolveChildRouteBinding($childType, $value, $field)
+    {
+        if (is_numeric($value)) {
+            return $this->vaPages()->where("id", $value)->firstOrFail();
+        }
+        return $this->vaPages()->where("page_key", $value)->firstOrFail();
+    }
 }

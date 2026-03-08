@@ -112,4 +112,16 @@ class Startup extends Model
         $thirtyDaysAgo = now()->subDays(30);
         return $this->deleted_at->isAfter($thirtyDaysAgo);
     }
+
+
+    /**
+     * Scope child route bindings (sections) to this startup
+     */
+    public function resolveChildRouteBinding($childType, $value, $field)
+    {
+        if (is_numeric($value)) {
+            return $this->vaSections()->where("id", $value)->firstOrFail();
+        }
+        return $this->vaSections()->where("section_key", $value)->firstOrFail();
+    }
 }
