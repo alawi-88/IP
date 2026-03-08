@@ -32,7 +32,7 @@ class MyRequestsResource extends Resource
     {
         return parent::getEloquentQuery()
             ->where('requested_by', Auth::id())
-            ->with(['requestedBy', 'approvalWorkflow', 'approvalRequestLevels', 'program', 'target', 'application.competition', 'project']);
+            ->with(['requestedBy', 'approvalWorkflow', 'approvalRequestLevels', 'program', 'target', 'application.program', 'project']);
     }
 
     public static function form(Form $form): Form
@@ -107,8 +107,8 @@ class MyRequestsResource extends Resource
                     ->sortable()
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'App\\Models\\Competition' => 'info',
-                        'App\\Models\\CompetitionApplication' => 'warning',
+                        'App\\Models\\Program' => 'info',
+                        'App\\Models\\ProgramApplication' => 'warning',
                         'App\\Models\\Form' => 'primary',
                         'App\\Models\\Project' => 'success',
                         'App\\Models\\Mentor' => 'info',
@@ -118,8 +118,8 @@ class MyRequestsResource extends Resource
                         default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'App\\Models\\Competition' => 'Program / برنامج',
-                        'App\\Models\\CompetitionApplication' => 'Application / طلب',
+                        'App\\Models\\Program' => 'Program / برنامج',
+                        'App\\Models\\ProgramApplication' => 'Application / طلب',
                         'App\\Models\\Form' => 'Form / نموذج',
                         'App\\Models\\Project' => 'Project / مشروع',
                         'App\\Models\\Mentor' => 'Mentor / مدرب',
@@ -137,7 +137,7 @@ class MyRequestsResource extends Resource
                     ->badge()
                     ->color('secondary')
                     ->formatStateUsing(function ($state, $record) {
-                        if ($record->target_type === 'App\\Models\\Competition') {
+                        if ($record->target_type === 'App\\Models\\Program') {
                             // Program: return its name/title
                             return $record->program?->title ?? (
                                 (!empty($record->action_data['title']))
@@ -147,7 +147,7 @@ class MyRequestsResource extends Resource
                                     : 'N/A'
                             );
                         }
-                        if ($record->target_type === 'App\\Models\\CompetitionApplication') {
+                        if ($record->target_type === 'App\\Models\\ProgramApplication') {
                             // Application: return the application id
                             return 'Application #' . $record->application?->id ?? $state;
                         }
@@ -181,14 +181,14 @@ class MyRequestsResource extends Resource
                             }
                         }
                         
-                        // If it's a Competition request, try to get the competition name
-                        if ($record->target_type === 'App\\Models\\Competition') {
-                            // First, try to get from database (if competition still exists)
+                        // If it's a Program request, try to get the program name
+                        if ($record->target_type === 'App\\Models\\Program') {
+                            // First, try to get from database (if program still exists)
                             if ($record->program) {
                                 return $record->program->title ?? 'N/A';
                             }
                             
-                            // If competition was deleted, fall back to action_data
+                            // If program was deleted, fall back to action_data
                             $actionData = $record->action_data ?? [];
                             if (isset($actionData['title'])) {
                                 $title = $actionData['title'];
@@ -200,14 +200,14 @@ class MyRequestsResource extends Resource
                             }
                         }
                         
-                        // If it's a CompetitionApplication request, try to get the competition name
-                        if ($record->target_type === 'App\\Models\\CompetitionApplication') {
+                        // If it's a ProgramApplication request, try to get the program name
+                        if ($record->target_type === 'App\\Models\\ProgramApplication') {
                             // Protect against null $record->application
-                            if ($record->application && $record->application->competition) {
-                                return $record->application->competition->title ?? 'N/A';
+                            if ($record->application && $record->application->program) {
+                                return $record->application->program->title ?? 'N/A';
                             }
                             
-                            // If competition was deleted, try to get from action_data
+                            // If program was deleted, try to get from action_data
                             $actionData = $record->action_data ?? [];
                             if (isset($actionData['title'])) {
                                 $title = $actionData['title'];

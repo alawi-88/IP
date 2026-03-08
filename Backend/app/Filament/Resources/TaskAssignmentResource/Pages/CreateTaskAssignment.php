@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\TaskAssignmentResource\Pages;
 
 use App\Filament\Resources\TaskAssignmentResource;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Participant;
 use App\Models\Stage;
 use App\Models\TaskAssignment;
@@ -24,9 +24,9 @@ class CreateTaskAssignment extends CreateRecord
             Forms\Components\Section::make('Task Assignment / تعيين مهمة')
                 ->columns(2)
                 ->schema([
-                    Forms\Components\Select::make('competition_id')
+                    Forms\Components\Select::make('program_id')
                         ->label('Program / البرنامج')
-                        ->options(fn () => Competition::active()->get()->mapWithKeys(fn ($c) => [$c->id => $c->getTranslation('title', 'en')]))
+                        ->options(fn () => Program::active()->get()->mapWithKeys(fn ($c) => [$c->id => $c->getTranslation('title', 'en')]))
                         ->required()
                         ->searchable()
                         ->reactive()
@@ -40,9 +40,9 @@ class CreateTaskAssignment extends CreateRecord
                     Forms\Components\Select::make('task_template_id')
                         ->label('From Template / من قالب')
                         ->options(function (callable $get) {
-                            $competitionId = $get('competition_id');
-                            if (!$competitionId) return [];
-                            return TaskTemplate::where('competition_id', $competitionId)
+                            $programId = $get('program_id');
+                            if (!$programId) return [];
+                            return TaskTemplate::where('program_id', $programId)
                                 ->where('is_archived', false)
                                 ->get()
                                 ->mapWithKeys(fn ($t) => [$t->id => $t->getTranslation('title', 'en')]);
@@ -67,9 +67,9 @@ class CreateTaskAssignment extends CreateRecord
                     Forms\Components\Select::make('stage_id')
                         ->label('Stage / المرحلة')
                         ->options(function (callable $get) {
-                            $competitionId = $get('competition_id');
-                            if (!$competitionId) return [];
-                            return Stage::where('competition_id', $competitionId)
+                            $programId = $get('program_id');
+                            if (!$programId) return [];
+                            return Stage::where('program_id', $programId)
                                 ->get()
                                 ->mapWithKeys(fn ($s) => [$s->id => $s->getTranslation('title', 'en') ?? $s->title]);
                         })
@@ -89,9 +89,9 @@ class CreateTaskAssignment extends CreateRecord
                     Forms\Components\Select::make('team_id')
                         ->label('Team / الفريق')
                         ->options(function (callable $get) {
-                            $competitionId = $get('competition_id');
-                            if (!$competitionId) return [];
-                            return Team::whereHas('application', fn ($q) => $q->where('competition_id', $competitionId))
+                            $programId = $get('program_id');
+                            if (!$programId) return [];
+                            return Team::whereHas('application', fn ($q) => $q->where('program_id', $programId))
                                 ->pluck('name', 'id');
                         })
                         ->searchable()
@@ -101,9 +101,9 @@ class CreateTaskAssignment extends CreateRecord
                     Forms\Components\Select::make('participant_id')
                         ->label('Participant / المشارك')
                         ->options(function (callable $get) {
-                            $competitionId = $get('competition_id');
-                            if (!$competitionId) return [];
-                            return Participant::whereHas('competitionApplications', fn ($q) => $q->where('competition_id', $competitionId)->where('status', 'approved'))
+                            $programId = $get('program_id');
+                            if (!$programId) return [];
+                            return Participant::whereHas('programApplications', fn ($q) => $q->where('program_id', $programId)->where('status', 'approved'))
                                 ->pluck('name', 'id');
                         })
                         ->searchable()

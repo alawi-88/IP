@@ -4,7 +4,7 @@ namespace App\Filament\Resources\ProjectFormConfigResource\Pages;
 
 use App\Filament\Resources\ProjectFormConfigResource;
 use App\Models\ProjectFormConfig;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
@@ -38,12 +38,12 @@ class ListProjectFormConfigs extends ListRecords
                         return $query;
                     }
 
-                    $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                        ->pluck('competition_id')
+                    $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                        ->pluck('program_id')
                         ->toArray();
 
-                    return $query->whereHas('form', function ($q) use ($supervisorCompetitions) {
-                        $q->whereIn('competition_id', $supervisorCompetitions);
+                    return $query->whereHas('form', function ($q) use ($supervisorPrograms) {
+                        $q->whereIn('program_id', $supervisorPrograms);
                     });
                 }),
 
@@ -56,13 +56,13 @@ class ListProjectFormConfigs extends ListRecords
                         return $query->where('is_archived', false);
                     }
 
-                    $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                        ->pluck('competition_id')
+                    $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                        ->pluck('program_id')
                         ->toArray();
 
                     return $query->where('is_archived', false)
-                        ->whereHas('form', function ($q) use ($supervisorCompetitions) {
-                            $q->whereIn('competition_id', $supervisorCompetitions);
+                        ->whereHas('form', function ($q) use ($supervisorPrograms) {
+                            $q->whereIn('program_id', $supervisorPrograms);
                         });
                 }),
 
@@ -75,13 +75,13 @@ class ListProjectFormConfigs extends ListRecords
                         return $query->where('is_archived', true);
                     }
 
-                    $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                        ->pluck('competition_id')
+                    $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                        ->pluck('program_id')
                         ->toArray();
 
                     return $query->where('is_archived', true)
-                        ->whereHas('form', function ($q) use ($supervisorCompetitions) {
-                            $q->whereIn('competition_id', $supervisorCompetitions);
+                        ->whereHas('form', function ($q) use ($supervisorPrograms) {
+                            $q->whereIn('program_id', $supervisorPrograms);
                         });
                 }),
         ];
@@ -96,12 +96,12 @@ class ListProjectFormConfigs extends ListRecords
                 if ($user->isSuperAdmin()) {
                     return $query;
                 }
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereHas('form', function ($q) use ($supervisorCompetitions) {
-                    $q->whereIn('competition_id', $supervisorCompetitions);
+                return $query->whereHas('form', function ($q) use ($supervisorPrograms) {
+                    $q->whereIn('program_id', $supervisorPrograms);
                 });
             })
             ->columns([

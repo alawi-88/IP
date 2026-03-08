@@ -193,7 +193,7 @@ function Comments({
       }
       if (type === "applications") {
         queryClient.invalidateQueries({
-          queryKey: ["my-competitions"],
+          queryKey: ["my-programs"],
         });
       }
     },

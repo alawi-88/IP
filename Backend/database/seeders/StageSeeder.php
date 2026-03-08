@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Stage;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -16,10 +16,10 @@ class StageSeeder extends Seeder
     {
         DB::table('stages')->truncate();
 
-        $competitions = Competition::all();
+        $programs = Program::all();
 
-        foreach ($competitions as $competition) {
-            $competition->stages()->create([
+        foreach ($programs as $program) {
+            $program->stages()->create([
                 'title' => [
                     'en' => 'Registration',
                     'ar' => 'التسجيل',
@@ -31,7 +31,7 @@ class StageSeeder extends Seeder
                 'slug' => 'registration',
             ]);
 
-            $competition->stages()->create([
+            $program->stages()->create([
                 'title' => [
                     'en' => 'Team Formation',
                     'ar' => 'تكوين الفريق',
@@ -43,7 +43,7 @@ class StageSeeder extends Seeder
                 'slug' => 'team-formation',
             ]);
 
-            $competition->stages()->create([
+            $program->stages()->create([
                 'title' => [
                     'en' => 'Project Submission',
                     'ar' => 'تقديم المشروع',

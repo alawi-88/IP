@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\MentorResource\Pages;
 
 use App\Filament\Resources\MentorResource;
-use App\Models\Competition;
-use App\Models\CompetitionApplication;
+use App\Models\Program;
+use App\Models\ProgramApplication;
 use App\Models\Mentor;
 use App\Models\Participant;
 use App\Models\Team;
@@ -38,23 +38,23 @@ class ViewMentor extends ViewRecord
                             Forms\Components\Select::make('team_applications')
                                 ->label('Team Applications / طلبات الفرق')
                                 ->options(function () {
-                                    $competitionIds = $this->record->competitions()->pluck('competitions.id')->toArray();
+                                    $programIds = $this->record->programs()->pluck('programs.id')->toArray();
                                     $currentMentorId = $this->record->id;
                                     
-                                    // If mentor has no assigned competitions, return empty
-                                    if (empty($competitionIds)) {
+                                    // If mentor has no assigned programs, return empty
+                                    if (empty($programIds)) {
                                         return [];
                                     }
                                     
-                                    // Get team applications ONLY from mentor's assigned competitions
+                                    // Get team applications ONLY from mentor's assigned programs
                                     // Exclude teams that already have a mentor assigned (except this mentor's teams)
-                                    return CompetitionApplication::query()
+                                    return ProgramApplication::query()
                                         ->where(function ($q) {
                                             $q->where('has_team', true)
                                               ->orWhere('registered_as', 'team');
                                         })
                                         ->whereIn('status', ['approved', 'pending', 'submitted'])
-                                        ->whereIn('competition_id', $competitionIds)
+                                        ->whereIn('program_id', $programIds)
                                         ->whereHas('team', function ($query) use ($currentMentorId) {
                                             $query->where('is_archived', false)
                                                  // ->where('is_published', true)
@@ -66,19 +66,19 @@ class ViewMentor extends ViewRecord
                                                         });
                                                   });
                                         })
-                                        ->with(['team.mentors', 'competition', 'participant'])
+                                        ->with(['team.mentors', 'program', 'participant'])
                                         ->orderBy('id', 'desc')
                                         ->get()
                                         ->mapWithKeys(function ($application) {
                                             $teamName = $application->team?->name ?? 'Unknown Team';
-                                            $competitionName = $application->competition?->title;
-                                            if (is_array($competitionName)) {
-                                                $competitionName = $competitionName['en'] ?? $competitionName['ar'] ?? '';
+                                            $programName = $application->program?->title;
+                                            if (is_array($programName)) {
+                                                $programName = $programName['en'] ?? $programName['ar'] ?? '';
                                             }
                                             $status = ucfirst($application->status ?? '');
                                             $label = "#{$application->id} - {$teamName}";
-                                            if ($competitionName) {
-                                                $label .= " ({$competitionName})";
+                                            if ($programName) {
+                                                $label .= " ({$programName})";
                                             }
                                             $label .= " [{$status}]";
                                             return [$application->id => $label];
@@ -89,18 +89,18 @@ class ViewMentor extends ViewRecord
                                 ->preload()
                                 ->placeholder('Select team applications... / اختر طلبات الفرق...')
                                 ->default(function () {
-                                    // Get application IDs for currently assigned teams (only from assigned competitions)
-                                    $competitionIds = $this->record->competitions()->pluck('competitions.id')->toArray();
+                                    // Get application IDs for currently assigned teams (only from assigned programs)
+                                    $programIds = $this->record->programs()->pluck('programs.id')->toArray();
                                     $teamIds = $this->record->teams()->pluck('teams.id')->toArray();
                                     
-                                    if (empty($competitionIds) || empty($teamIds)) {
+                                    if (empty($programIds) || empty($teamIds)) {
                                         return [];
                                     }
                                     
-                                    return CompetitionApplication::whereHas('team', function ($q) use ($teamIds) {
+                                    return ProgramApplication::whereHas('team', function ($q) use ($teamIds) {
                                         $q->whereIn('id', $teamIds);
                                     })
-                                    ->whereIn('competition_id', $competitionIds)
+                                    ->whereIn('program_id', $programIds)
                                     ->pluck('id')
                                     ->toArray();
                                 })
@@ -114,23 +114,23 @@ class ViewMentor extends ViewRecord
                             Forms\Components\Select::make('individual_applications')
                                 ->label('Individual Applications / الطلبات الفردية')
                                 ->options(function () {
-                                    $competitionIds = $this->record->competitions()->pluck('competitions.id')->toArray();
+                                    $programIds = $this->record->programs()->pluck('programs.id')->toArray();
                                     $currentMentorId = $this->record->id;
                                     
-                                    // If mentor has no assigned competitions, return empty
-                                    if (empty($competitionIds)) {
+                                    // If mentor has no assigned programs, return empty
+                                    if (empty($programIds)) {
                                         return [];
                                     }
                                     
-                                    // Get individual applications ONLY from mentor's assigned competitions
+                                    // Get individual applications ONLY from mentor's assigned programs
                                     // Exclude participants that already have a mentor assigned (except this mentor's participants)
-                                    return CompetitionApplication::query()
+                                    return ProgramApplication::query()
                                         ->where(function ($q) {
                                             $q->where('has_team', false)
                                               ->orWhere('registered_as', 'individual');
                                         })
                                         ->whereIn('status', ['approved', 'pending', 'submitted'])
-                                        ->whereIn('competition_id', $competitionIds)
+                                        ->whereIn('program_id', $programIds)
                                         ->whereHas('participant', function ($q) use ($currentMentorId) {
                                             $q->where('is_archived', false)
                                              // Exclude participants with other mentors, but include participants assigned to this mentor
@@ -141,7 +141,7 @@ class ViewMentor extends ViewRecord
                                                      });
                                               });
                                         })
-                                        ->with(['competition', 'participant.mentors'])
+                                        ->with(['program', 'participant.mentors'])
                                         ->orderBy('id', 'desc')
                                         ->get()
                                         ->mapWithKeys(function ($application) {
@@ -150,14 +150,14 @@ class ViewMentor extends ViewRecord
                                                 $participantName = $participantName['en'] ?? $participantName['ar'] ?? 'Unknown';
                                             }
                                             $participantEmail = $application->participant?->email ?? '';
-                                            $competitionName = $application->competition?->title;
-                                            if (is_array($competitionName)) {
-                                                $competitionName = $competitionName['en'] ?? $competitionName['ar'] ?? '';
+                                            $programName = $application->program?->title;
+                                            if (is_array($programName)) {
+                                                $programName = $programName['en'] ?? $programName['ar'] ?? '';
                                             }
                                             $status = ucfirst($application->status ?? '');
                                             $label = "#{$application->id} - {$participantName} ({$participantEmail})";
-                                            if ($competitionName) {
-                                                $label .= " - {$competitionName}";
+                                            if ($programName) {
+                                                $label .= " - {$programName}";
                                             }
                                             $label .= " [{$status}]";
                                             return [$application->id => $label];
@@ -168,7 +168,7 @@ class ViewMentor extends ViewRecord
                                 ->preload()
                                 ->placeholder('Select individual applications... / اختر الطلبات الفردية...')
                                 ->default(function () {
-                                    // Get assignments exactly as they are in the database (scoped by competition)
+                                    // Get assignments exactly as they are in the database (scoped by program)
                                     $assignments = DB::table('mentor_participant')
                                         ->where('mentor_id', $this->record->id)
                                         ->get();
@@ -177,8 +177,8 @@ class ViewMentor extends ViewRecord
                                     $globalParticipantIds = [];
                                     
                                     foreach ($assignments as $assignment) {
-                                        if ($assignment->competition_id) {
-                                            $identifiers[] = $assignment->participant_id . '-' . $assignment->competition_id;
+                                        if ($assignment->program_id) {
+                                            $identifiers[] = $assignment->participant_id . '-' . $assignment->program_id;
                                         } else {
                                             $globalParticipantIds[] = $assignment->participant_id;
                                         }
@@ -189,13 +189,13 @@ class ViewMentor extends ViewRecord
                                     }
                                     
                                     // Fetch all potential applications
-                                    $competitionIds = $this->record->competitions()->pluck('competitions.id')->toArray();
+                                    $programIds = $this->record->programs()->pluck('programs.id')->toArray();
                                     
-                                    $query = CompetitionApplication::where(function ($q) {
+                                    $query = ProgramApplication::where(function ($q) {
                                             $q->where('has_team', false)
                                               ->orWhere('registered_as', 'individual');
                                         })
-                                        ->whereIn('competition_id', $competitionIds);
+                                        ->whereIn('program_id', $programIds);
                                         
                                     // Optimization: filter by participants we care about
                                     $allParticipantIds = array_unique(array_merge(
@@ -204,7 +204,7 @@ class ViewMentor extends ViewRecord
                                     ));
                                     
                                     $applications = $query->whereIn('participant_id', $allParticipantIds)
-                                        ->select('id', 'participant_id', 'competition_id')
+                                        ->select('id', 'participant_id', 'program_id')
                                         ->get();
                                         
                                     $selectedApplicationIds = [];
@@ -216,8 +216,8 @@ class ViewMentor extends ViewRecord
                                             continue;
                                         }
                                         
-                                        // If participant is assigned for this specific competition, include this app
-                                        $ident = $app->participant_id . '-' . $app->competition_id;
+                                        // If participant is assigned for this specific program, include this app
+                                        $ident = $app->participant_id . '-' . $app->program_id;
                                         if (in_array($ident, $identifiers)) {
                                             $selectedApplicationIds[] = $app->id;
                                         }
@@ -252,10 +252,10 @@ class ViewMentor extends ViewRecord
                 ->modalHeading('Assign Mentor to Programs')
                 ->modalDescription('Select one or more programs to assign this mentor to.')
                 ->form([
-                    Forms\Components\Select::make('competitions')
+                    Forms\Components\Select::make('programs')
                         ->label('Programs')
                         ->options(function () {
-                            return Competition::query()
+                            return Program::query()
                                 ->whereNotNull('title')
                                 ->where('is_archived', false)
                                 ->get()
@@ -271,33 +271,33 @@ class ViewMentor extends ViewRecord
                         ->searchable()
                         ->preload()
                         ->placeholder('Select programs...')
-                        ->default(fn () => $this->record->competitions()->pluck('competitions.id')->toArray())
+                        ->default(fn () => $this->record->programs()->pluck('programs.id')->toArray())
                         ->required()
                         ->helperText('Search and select one or more programs for this mentor.')
                 ])
                 ->action(function (array $data) {
-                    // Get currently assigned competition IDs before sync
-                    $originalCompetitionIds = $this->record->competitions()->pluck('competitions.id')->toArray();
+                    // Get currently assigned program IDs before sync
+                    $originalProgramIds = $this->record->programs()->pluck('programs.id')->toArray();
                     
-                    // Sync new competitions
-                    $this->record->competitions()->sync($data['competitions']);
+                    // Sync new programs
+                    $this->record->programs()->sync($data['programs']);
                     
-                    // Determine removed competitions
-                    $newCompetitionIds = $data['competitions'];
-                    $removedCompetitionIds = array_diff($originalCompetitionIds, $newCompetitionIds);
+                    // Determine removed programs
+                    $newProgramIds = $data['programs'];
+                    $removedProgramIds = array_diff($originalProgramIds, $newProgramIds);
                     
-                    // If competitions were removed, cleanup assigned participants and teams
-                    if (!empty($removedCompetitionIds)) {
+                    // If programs were removed, cleanup assigned participants and teams
+                    if (!empty($removedProgramIds)) {
                         $mentorId = $this->record->id;
                         
                         // 1. Cleanup Teams
-                        // Find teams assigned to this mentor that belong to the removed competitions
+                        // Find teams assigned to this mentor that belong to the removed programs
                         $teamsToRemove = Team::query()
                             ->whereHas('mentors', function ($q) use ($mentorId) {
                                 $q->where('mentor_id', $mentorId);
                             })
-                            ->whereHas('application', function ($q) use ($removedCompetitionIds) {
-                                $q->whereIn('competition_id', $removedCompetitionIds);
+                            ->whereHas('application', function ($q) use ($removedProgramIds) {
+                                $q->whereIn('program_id', $removedProgramIds);
                             })
                             ->pluck('id')
                             ->toArray();
@@ -307,33 +307,33 @@ class ViewMentor extends ViewRecord
                         }
                         
                         // 2. Cleanup Individual Participants
-                        // Find participants assigned to this mentor via applications in removed competitions
-                        // We need to be careful: a participant might be in multiple competitions.
-                        // We should only remove if their *application for that competition* was the reason for assignment.
+                        // Find participants assigned to this mentor via applications in removed programs
+                        // We need to be careful: a participant might be in multiple programs.
+                        // We should only remove if their *application for that program* was the reason for assignment.
                         // However, the relationship is Mentor <-> Participant. 
-                        // If we assume a mentor is assigned to a participant in the context of a competition...
+                        // If we assume a mentor is assigned to a participant in the context of a program...
                         
-                        // Let's look at applications for removed competitions where the participant is assigned to this mentor
+                        // Let's look at applications for removed programs where the participant is assigned to this mentor
                         // and detach the participant.
                         
                         // Better approach: Find participants assigned to this mentor who ONLY have active applications 
-                        // in the REMOVED competitions (relative to what the mentor is assigned to).
-                        // OR simpler: Just find participants whose active applications in Removed Competitions match, and detach them?
-                        // But wait, what if they are also in a Kept Competition?
+                        // in the REMOVED programs (relative to what the mentor is assigned to).
+                        // OR simpler: Just find participants whose active applications in Removed Programs match, and detach them?
+                        // But wait, what if they are also in a Kept Program?
                         
                         // Let's refine:
                         // Find participants assigned to this mentor.
-                        // For each participant, check if they still have ANY valid application in the *newly assigned* competitions of this mentor.
+                        // For each participant, check if they still have ANY valid application in the *newly assigned* programs of this mentor.
                         // If NOT, then detach them.
                         // This seems safest.
                         
                         $assignedParticipantIds = $this->record->participants()->pluck('participants.id')->toArray();
                         
                         if (!empty($assignedParticipantIds)) {
-                            // Find which of these currently assigned participants have valid applications in the NEW competition list
-                            $participantsToKeep = CompetitionApplication::query()
+                            // Find which of these currently assigned participants have valid applications in the NEW program list
+                            $participantsToKeep = ProgramApplication::query()
                                 ->whereIn('participant_id', $assignedParticipantIds)
-                                ->whereIn('competition_id', $newCompetitionIds)
+                                ->whereIn('program_id', $newProgramIds)
                                 ->where(function ($q) {
                                     $q->where('has_team', false)
                                       ->orWhere('registered_as', 'individual');
@@ -352,7 +352,7 @@ class ViewMentor extends ViewRecord
                     
                     \Filament\Notifications\Notification::make()
                         ->title('Programs Assigned')
-                        ->body('The mentor has been successfully assigned to the selected programs.' . (!empty($removedCompetitionIds) ? ' Related assignments from removed programs have been cleaned up.' : ''))
+                        ->body('The mentor has been successfully assigned to the selected programs.' . (!empty($removedProgramIds) ? ' Related assignments from removed programs have been cleaned up.' : ''))
                         ->success()
                         ->send();
                 })
@@ -408,7 +408,7 @@ class ViewMentor extends ViewRecord
             // Process Team Applications - get team IDs from applications
             $selectedTeamIds = [];
             if (!empty($selectedTeamApplicationIds)) {
-                $selectedTeamIds = CompetitionApplication::whereIn('id', $selectedTeamApplicationIds)
+                $selectedTeamIds = ProgramApplication::whereIn('id', $selectedTeamApplicationIds)
                     ->whereHas('team')
                     ->with('team')
                     ->get()
@@ -417,18 +417,18 @@ class ViewMentor extends ViewRecord
                     ->toArray();
             }
             
-            // Process Individual Applications - get participant IDs AND competition IDs
-            $selectedParticipantMap = []; // participant_id => [competition_id => true]
+            // Process Individual Applications - get participant IDs AND program IDs
+            $selectedParticipantMap = []; // participant_id => [program_id => true]
             if (!empty($selectedIndividualApplicationIds)) {
-                $applications = CompetitionApplication::whereIn('id', $selectedIndividualApplicationIds)
-                    ->select('id', 'participant_id', 'competition_id')
+                $applications = ProgramApplication::whereIn('id', $selectedIndividualApplicationIds)
+                    ->select('id', 'participant_id', 'program_id')
                     ->get();
                 
                 foreach ($applications as $app) {
                     if (!isset($selectedParticipantMap[$app->participant_id])) {
                         $selectedParticipantMap[$app->participant_id] = [];
                     }
-                    $selectedParticipantMap[$app->participant_id][] = $app->competition_id;
+                    $selectedParticipantMap[$app->participant_id][] = $app->program_id;
                 }
             }
             
@@ -545,7 +545,7 @@ class ViewMentor extends ViewRecord
      */
     /**
      * Process individual participant assignments
-     * @param array $selectedParticipantMap Format: [participant_id => [competition_id_1, competition_id_2]]
+     * @param array $selectedParticipantMap Format: [participant_id => [program_id_1, program_id_2]]
      */
     protected function processParticipantAssignments(array $selectedParticipantMap, ?string $notes, int $currentUserId): void
     {
@@ -563,7 +563,7 @@ class ViewMentor extends ViewRecord
             }
         }
         
-        // 2. Check for conflicts (Participants already assigned to other mentors in these competitions)
+        // 2. Check for conflicts (Participants already assigned to other mentors in these programs)
         $conflicts = [];
         $participantIds = array_keys($selectedParticipantMap);
         
@@ -576,15 +576,15 @@ class ViewMentor extends ViewRecord
                 
             foreach ($existingAssignments as $assignment) {
                 $pId = $assignment->participant_id;
-                $cId = $assignment->competition_id;
+                $cId = $assignment->program_id;
                 
-                // Get the desired competitions for this participant
+                // Get the desired programs for this participant
                 $desiredCompIds = $selectedParticipantMap[$pId] ?? [];
                 
                 foreach ($desiredCompIds as $desiredCId) {
                     // Conflict if:
-                    // 1. The existing assignment is Global (NULL cId) - covers ALL competitions
-                    // 2. The existing assignment matches the desired competition
+                    // 1. The existing assignment is Global (NULL cId) - covers ALL programs
+                    // 2. The existing assignment matches the desired program
                     if (is_null($cId) || $cId == $desiredCId) {
                         // We have a conflict
                         $conflicts[$pId] = $conflicts[$pId] ?? [];
@@ -598,7 +598,7 @@ class ViewMentor extends ViewRecord
             $conflictDetails = [];
             // Fetch names for nice error message
             $participants = Participant::whereIn('id', array_keys($conflicts))->pluck('name', 'id');
-            $competitions = Competition::whereIn('id', \Illuminate\Support\Arr::flatten($conflicts))->pluck('title', 'id');
+            $programs = Program::whereIn('id', \Illuminate\Support\Arr::flatten($conflicts))->pluck('title', 'id');
             
             foreach ($conflicts as $pId => $compIds) {
                 $pName = $participants[$pId] ?? $pId;
@@ -606,7 +606,7 @@ class ViewMentor extends ViewRecord
                 
                 $compNames = [];
                 foreach (array_unique($compIds) as $cId) {
-                    $cName = $competitions[$cId] ?? $cId;
+                    $cName = $programs[$cId] ?? $cId;
                     if (is_array($cName)) $cName = $cName['en'] ?? $cName['ar'] ?? 'Unknown';
                     $compNames[] = $cName;
                 }
@@ -624,21 +624,21 @@ class ViewMentor extends ViewRecord
         // Get all current assignments for this mentor
         $currentAssignments = DB::table('mentor_participant')
             ->where('mentor_id', $mentorId)
-            ->get(); // Collection of {id, mentor_id, participant_id, competition_id, ...}
+            ->get(); // Collection of {id, mentor_id, participant_id, program_id, ...}
             
-        // Get mentor's managed competitions (Scope)
-        $managedCompetitionIds = $this->record->competitions()->pluck('competitions.id')->toArray();
+        // Get mentor's managed programs (Scope)
+        $managedProgramIds = $this->record->programs()->pluck('programs.id')->toArray();
         
         // Track what we've handled
         $processedPairs = []; // "part_id:comp_id" => true
         
         foreach ($currentAssignments as $assignment) {
             $pId = $assignment->participant_id;
-            $cId = $assignment->competition_id; // Can be NULL (Global)
+            $cId = $assignment->program_id; // Can be NULL (Global)
             
             // Handle Global Assignment (Legacy)
             if (is_null($cId)) {
-                // We interpret Global as "Assigned to all managed competitions".
+                // We interpret Global as "Assigned to all managed programs".
                 // Since we are migrating to Scoped, we will REMOVE the global assignment.
                 // If the user INTENDED to keep them, they would have selected the applications in the UI.
                 // Since the UI pre-selects based on existing assignments, the user's selection should include them if they were relevant.
@@ -647,22 +647,22 @@ class ViewMentor extends ViewRecord
             }
             
             // Handle Scoped Assignment
-            // Is this assignment within the scope of competitions we are managing right now?
-            if (!in_array($cId, $managedCompetitionIds)) {
+            // Is this assignment within the scope of programs we are managing right now?
+            if (!in_array($cId, $managedProgramIds)) {
                 // Out of scope (e.g. mentor assigned to CompA and CompB, but this assignment is for CompC).
                 // Keep it safe.
                 continue;
             }
             
             // It IS in scope. Check if it is in the Desired Selection.
-            $desiredCompetitions = $selectedParticipantMap[$pId] ?? [];
-            if (in_array($cId, $desiredCompetitions)) {
+            $desiredPrograms = $selectedParticipantMap[$pId] ?? [];
+            if (in_array($cId, $desiredPrograms)) {
                 // Keep it.
                 $pairKey = "{$pId}:{$cId}";
                 $processedPairs[$pairKey] = true;
             } else {
                 // Not in desired selection -> Remove it.
-                $this->record->participants()->wherePivot('competition_id', $cId)->detach($pId);
+                $this->record->participants()->wherePivot('program_id', $cId)->detach($pId);
             }
         }
         
@@ -676,14 +676,14 @@ class ViewMentor extends ViewRecord
                     // Check if we should add it (is it in managed scope? Yes, selection constrained by UI).
                     $this->record->participants()->syncWithoutDetaching([
                         $pId => [
-                            'competition_id' => $cId,
+                            'program_id' => $cId,
                             'assigned_by' => $currentUserId,
                             'assigned_at' => now(),
                             'notes' => $notes,
                         ]
                     ]);
                     // $this->record->participants()->attach($pId, [
-                    //     'competition_id' => $cId,
+                    //     'program_id' => $cId,
                     //     'assigned_by' => $currentUserId,
                     //     'assigned_at' => now(),
                     //     'notes' => $notes,

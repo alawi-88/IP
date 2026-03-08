@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Competition;
-use App\Models\CompetitionApplication;
+use App\Models\Program;
+use App\Models\ProgramApplication;
 use App\Models\ProjectEvaluation;
 use App\Models\Team;
 use Random\RandomException;
@@ -32,44 +32,44 @@ if (!function_exists('myTeam')) {
     }
 }
 
-// currentCompetition
-if (!function_exists('currentCompetition')) {
+// currentProgram
+if (!function_exists('currentProgram')) {
     /**
-     * Get the current competition.
+     * Get the current program.
      *
      * @param string $attribute
      * @return mixed
      */
-    function currentCompetitionId(): mixed
+    function currentProgramId(): mixed
     {
-        return session('current_competition_id');
+        return session('current_program_id');
     }
 }
 
-if (!function_exists('currentCompetition')) {
+if (!function_exists('currentProgram')) {
     /**
-     * Get the current competition.
+     * Get the current program.
      *
      * @param string $attribute
      * @return mixed
      */
-    function currentCompetition(string $attribute = 'id'): mixed
+    function currentProgram(string $attribute = 'id'): mixed
     {
-        return Competition::find(currentCompetitionId())?->$attribute;
+        return Program::find(currentProgramId())?->$attribute;
     }
 }
 
 
-if (!function_exists('getCompetitionId')) {
+if (!function_exists('getProgramId')) {
     /**
-     * Get the competition id of an application.
+     * Get the program id of an application.
      *
      * @param int $applicationId
-     * @return Competition
+     * @return Program
      */
-    function getCompetitionId(int $applicationId): int
+    function getProgramId(int $applicationId): int
     {
-        return CompetitionApplication::findOrFail($applicationId)->competition_id;
+        return ProgramApplication::findOrFail($applicationId)->program_id;
     }
 }
 

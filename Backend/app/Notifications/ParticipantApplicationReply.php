@@ -22,10 +22,10 @@ class ParticipantApplicationReply extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $competitionName = $this->comment->application->competition->title ?? 'Competition';
+        $programName = $this->comment->application->program->title ?? 'Program';
         $participantName = $this->comment->author?->name ?? __('A participant');
 
-        $data = $this->renderEmailTemplate('admin.participant_application_reply', ['competition' => $competitionName, 'AdminName' => $notifiable->name, 'UserName' => $participantName, 'comment' => $this->comment->comment]);
+        $data = $this->renderEmailTemplate('admin.participant_application_reply', ['program' => $programName, 'AdminName' => $notifiable->name, 'UserName' => $participantName, 'comment' => $this->comment->comment]);
         if ($data && !empty($data['body']) && $data['body'] !== null) {
             $body = $data['body'];
             $subject = $data['subject'];
@@ -38,7 +38,7 @@ class ParticipantApplicationReply extends Notification implements ShouldQueue
                 ->line(new \Illuminate\Support\HtmlString($body));
         } else {
             return (new MailMessage)
-            ->subject("New reply on application: {$competitionName}")
+            ->subject("New reply on application: {$programName}")
             ->greeting("Hello {$notifiable->name},")
             ->line("{$participantName} replied to your comment on their application:")
             ->line("\"{$this->comment->comment}\"")
@@ -50,14 +50,14 @@ class ParticipantApplicationReply extends Notification implements ShouldQueue
 
     public function toDatabase(object $notifiable): array
     {
-        $competitionName = optional($this->comment->application)->competition->title ?? 'Program'; 
+        $programName = optional($this->comment->application)->program->title ?? 'Program'; 
         $participantName = optional($this->comment->author)->name ?? __('A participant');
-        $data = $this->renderNotificationMessage('admin.participant_application_reply', ['competition' => $competitionName, 'AdminName' => $notifiable->name, 'UserName' => $participantName, 'comment' => $this->comment->comment]);
+        $data = $this->renderNotificationMessage('admin.participant_application_reply', ['program' => $programName, 'AdminName' => $notifiable->name, 'UserName' => $participantName, 'comment' => $this->comment->comment]);
         if ($data) {
             $body = $data['body'];
             $subject = $data['subject'];
         } else {
-            $subject = "New reply on application: {$competitionName}";
+            $subject = "New reply on application: {$programName}";
             $body = "{$participantName} replied to your comment on their application: \"{$this->comment->comment}\"";
         }
         return [
@@ -68,7 +68,7 @@ class ParticipantApplicationReply extends Notification implements ShouldQueue
             'comment_id' => $this->comment->id,
             'application_id' => $this->comment->application_id,
             'participant_name' => $participantName,
-            'competition_name' => $competitionName,
+            'program_name' => $programName,
         ];
     }
 }

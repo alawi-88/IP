@@ -4,7 +4,7 @@ namespace App\Filament\Resources\RegistrationFormConfigResource\Pages;
 
 use App\Filament\Resources\RegistrationFormConfigResource;
 use App\Models\RegistrationFormConfig;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -32,11 +32,11 @@ class ListRegistrationFormConfigs extends ListRecords
                 if ($user->isSuperAdmin()) {
                     return $query;
                 }
-                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                    ->pluck('competition_id')
+                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                    ->pluck('program_id')
                     ->toArray();
 
-                return $query->whereIn('competition_id', $supervisorCompetitions);
+                return $query->whereIn('program_id', $supervisorPrograms);
             })
             ->columns(RegistrationFormConfig::table())
             ->actions([
@@ -204,10 +204,10 @@ class ListRegistrationFormConfigs extends ListRecords
         if ($user->isSuperAdmin()) {
             $baseQuery = RegistrationFormConfig::query();
         } else {
-            $supervisorCompetitions = \App\Models\UserCompetition::where('user_id', $user->id)
-                ->pluck('competition_id')
+            $supervisorPrograms = \App\Models\UserProgram::where('user_id', $user->id)
+                ->pluck('program_id')
                 ->toArray();
-            $baseQuery = RegistrationFormConfig::query()->whereIn('competition_id', $supervisorCompetitions);
+            $baseQuery = RegistrationFormConfig::query()->whereIn('program_id', $supervisorPrograms);
         }
 
         $tabs = [

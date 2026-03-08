@@ -45,28 +45,28 @@ class ParticipantAddedAsTeamMember extends Notification
      */
     // public function toMail(object $notifiable): MailMessage
     // {
-    //     $competition = $this->team->application->competition;
+    //     $program = $this->team->application->program;
     //     $teamName = $this->team->name;
-    //     $competitionName = $competition->title;
+    //     $programName = $program->title;
 
     //     return (new MailMessage)
     //         ->subject(__('team_member.You have been added to a team!'))
     //         ->greeting(__('team_member.Dear Participant,'))
     //         ->line(__('team_member.team_added_message', [
     //             'team' => $teamName,
-    //             'competition' => $competitionName,
+    //             'program' => $programName,
     //         ]))
-    //         ->action(__('team_member.View Team'), url('/participant-dashboard/my-competitions'))
+    //         ->action(__('team_member.View Team'), url('/participant-dashboard/my-programs'))
     //         ->line(__('team_member.Innovation Platform Team'));
     // }
     public function toMail(object $notifiable): MailMessage
 {
-    $competition = $this->team->application->competition;
+    $program = $this->team->application->program;
     $teamName = $this->team->name;
-    $competitionName = $competition->title;
+    $programName = $program->title;
 
     // Try to get template from DB
-    $data = $this->renderEmailTemplate('user.team_addition', ['url'=>url('/participant-dashboard/my-competitions') , 'team' => $teamName, 'competition' => $competitionName]);
+    $data = $this->renderEmailTemplate('user.team_addition', ['url'=>url('/participant-dashboard/my-programs') , 'team' => $teamName, 'program' => $programName]);
     if ($data && !empty($data['body']) && $data['body'] !== null) {
 
         $body = $data['body'];
@@ -86,9 +86,9 @@ class ParticipantAddedAsTeamMember extends Notification
             ->greeting(__('team_member.Dear Participant,'))
             ->line(__('team_member.team_added_message', [
                 'team' => $teamName,
-                'competition' => $competitionName,
+                'program' => $programName,
             ]))
-            ->action(__('team_member.View Team'), url('/participant-dashboard/my-competitions'))
+            ->action(__('team_member.View Team'), url('/participant-dashboard/my-programs'))
             ->line(__('team_member.Innovation Platform Team', [
                 'app' => config('app.name'),
             ]));
@@ -108,10 +108,10 @@ class ParticipantAddedAsTeamMember extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        $competition = $this->team->application->competition;
+        $program = $this->team->application->program;
         $teamName = $this->team->name;
-        $competitionName = $competition->title;
-        $data = $this->renderNotificationMessage('user.team_addition', ['team' => $teamName, 'competition' => $competitionName]);
+        $programName = $program->title;
+        $data = $this->renderNotificationMessage('user.team_addition', ['team' => $teamName, 'program' => $programName]);
         if ($data) {
             $body = $data['body'];
             $subject = $data['subject'];
@@ -120,18 +120,18 @@ class ParticipantAddedAsTeamMember extends Notification
             $body =[
                 'ar' => getTranslationForLocale('team_member.platform_notification_message', 'ar', [
                     'team' => $teamName,
-                    'competition' => $competitionName,
+                    'program' => $programName,
                 ]),
                 'en' => getTranslationForLocale('team_member.platform_notification_message', 'en', [
                     'team' => $teamName,
-                    'competition' => $competitionName,
+                    'program' => $programName,
                 ])
                 ];
         }
         return [
             'title' => $subject,
             'body' => $body,
-            'action_url' => url('/participant-dashboard/my-competitions'),
+            'action_url' => url('/participant-dashboard/my-programs'),
         ];
     }
 }

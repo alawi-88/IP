@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\ProgramParticipantResource\Pages;
 
 use App\Filament\Resources\ProgramParticipantResource;
-use App\Models\CompetitionApplication;
-use App\Models\Competition;
+use App\Models\ProgramApplication;
+use App\Models\Program;
 use App\Models\Project;
 use App\Services\ApplicationApprovalService;
 use Filament\Resources\Pages\ListRecords;
@@ -19,56 +19,56 @@ class ListProgramParticipants extends ListRecords
     public function table(Table $table): Table
     {
         $user = auth()->user();
-        $currentCompetitionId = session('current_competition_id');
+        $currentProgramId = session('current_program_id');
 
         // Build base query - only submission type applications
-        $baseQuery = CompetitionApplication::query()
+        $baseQuery = ProgramApplication::query()
             ->where('type', 'submission')
-            ->with(['competition.stages' => function ($q) {
+            ->with(['program.stages' => function ($q) {
                 $q->where('slug', '!=', 'registration')
                   ->orderBy('starts_at', 'asc');
             }, 'participant', 'team']);
 
         // Filter by current program if set
-        if ($currentCompetitionId) {
-            $baseQuery->where('competition_id', $currentCompetitionId);
+        if ($currentProgramId) {
+            $baseQuery->where('program_id', $currentProgramId);
         }
 
         // Filter by admin's assigned programs (unless super admin)
         if ($user && !$user->isSuperAdmin()) {
-            // Get competition IDs the user has access to
-            $competitionIds = \App\Models\UserCompetition::where('user_id', $user->id)
-                ->pluck('competition_id')
+            // Get program IDs the user has access to
+            $programIds = \App\Models\UserProgram::where('user_id', $user->id)
+                ->pluck('program_id')
                 ->toArray();
 
-            if (!empty($competitionIds)) {
-                $baseQuery->whereIn('competition_id', $competitionIds);
+            if (!empty($programIds)) {
+                $baseQuery->whereIn('program_id', $programIds);
             } else {
                 // If user has no assigned programs, show nothing
                 $baseQuery->whereRaw('1 = 0');
             }
         } else {
             // Super admin sees all participants (filtered by current program if set)
-            if (!$currentCompetitionId) {
-                $baseQuery = CompetitionApplication::byCompetition()->where('type', 'submission');
+            if (!$currentProgramId) {
+                $baseQuery = ProgramApplication::byProgram()->where('type', 'submission');
             }
         }
 
         // Set default query
         $table->query($baseQuery);
 
-        // Get current competition for dynamic columns
-        $currentCompetition = $currentCompetitionId ? Competition::with(['stages' => function ($q) {
+        // Get current program for dynamic columns
+        $currentProgram = $currentProgramId ? Program::with(['stages' => function ($q) {
             $q->where('slug', '!=', 'registration')
               ->orderBy('starts_at', 'asc');
-        }])->find($currentCompetitionId) : null;
+        }])->find($currentProgramId) : null;
 
         // Build columns
         $columns = $this->buildBaseColumns();
 
-        // Add dynamic stage columns if competition is selected
-        if ($currentCompetition && $currentCompetition->stages) {
-            $stages = $currentCompetition->stages;
+        // Add dynamic stage columns if program is selected
+        if ($currentProgram && $currentProgram->stages) {
+            $stages = $currentProgram->stages;
             foreach ($stages as $stage) {
                 $formIds = $stage->getFormIds();
                 if (!empty($formIds)) {
@@ -147,9 +147,9 @@ class ListProgramParticipants extends ListRecords
             }
         }
 
-        // Add competition column if no current competition is set
-        if (!$currentCompetitionId) {
-            $columns[] = Tables\Columns\TextColumn::make('competition.title')
+        // Add program column if no current program is set
+        if (!$currentProgramId) {
+            $columns[] = Tables\Columns\TextColumn::make('program.title')
                 ->label('Program')
                 ->searchable()
                 ->sortable()
@@ -161,7 +161,7 @@ class ListProgramParticipants extends ListRecords
             ->columns($columns)
             ->defaultSort('total_score', 'desc')
             ->emptyStateHeading('No Participants')
-            ->emptyStateDescription($currentCompetitionId 
+            ->emptyStateDescription($currentProgramId 
                 ? 'No participants have registered for this program yet.'
                 : 'Please select a program to view participants, or no participants have registered yet.')
             ->emptyStateIcon('heroicon-o-users')
@@ -187,7 +187,7 @@ class ListProgramParticipants extends ListRecords
                         $approvalService = new ApplicationApprovalService();
                         $result = $approvalService->processAction(
                             'update',
-                            ['status' => 'approved', 'competition_id' => $record->competition_id, 'title' => $record->competition?->title ?? 'N/A'],
+                            ['status' => 'approved', 'program_id' => $record->program_id, 'title' => $record->program?->title ?? 'N/A'],
                             $record->id,
                             'Approve participant request'
                         );
@@ -216,7 +216,7 @@ class ListProgramParticipants extends ListRecords
                         }
                     })
                     ->authorize(fn ($record) =>
-                        auth()->user()?->can('update CompetitionApplication') &&
+                        auth()->user()?->can('update ProgramApplication') &&
                         ProgramParticipantResource::canView($record)
                     ),
 
@@ -232,7 +232,7 @@ class ListProgramParticipants extends ListRecords
                         $approvalService = new ApplicationApprovalService();
                         $result = $approvalService->processAction(
                             'update',
-                            ['status' => 'rejected', 'competition_id' => $record->competition_id, 'title' => $record->competition?->title ?? 'N/A'],
+                            ['status' => 'rejected', 'program_id' => $record->program_id, 'title' => $record->program?->title ?? 'N/A'],
                             $record->id,
                             'Reject participant request'
                         );
@@ -261,7 +261,7 @@ class ListProgramParticipants extends ListRecords
                         }
                     })
                     ->authorize(fn ($record) =>
-                        auth()->user()?->can('update CompetitionApplication') &&
+                        auth()->user()?->can('update ProgramApplication') &&
                         ProgramParticipantResource::canView($record)
                     ),
 
@@ -271,13 +271,13 @@ class ListProgramParticipants extends ListRecords
                     ->icon('heroicon-o-x-mark')
                     ->requiresConfirmation()
                     ->modalHeading('Disqualify Participant')
-                    ->modalDescription('Are you sure you want to disqualify this participant? This will mark them as disqualified and they will not be able to continue in the competition. This action will be submitted for approval.')
+                    ->modalDescription('Are you sure you want to disqualify this participant? This will mark them as disqualified and they will not be able to continue in the program. This action will be submitted for approval.')
                     ->visible(fn ($record) => !$record->isArchived() && $record->isApproved())
                     ->action(function ($record) {
                         $approvalService = new ApplicationApprovalService();
                         $result = $approvalService->processAction(
                             'update',
-                            ['status' => 'rejected', 'competition_id' => $record->competition_id, 'title' => $record->competition?->title ?? 'N/A'],
+                            ['status' => 'rejected', 'program_id' => $record->program_id, 'title' => $record->program?->title ?? 'N/A'],
                             $record->id,
                             'Disqualify participant request'
                         );
@@ -306,7 +306,7 @@ class ListProgramParticipants extends ListRecords
                         }
                     })
                     ->authorize(fn ($record) =>
-                        auth()->user()?->can('update CompetitionApplication') &&
+                        auth()->user()?->can('update ProgramApplication') &&
                         ProgramParticipantResource::canView($record)
                     ),
 
@@ -323,7 +323,7 @@ class ListProgramParticipants extends ListRecords
                         $approvalService = new ApplicationApprovalService();
                         $result = $approvalService->processAction(
                             'archive',
-                            ['is_archived' => true, 'archived_at' => now(), 'competition_id' => $record->competition_id, 'title' => $record->competition?->title ?? 'N/A'],
+                            ['is_archived' => true, 'archived_at' => now(), 'program_id' => $record->program_id, 'title' => $record->program?->title ?? 'N/A'],
                             $record->id,
                             'Archive participant request'
                         );
@@ -392,7 +392,7 @@ class ListProgramParticipants extends ListRecords
                         $approvalService = new ApplicationApprovalService();
                         $result = $approvalService->processAction(
                             'delete',
-                            ['competition_id' => $record->competition_id, 'title' => $record->competition?->title ?? 'N/A'],
+                            ['program_id' => $record->program_id, 'title' => $record->program?->title ?? 'N/A'],
                             $record->id,
                             'Delete participant request'
                         );
@@ -419,8 +419,8 @@ class ListProgramParticipants extends ListRecords
                                 ->send();
                         }
                     })
-                    ->visible(fn ($record) => auth()->user()?->can('delete CompetitionApplication'))
-                    ->authorize(fn ($record) => auth()->user()?->can('delete CompetitionApplication')),
+                    ->visible(fn ($record) => auth()->user()?->can('delete ProgramApplication'))
+                    ->authorize(fn ($record) => auth()->user()?->can('delete ProgramApplication')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -447,7 +447,7 @@ class ListProgramParticipants extends ListRecords
                                 if ($record->isPending() || $record->isRejected()) {
                                     $result = $approvalService->processAction(
                                         'update',
-                                        ['status' => 'approved', 'competition_id' => $record->competition_id, 'title' => $record->competition?->title ?? 'N/A'],
+                                        ['status' => 'approved', 'program_id' => $record->program_id, 'title' => $record->program?->title ?? 'N/A'],
                                         $record->id,
                                         'Bulk approve participant request'
                                     );
@@ -505,7 +505,7 @@ class ListProgramParticipants extends ListRecords
                                     ->send();
                             }
                         })
-                        ->visible(fn () => auth()->user()?->can('update CompetitionApplication')),
+                        ->visible(fn () => auth()->user()?->can('update ProgramApplication')),
 
                     Tables\Actions\BulkAction::make('bulk-reject')
                         ->label('Reject Selected')
@@ -530,7 +530,7 @@ class ListProgramParticipants extends ListRecords
                                 if ($record->isPending() || $record->isApproved()) {
                                     $result = $approvalService->processAction(
                                         'update',
-                                        ['status' => 'rejected', 'competition_id' => $record->competition_id, 'title' => $record->competition?->title ?? 'N/A'],
+                                        ['status' => 'rejected', 'program_id' => $record->program_id, 'title' => $record->program?->title ?? 'N/A'],
                                         $record->id,
                                         'Bulk reject participant request'
                                     );
@@ -588,7 +588,7 @@ class ListProgramParticipants extends ListRecords
                                     ->send();
                             }
                         })
-                        ->visible(fn () => auth()->user()?->can('update CompetitionApplication')),
+                        ->visible(fn () => auth()->user()?->can('update ProgramApplication')),
 
                     Tables\Actions\BulkAction::make('bulk-disqualify')
                         ->label('Disqualify Selected')
@@ -596,7 +596,7 @@ class ListProgramParticipants extends ListRecords
                         ->icon('heroicon-o-x-mark')
                         ->requiresConfirmation()
                         ->modalHeading('Disqualify Selected Participants')
-                        ->modalDescription('Are you sure you want to disqualify the selected participants? This will mark them as disqualified and they will not be able to continue in the competition. This action will be submitted for approval.')
+                        ->modalDescription('Are you sure you want to disqualify the selected participants? This will mark them as disqualified and they will not be able to continue in the program. This action will be submitted for approval.')
                         ->action(function ($records) {
                             $approvalService = new ApplicationApprovalService();
                             $count = 0;
@@ -613,7 +613,7 @@ class ListProgramParticipants extends ListRecords
                                 if ($record->isApproved()) {
                                     $result = $approvalService->processAction(
                                         'update',
-                                        ['status' => 'rejected', 'competition_id' => $record->competition_id, 'title' => $record->competition?->title ?? 'N/A'],
+                                        ['status' => 'rejected', 'program_id' => $record->program_id, 'title' => $record->program?->title ?? 'N/A'],
                                         $record->id,
                                         'Bulk disqualify participant request'
                                     );
@@ -671,7 +671,7 @@ class ListProgramParticipants extends ListRecords
                                     ->send();
                             }
                         })
-                        ->visible(fn () => auth()->user()?->can('update CompetitionApplication')),
+                        ->visible(fn () => auth()->user()?->can('update ProgramApplication')),
 
                     Tables\Actions\BulkAction::make('bulk-archive')
                         ->label('Deactivate Selected')
@@ -690,7 +690,7 @@ class ListProgramParticipants extends ListRecords
                                 if (!$record->isArchived()) {
                                     $result = $approvalService->processAction(
                                         'archive',
-                                        ['is_archived' => true, 'archived_at' => now(), 'competition_id' => $record->competition_id, 'title' => $record->competition?->title ?? 'N/A'],
+                                        ['is_archived' => true, 'archived_at' => now(), 'program_id' => $record->program_id, 'title' => $record->program?->title ?? 'N/A'],
                                         $record->id,
                                         'Bulk archive participant request'
                                     );
@@ -740,8 +740,8 @@ class ListProgramParticipants extends ListRecords
                                     ->send();
                             }
                         })
-                        ->visible(fn () => auth()->user()?->can('archive CompetitionApplication'))
-                        ->authorize(fn () => auth()->user()?->can('archive CompetitionApplication')),
+                        ->visible(fn () => auth()->user()?->can('archive ProgramApplication'))
+                        ->authorize(fn () => auth()->user()?->can('archive ProgramApplication')),
 
                     Tables\Actions\BulkAction::make('bulk-restore')
                         ->label('Activate Selected')
@@ -800,11 +800,11 @@ class ListProgramParticipants extends ListRecords
                                     ->send();
                             }
                         })
-                        ->visible(fn () => auth()->user()?->can('restore CompetitionApplication'))
-                        ->authorize(fn () => auth()->user()?->can('restore CompetitionApplication')),
+                        ->visible(fn () => auth()->user()?->can('restore ProgramApplication'))
+                        ->authorize(fn () => auth()->user()?->can('restore ProgramApplication')),
 
                     Tables\Actions\DeleteBulkAction::make()
-                        ->visible(fn () => auth()->user()?->can('delete CompetitionApplication')),
+                        ->visible(fn () => auth()->user()?->can('delete ProgramApplication')),
                 ]),
             ])
             ->filters([
@@ -896,13 +896,13 @@ class ListProgramParticipants extends ListRecords
                     // Start with combined registration score (manual + AI evaluation)
                     $total = $record->registration_total_score ?? 0;
 
-                    // Get competition stages
-                    $competition = $record->competition;
-                    if (!$competition) {
+                    // Get program stages
+                    $program = $record->program;
+                    if (!$program) {
                         return $total > 0 ? number_format($total, 2) : '—';
                     }
 
-                    $stages = $competition->stages()
+                    $stages = $program->stages()
                         ->where('slug', '!=', 'registration')
                         ->orderBy('starts_at', 'asc')
                         ->get();

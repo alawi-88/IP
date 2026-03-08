@@ -53,7 +53,7 @@ return [
     'full_name_label' => 'Full Name',
     'email_label' => 'Email',
     'session_title_label' => 'Note',
-    'competition_label' => 'Program',
+    'program_label' => 'Program',
     'program_label' => 'Program',
     'session_date_label' => 'Date',
     'session_time_label' => 'Time',

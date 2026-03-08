@@ -7,7 +7,7 @@ use App\Filters\Mentors\HasAvailability;
 use App\Filters\Mentors\Profession;
 use App\Http\Resources\MentorResource;
 use App\Models\Mentor;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -28,7 +28,7 @@ class MentorController extends Controller
         }
 
         // Get application with relations
-        $application = CompetitionApplication::with(['participant.mentors', 'team.mentors'])->findOrFail($applicationId);
+        $application = ProgramApplication::with(['participant.mentors', 'team.mentors'])->findOrFail($applicationId);
         
         // IDOR Prevention: Verify that the application belongs to the authenticated user
         $userId = auth()->id();
@@ -36,7 +36,7 @@ class MentorController extends Controller
             abort(404, 'Application not found');
         }
         
-        $competitionId = $application->competition_id;
+        $programId = $application->program_id;
 
         // Collect mentor IDs assigned directly to the participant or to their team
         $assignedMentorIds = collect();
@@ -66,16 +66,16 @@ class MentorController extends Controller
             return MentorResource::collection(collect());
         }
 
-        // Since $application->competitions() does not exist, fall back to single competition_id logic
-        $competitionIds = [$competitionId];
+        // Since $application->programs() does not exist, fall back to single program_id logic
+        $programIds = [$programId];
 
         $mentorsQuery = Mentor::whereIn('id', $assignedMentorIds)
             ->where('is_visible', true)
             ->where('status', 'approved')
-            ->whereHas('competitions', function ($q) use ($competitionIds) {
-                $q->whereIn('competitions.id', $competitionIds);
+            ->whereHas('programs', function ($q) use ($programIds) {
+                $q->whereIn('programs.id', $programIds);
             })
-            ->with(['competitions', 'track', 'competition'])
+            ->with(['programs', 'track', 'program'])
             ->active(); // Only show non-archived mentors
 
         if (!config('video_tools.google.use_global_account', false)) {
@@ -130,14 +130,14 @@ class MentorController extends Controller
      */
     public function show($mentor): JsonResource
     {
-        // application_id is required to scope mentor to current competition
+        // application_id is required to scope mentor to current program
         $applicationId = request('application_id');
 
         if (!$applicationId) {
             abort(404, 'Mentor not found.');
         }
 
-        $application = CompetitionApplication::with(['participant.mentors', 'team.mentors'])->find($applicationId);
+        $application = ProgramApplication::with(['participant.mentors', 'team.mentors'])->find($applicationId);
         if (!$application) {
             abort(404, 'Application not found.');
         }
@@ -148,7 +148,7 @@ class MentorController extends Controller
             abort(404, 'Application not found.');
         }
         
-        $competitionId = $application->competition_id;
+        $programId = $application->program_id;
 
         // Collect mentor IDs assigned directly to the participant or to their team
         $assignedMentorIds = collect();
@@ -178,16 +178,16 @@ class MentorController extends Controller
             abort(404, 'Mentor not found.');
         }
 
-        // Fetch mentor manually with competition and visibility constraints
+        // Fetch mentor manually with program and visibility constraints
         $mentorModel = Mentor::query()
             ->where('id', $mentor)
             ->where('is_visible', true)
             ->where('status', 'approved')
-            ->whereHas('competitions', function ($q) use ($competitionId) {
-                $q->where('competitions.id', $competitionId);
+            ->whereHas('programs', function ($q) use ($programId) {
+                $q->where('programs.id', $programId);
             })
             ->active()
-            ->with(['competitions', 'track', 'competition'])
+            ->with(['programs', 'track', 'program'])
             ->first();
 
         if (!$mentorModel) {

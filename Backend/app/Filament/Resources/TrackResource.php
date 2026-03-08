@@ -30,9 +30,9 @@ class TrackResource extends Resource
             Forms\Components\Section::make('Basic Information')
                 ->description('Select the program and order of this track.')
                 ->schema([
-                    Select::make('competition_id')
+                    Select::make('program_id')
                         ->label('Program')
-                        ->options(\App\Models\Competition::pluck('title', 'id'))
+                        ->options(\App\Models\Program::pluck('title', 'id'))
                         ->searchable()
                         ->required()
                         ->native(false)
@@ -46,10 +46,10 @@ class TrackResource extends Resource
                         ->helperText('Defines the order of the track in listings.')
                         ->columnSpanFull()
                         ->rules(function (callable $get) {
-                            $competitionId = $get('competition_id');
+                            $programId = $get('program_id');
                             return [
                                 Rule::unique('tracks', 'order')
-                                    ->where(fn($query) => $query->where('competition_id', $competitionId)),
+                                    ->where(fn($query) => $query->where('program_id', $programId)),
                             ];
                         }),
                 ]),
@@ -70,11 +70,11 @@ class TrackResource extends Resource
                                             if (blank($value)) {
                                                 return;
                                             }
-                                            $competitionId = $get('competition_id');
-                                            if (blank($competitionId)) {
+                                            $programId = $get('program_id');
+                                            if (blank($programId)) {
                                                 return;
                                             }
-                                            $query = Track::where('competition_id', $competitionId)
+                                            $query = Track::where('program_id', $programId)
                                                 ->where('name->en', $value);
                                             $recordId = request()->route('record');
                                             if ($recordId) {
@@ -106,7 +106,7 @@ class TrackResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('competition.title')
+                Tables\Columns\TextColumn::make('program.title')
                     ->label('Program')
                     ->searchable()
                     ->sortable(),
@@ -135,7 +135,7 @@ class TrackResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->visible(function ($record) {
-                        return !\App\Models\CompetitionApplication::query()
+                        return !\App\Models\ProgramApplication::query()
                             ->where('form_submissions->track', $record->id)
                             ->exists();
                     }),

@@ -25,7 +25,7 @@ class ListStages extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->query(Stage::byCompetition())
+            ->query(Stage::byProgram())
             ->columns(Stage::columns())
             ->defaultSort('starts_at', 'desc')
             ->actions([

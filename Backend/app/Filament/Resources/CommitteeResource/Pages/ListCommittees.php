@@ -5,7 +5,7 @@ namespace App\Filament\Resources\CommitteeResource\Pages;
 use App\Filament\Exports\CommitteeExporter;
 use App\Filament\Resources\CommitteeResource;
 use App\Models\Committee;
-use App\Models\CompetitionJudge;
+use App\Models\ProgramJudge;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\ExportBulkAction;
@@ -26,13 +26,13 @@ class ListCommittees extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->query(Committee::byCompetition())
+            ->query(Committee::byProgram())
             ->columns(Committee::columns())
             ->filters([
                 Tables\Filters\SelectFilter::make('judges')
-                    ->options(CompetitionJudge::query()
+                    ->options(ProgramJudge::query()
                         ->select('id', 'judge_id')
-                        ->where('competition_id', 1)
+                        ->where('program_id', 1)
                         ->get()
                         ->pluck('judge.name', 'id')
                         ->toArray())

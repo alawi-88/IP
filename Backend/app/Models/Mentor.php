@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\CompetitionApplicationScope;
-use App\Traits\Competition\FilterByCompetition;
+use App\Models\Scopes\ProgramApplicationScope;
+use App\Traits\Program\FilterByProgram;
 use App\Traits\HasActivityLog;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -28,10 +28,10 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 
-#[ScopedBy([CompetitionApplicationScope::class])]
+#[ScopedBy([ProgramApplicationScope::class])]
 class Mentor extends AuthenticatableUser
 {
-    use HasTranslations, HasFactory, FilterByCompetition, LogsActivity, HasActivityLog, Notifiable, HasApiTokens;
+    use HasTranslations, HasFactory, FilterByProgram, LogsActivity, HasActivityLog, Notifiable, HasApiTokens;
 
     protected array $logFields = [
         'name',
@@ -42,8 +42,8 @@ class Mentor extends AuthenticatableUser
         'facebook',
         'instagram',
         'is_visible',
-        'competition.title',
-        'competition_id',
+        'program.title',
+        'program_id',
         'track.name',
         'is_archived',
         'archived_at'
@@ -61,7 +61,7 @@ class Mentor extends AuthenticatableUser
 
     protected $fillable = [
         'track_id',
-        'competition_id',
+        'program_id',
         'name',
         'experience',
         'brief',
@@ -113,29 +113,29 @@ class Mentor extends AuthenticatableUser
         parent::boot();
 
         static::creating(function ($mentor) {
-            // Only set competition_id if not already provided
-            if (!$mentor->competition_id) {
-                $mentor->competition_id = currentCompetitionId();
+            // Only set program_id if not already provided
+            if (!$mentor->program_id) {
+                $mentor->program_id = currentProgramId();
             }
         });
 
         static::created(function ($mentor) {
-            // Attach mentor to current competition using many-to-many relationship
-            $currentCompetitionId = currentCompetitionId();
-            if ($currentCompetitionId && $mentor->competitions()->count() === 0) {
-                $mentor->competitions()->attach($currentCompetitionId);
+            // Attach mentor to current program using many-to-many relationship
+            $currentProgramId = currentProgramId();
+            if ($currentProgramId && $mentor->programs()->count() === 0) {
+                $mentor->programs()->attach($currentProgramId);
             }
         });
     }
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
-    public function competitions(): BelongsToMany
+    public function programs(): BelongsToMany
     {
-        return $this->belongsToMany(Competition::class, 'mentor_competitions')->withTimestamps();
+        return $this->belongsToMany(Program::class, 'mentor_programs')->withTimestamps();
     }
 
     public function track(): BelongsTo
@@ -149,18 +149,18 @@ class Mentor extends AuthenticatableUser
     }
 
     /**
-     * Override byCompetition scope to use many-to-many relationship
+     * Override byProgram scope to use many-to-many relationship
      */
-    public function scopeByCompetition($query)
+    public function scopeByProgram($query)
     {
-        $competitionId = currentCompetitionId();
+        $programId = currentProgramId();
         
-        if (!$competitionId) {
+        if (!$programId) {
             return $query;
         }
         
-        return $query->whereHas('competitions', function ($q) use ($competitionId) {
-            $q->where('competition_id', $competitionId);
+        return $query->whereHas('programs', function ($q) use ($programId) {
+            $q->where('program_id', $programId);
         });
     }
 
@@ -198,7 +198,7 @@ class Mentor extends AuthenticatableUser
     public function participants(): BelongsToMany
     {
         return $this->belongsToMany(Participant::class, 'mentor_participant')
-            ->withPivot(['assigned_by', 'assigned_at', 'notes', 'competition_id'])
+            ->withPivot(['assigned_by', 'assigned_at', 'notes', 'program_id'])
             ->withTimestamps();
     }    
 
@@ -288,8 +288,8 @@ class Mentor extends AuthenticatableUser
             Forms\Components\Select::make('track_id')
                 ->label('Track')
                 ->options(function ($get) {
-                    $competitionIds = $get('competitions') ?? [currentCompetitionId()];
-                    return \App\Models\Track::whereIn('competition_id', (array) $competitionIds)->pluck('name', 'id');
+                    $programIds = $get('programs') ?? [currentProgramId()];
+                    return \App\Models\Track::whereIn('program_id', (array) $programIds)->pluck('name', 'id');
                 }),
             Forms\Components\TextInput::make('linkedin')
                 ->label('LinkedIn')
@@ -317,19 +317,19 @@ class Mentor extends AuthenticatableUser
                 ->required()
                 ->default('approved'),
             
-            Forms\Components\Select::make('competitions')
+            Forms\Components\Select::make('programs')
                 ->label('Programs')
-                ->relationship('competitions', 'title')
+                ->relationship('programs', 'title')
                 ->options(function () {
-                    return \App\Models\Competition::query()
+                    return \App\Models\Program::query()
                         ->where('is_archived', false)
                         ->whereNotNull('title')
                         ->get()
-                        ->mapWithKeys(function ($competition) {
-                            $title = is_array($competition->title) 
-                                ? ($competition->title['en'] ?? $competition->title['ar'] ?? 'Unknown')
-                                : $competition->title;
-                            return [$competition->id => $title];
+                        ->mapWithKeys(function ($program) {
+                            $title = is_array($program->title) 
+                                ? ($program->title['en'] ?? $program->title['ar'] ?? 'Unknown')
+                                : $program->title;
+                            return [$program->id => $title];
                         });
                 })
                 ->multiple()
@@ -341,9 +341,9 @@ class Mentor extends AuthenticatableUser
                         // If a value is already selected (editing), don't override it
                         return $state;
                     }
-                    // Use currentCompetitionId() helper if available
-                    if (function_exists('currentCompetitionId')) {
-                        $current = currentCompetitionId();
+                    // Use currentProgramId() helper if available
+                    if (function_exists('currentProgramId')) {
+                        $current = currentProgramId();
                         if ($current) {
                             return [$current];
                         }
@@ -358,16 +358,16 @@ class Mentor extends AuthenticatableUser
     public static function columns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('competitions')
+            Tables\Columns\TextColumn::make('programs')
                 ->label('Programs')
                 ->getStateUsing(function ($record) {
-                    $competitions = $record->competitions ?? [];
-                    // If competitions is a relation, turn into a collection; 
+                    $programs = $record->programs ?? [];
+                    // If programs is a relation, turn into a collection; 
                     // if not, fallback to empty array
-                    if (is_object($competitions) && method_exists($competitions, 'pluck')) {
-                        $competitions = $competitions->all();
+                    if (is_object($programs) && method_exists($programs, 'pluck')) {
+                        $programs = $programs->all();
                     }
-                    return collect($competitions)->pluck('title')->map(function ($title) {
+                    return collect($programs)->pluck('title')->map(function ($title) {
                         if (is_array($title)) {
                             return $title['en'] ?? $title['ar'] ?? 'Unknown';
                         }
@@ -483,7 +483,7 @@ class Mentor extends AuthenticatableUser
             Section::make('Assigned Programs / البرامج المعينة')
                 ->description('Programs this mentor is assigned to / البرامج المخصصة لهذا المرشد')
                 ->schema([
-                    RepeatableEntry::make('competitions')
+                    RepeatableEntry::make('programs')
                         ->label('Programs / البرامج')
                         ->schema([
                             TextEntry::make('title')
@@ -519,10 +519,10 @@ class Mentor extends AuthenticatableUser
                             TextEntry::make('pivot.assigned_at')
                                 ->label('Assigned At / تاريخ التعيين')
                                 ->dateTime('M d, Y H:i'),
-                            TextEntry::make('application.competition.title')
+                            TextEntry::make('application.program.title')
                                 ->label('Program / البرنامج')
                                 ->getStateUsing(function ($record) {
-                                    $title = $record->application?->competition?->title;
+                                    $title = $record->application?->program?->title;
                                     if (is_array($title)) {
                                         return $title['en'] ?? $title['ar'] ?? 'Unknown';
                                     }

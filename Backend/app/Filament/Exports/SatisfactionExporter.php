@@ -56,7 +56,7 @@ class SatisfactionExporter extends Exporter
 
     private static function getAnswer($participantId, mixed $question)
     {
-        return Satisfaction::where('competition_id', currentCompetitionId())
+        return Satisfaction::where('program_id', currentProgramId())
             ->where('participant_id', $participantId)
             ->where('question', $question)->first()?->answer;
     }

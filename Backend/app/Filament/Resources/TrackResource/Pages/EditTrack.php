@@ -23,7 +23,7 @@ class EditTrack extends EditRecord
         return [
             Actions\DeleteAction::make()
                 ->visible(function ($record) {
-                    return !\App\Models\CompetitionApplication::query()
+                    return !\App\Models\ProgramApplication::query()
                         ->where('form_submissions->track', $record->id)
                         ->exists();
                 }),

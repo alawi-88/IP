@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\CompetitionApplicationScope;
-use App\Traits\Competition\FilterByCompetition;
+use App\Models\Scopes\ProgramApplicationScope;
+use App\Traits\Program\FilterByProgram;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,15 +11,15 @@ use Filament\Tables;
 
 /**
  * @method static create(mixed $validated)
- * @method static byCompetition()
+ * @method static byProgram()
  */
-#[ScopedBy([CompetitionApplicationScope::class])]
+#[ScopedBy([ProgramApplicationScope::class])]
 class Satisfaction extends Model
 {
-    use FilterByCompetition;
+    use FilterByProgram;
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'participant_id',
         'question',
         'answer',
@@ -31,9 +31,9 @@ class Satisfaction extends Model
 
         static::creating(function ($satisfaction) {
             $applicationId = request('application_id');
-            $application = CompetitionApplication::where('id', $applicationId)->firstOrFail();
+            $application = ProgramApplication::where('id', $applicationId)->firstOrFail();
 
-            $satisfaction->competition_id = $application->competition_id;
+            $satisfaction->program_id = $application->program_id;
             $satisfaction->participant_id = auth()->id();
         });
     }

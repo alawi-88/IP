@@ -34,8 +34,8 @@ class SubTrackResource extends Resource
                 ->schema([
                     Forms\Components\Select::make('track_id')
                         ->label('Track')
-                        ->options(fn () => Track::with('competition')->get()->mapWithKeys(function ($track) {
-                            return [$track->id => $track->competition->title . ' / ' . $track->name];
+                        ->options(fn () => Track::with('program')->get()->mapWithKeys(function ($track) {
+                            return [$track->id => $track->program->title . ' / ' . $track->name];
                         }))
                         ->searchable()
                         ->required()
@@ -108,7 +108,7 @@ class SubTrackResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('track.competition.title')
+                Tables\Columns\TextColumn::make('track.program.title')
                     ->label('Program')
                     ->sortable()
                     ->searchable(),

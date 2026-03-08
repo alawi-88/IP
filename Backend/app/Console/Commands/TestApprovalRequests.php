@@ -56,8 +56,8 @@ class TestApprovalRequests extends Command
 
         $actionData = [
             'method' => 'POST',
-            'path' => 'admin/competitions',
-            'data' => ['name' => 'Test Competition', 'description' => 'Test Description'],
+            'path' => 'admin/programs',
+            'data' => ['name' => 'Test Program', 'description' => 'Test Description'],
             'ip' => '127.0.0.1',
             'user_agent' => 'Test Agent',
         ];

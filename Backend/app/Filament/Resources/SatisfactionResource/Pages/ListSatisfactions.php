@@ -26,7 +26,7 @@ class ListSatisfactions extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->query(Satisfaction::byCompetition()->groupBy('participant_id'))
+            ->query(Satisfaction::byProgram()->groupBy('participant_id'))
             ->recordUrl(null)
             ->columns(Satisfaction::columns())
             ->actions([
@@ -36,26 +36,26 @@ class ListSatisfactions extends ListRecords
                     ->modal()
                     ->modalHeading(fn($record) => 'Satisfaction from [' . ($record?->participant->name) . ']')
                     ->modalContent(fn($record) => view('filament.modals.satisfactions', [
-                        'satisfactions' => Satisfaction::byCompetition()
+                        'satisfactions' => Satisfaction::byProgram()
                             ->where('participant_id', $record->participant_id)->get(),
                     ]))
                     ->modalSubmitAction(false)
                     ->modalCancelAction(false),
 
                 Tables\Actions\DeleteAction::make()
-                    ->action(fn($record) => Satisfaction::byCompetition()->where('participant_id', $record->participant_id)->delete())
+                    ->action(fn($record) => Satisfaction::byProgram()->where('participant_id', $record->participant_id)->delete())
                     ,
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('participant_id')
                     ->label('Participant')
                     ->placeholder('Select Participant')
-                    ->options(fn() => Satisfaction::byCompetition()->groupBy('participant_id')->get()->mapWithKeys(fn($satisfaction) => [$satisfaction->participant_id => $satisfaction->participant->name])),
+                    ->options(fn() => Satisfaction::byProgram()->groupBy('participant_id')->get()->mapWithKeys(fn($satisfaction) => [$satisfaction->participant_id => $satisfaction->participant->name])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->action(fn($records) => Satisfaction::byCompetition()->whereIn('participant_id', $records->pluck('participant_id'))->delete())
+                        ->action(fn($records) => Satisfaction::byProgram()->whereIn('participant_id', $records->pluck('participant_id'))->delete())
                         ,
                 ]),
 

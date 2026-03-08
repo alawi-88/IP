@@ -15,8 +15,8 @@ class SupervisorExporter extends Exporter
     {
         return [
             ExportColumn::make('id'),
-            ExportColumn::make('competitions')->label('Programs')
-                ->formatStateUsing(fn ($record) => $record->competitions->map(fn ($competition) => $competition->title)->join(', ')),
+            ExportColumn::make('programs')->label('Programs')
+                ->formatStateUsing(fn ($record) => $record->programs->map(fn ($program) => $program->title)->join(', ')),
             ExportColumn::make('name'),
             ExportColumn::make('email'),
             ExportColumn::make('role')

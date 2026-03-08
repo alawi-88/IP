@@ -16,7 +16,7 @@ class JudgeResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'competition' => new CompetitionResource($this->competition),
+            'program' => new ProgramResource($this->program),
             'name' => $this->name,
             'email' => $this->email,
             'phone_number' => $this->phone_number,

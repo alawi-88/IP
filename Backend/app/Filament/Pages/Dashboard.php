@@ -2,7 +2,7 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Resources\CompetitionResource\Widgets\StatsCount;
+use App\Filament\Resources\ProgramResource\Widgets\StatsCount;
 use App\Filament\Widgets\ChallengePercentageStats;
 use App\Filament\Widgets\EducationalBackgroundPercentageStats;
 use App\Filament\Widgets\ExperiencePercentageStats;

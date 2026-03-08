@@ -29,7 +29,7 @@ class ListTeams extends ListRecords
 
     public function table(Table $table): Table
     {
-        $baseQuery = Team::byCompetition();
+        $baseQuery = Team::byProgram();
         
         return $table
             ->query($baseQuery)
@@ -317,7 +317,7 @@ class ListTeams extends ListRecords
 
     public function getTabs(): array
     {
-        $baseQuery = Team::byCompetition();
+        $baseQuery = Team::byProgram();
         
         $tabs = [
             'all' => Tab::make(__('team_archive.all_teams'))

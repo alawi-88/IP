@@ -24,15 +24,15 @@ class CreateNotificationManagement extends CreateRecord
             };
             $users = $model::whereIn('id', $ids)->get();
         } elseif ($this->record->user_type === 'all') {
-            $participants = \App\Models\Participant::whereHas('competitionApplications', function ($query) {
-                if ($this->record->competition_id) {
-                    $query->where('competition_id', $this->record->competition_id);
+            $participants = \App\Models\Participant::whereHas('programApplications', function ($query) {
+                if ($this->record->program_id) {
+                    $query->where('program_id', $this->record->program_id);
                 }
             })->get();
 
-            $judges = \App\Models\Judge::whereHas('competitions', function ($query) {
-                if ($this->record->competition_id) {
-                    $query->where('competition_id', $this->record->competition_id);
+            $judges = \App\Models\Judge::whereHas('programs', function ($query) {
+                if ($this->record->program_id) {
+                    $query->where('program_id', $this->record->program_id);
                 }
             })->get();
 

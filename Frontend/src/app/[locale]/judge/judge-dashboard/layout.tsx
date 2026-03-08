@@ -5,7 +5,7 @@ import DashboardHeader from "@/components/layout/dashboard/DashboardHeader";
 import DashboardSidebar from "@/components/layout/dashboard/DashboardSidebar";
 import { useAutoLogin } from "@/hooks/useAutoLogin";
 import { usePathname, useRouter } from "@/i18n/routing";
-import { MyCompetition } from "@/lib/interfaces";
+import { ProgramApplication } from "@/lib/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import { Breadcrumb } from "antd";
 import { BreadcrumbItemType } from "antd/es/breadcrumb/Breadcrumb";
@@ -27,7 +27,7 @@ export default function DashboardLayout({
     projectId: string;
   }>();
 
-  const { data: project } = useQuery<MyCompetition>({
+  const { data: project } = useQuery<ProgramApplication>({
     queryKey: ["judge-project", projectId],
     queryFn: async () => {
       const response = await axiosInstance.get(`/judges/projects/${projectId}`);

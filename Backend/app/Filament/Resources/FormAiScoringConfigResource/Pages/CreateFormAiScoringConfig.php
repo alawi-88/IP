@@ -15,8 +15,8 @@ class CreateFormAiScoringConfig extends CreateRecord
         // Get form_id from the form
         $formId = $data['form_id'];
         
-        // Remove competition_id and form_type from data as they're not in the model
-        unset($data['competition_id']);
+        // Remove program_id and form_type from data as they're not in the model
+        unset($data['program_id']);
         unset($data['form_type']);
         
         // Set form_id

@@ -4,7 +4,7 @@ namespace App\Filament\Resources\JudgeResource\Pages;
 
 use App\Filament\Resources\JudgeResource;
 use App\Models\Judge;
-use App\Models\UserCompetition;
+use App\Models\UserProgram;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
@@ -12,7 +12,7 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use App\Filament\Exports\JudgeExporter;
 use Filament\Tables\Actions\ExportBulkAction;
-use App\Models\Competition;
+use App\Models\Program;
 use Filament\Forms;
 use Illuminate\Support\Collection;
 use Filament\Notifications\Notification;
@@ -39,12 +39,12 @@ class ListJudges extends ListRecords
     //             if ($user->isSuperAdmin()) {
     //                 return $query;
     //             }
-    //             $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-    //                 ->pluck('competition_id')
+    //             $supervisorPrograms = UserProgram::where('user_id', $user->id)
+    //                 ->pluck('program_id')
     //                 ->toArray();
 
-    //             return $query->whereHas('competitions', function ($q) use ($supervisorCompetitions) {
-    //                 $q->whereIn('competitions.id', $supervisorCompetitions);
+    //             return $query->whereHas('programs', function ($q) use ($supervisorPrograms) {
+    //                 $q->whereIn('programs.id', $supervisorPrograms);
     //             });
     //         })
     //         ->columns(array_merge(Judge::columns(), [
@@ -56,77 +56,77 @@ class ListJudges extends ListRecords
     //             Tables\Actions\ViewAction::make(),
     //             Tables\Actions\EditAction::make(),
     //             Tables\Actions\DeleteAction::make(),
-    //             // Add new action for single record competition assignment
-    //             // Tables\Actions\Action::make('assign_competitions')
-    //             //     ->label('Competitions')
+    //             // Add new action for single record program assignment
+    //             // Tables\Actions\Action::make('assign_programs')
+    //             //     ->label('Programs')
     //             //     ->icon('heroicon-o-academic-cap')
     //             //     ->visible(fn () => auth()->user()->can('update Judge'))
     //             //     ->form([
-    //             //         Forms\Components\Select::make('competitions')
-    //             //             ->label('Competitions')
+    //             //         Forms\Components\Select::make('programs')
+    //             //             ->label('Programs')
     //             //             ->multiple()
-    //             //             ->relationship('competitions', 'title')
+    //             //             ->relationship('programs', 'title')
     //             //             ->options(function () {
     //             //                 $user = auth()->user();
 
     //             //                 if ($user->isSuperAdmin()) {
-    //             //                     return Competition::pluck('title', 'id');
+    //             //                     return Program::pluck('title', 'id');
     //             //                 }
 
-    //             //                 $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-    //             //                     ->pluck('competition_id');
+    //             //                 $supervisorPrograms = UserProgram::where('user_id', $user->id)
+    //             //                     ->pluck('program_id');
 
-    //             //                 return Competition::whereIn('id', $supervisorCompetitions)
+    //             //                 return Program::whereIn('id', $supervisorPrograms)
     //             //                     ->pluck('title', 'id');
     //             //             })
     //             //             ->preload()
     //             //             ->required()
     //             //             ->default(fn (Judge $record): array =>
-    //             //             $record->competitions()->pluck('competitions.id')->toArray()
+    //             //             $record->programs()->pluck('programs.id')->toArray()
     //             //             )
     //             //     ])
-    //             Tables\Actions\Action::make('assign_competitions')
-    //             ->label('Competitions')
+    //             Tables\Actions\Action::make('assign_programs')
+    //             ->label('Programs')
     //             ->icon('heroicon-o-academic-cap')
     //             ->visible(fn () => auth()->user()->can('update Judge'))
     //             ->form([
-    //                 Forms\Components\Select::make('competitions')
-    //                     ->label('Competitions')
+    //                 Forms\Components\Select::make('programs')
+    //                     ->label('Programs')
     //                     ->multiple()
     //                     ->options(function () {
     //                         $user = auth()->user();
             
     //                         if ($user->isSuperAdmin()) {
-    //                             return Competition::pluck('title', 'id');
+    //                             return Program::pluck('title', 'id');
     //                         }
             
-    //                         $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-    //                             ->pluck('competition_id');
+    //                         $supervisorPrograms = UserProgram::where('user_id', $user->id)
+    //                             ->pluck('program_id');
             
-    //                         return Competition::whereIn('id', $supervisorCompetitions)
+    //                         return Program::whereIn('id', $supervisorPrograms)
     //                             ->pluck('title', 'id');
     //                     })
     //                     ->preload()
     //                     ->required()
     //                     ->default(fn (Judge $record): array =>
-    //                         $record->competitions()->pluck('competitions.id')->toArray()
+    //                         $record->programs()->pluck('programs.id')->toArray()
     //                     ),
     //             ])
     //                 ->after(
     //                     fn() =>
     //                     Notification::make()
     //                         ->success()
-    //                         ->title('Competitions updated')
+    //                         ->title('Programs updated')
     //                         ->send()
     //                 ),
 
     //         ])
     //         ->filters([
-    //             Tables\Filters\SelectFilter::make('competition')
-    //                 ->relationship('competitions', 'title')
+    //             Tables\Filters\SelectFilter::make('program')
+    //                 ->relationship('programs', 'title')
     //                 ->multiple()
     //                 ->preload()
-    //                 ->label('Competition'),
+    //                 ->label('Program'),
 
     //             Tables\Filters\SelectFilter::make('registration_method')
     //                 ->options(Judge::getRegistrationMethods())
@@ -137,18 +137,18 @@ class ListJudges extends ListRecords
     //             Tables\Actions\BulkActionGroup::make([
     //                 Tables\Actions\DeleteBulkAction::make()
     //                     ->visible(fn () => auth()->user()->can('delete Judge')),
-    //                 Tables\Actions\BulkAction::make('assign_competitions')
-    //                     ->label('Assign Competitions')
+    //                 Tables\Actions\BulkAction::make('assign_programs')
+    //                     ->label('Assign Programs')
     //                     ->icon('heroicon-o-academic-cap')
     //                     ->visible(fn () => auth()->user()->can('update Judge'))
     //                     ->form([
-    //                         Forms\Components\Select::make('competitions')
-    //                             ->label('Competitions')
+    //                         Forms\Components\Select::make('programs')
+    //                             ->label('Programs')
     //                             ->multiple()
-    //                             ->relationship('competitions', 'title', fn ($query) =>
+    //                             ->relationship('programs', 'title', fn ($query) =>
     //                             auth()->user()->isSuperAdmin()
     //                                 ? $query
-    //                                 : $query->whereIn('competitions.id', auth()->user()->competitions()->pluck('competitions.id'))
+    //                                 : $query->whereIn('programs.id', auth()->user()->programs()->pluck('programs.id'))
     //                             )
     //                             ->preload()
     //                             ->required(),
@@ -156,15 +156,15 @@ class ListJudges extends ListRecords
 
     //                     ->action(function (Collection $records, array $data): void {
     //                         foreach ($records as $record) {
-    //                             $record->competitions()->sync($data['competitions'] ?? []);
+    //                             $record->programs()->sync($data['programs'] ?? []);
     //                         }
     //                     })
     //                     ->deselectRecordsAfterCompletion()
     //                     ->successNotification(
     //                         Notification::make()
     //                             ->success()
-    //                             ->title('Competitions assigned')
-    //                             ->body('The selected judges have been assigned to the competitions successfully.')
+    //                             ->title('Programs assigned')
+    //                             ->body('The selected judges have been assigned to the programs successfully.')
     //                     ),
     //             ]),
     //             ExportBulkAction::make()
@@ -183,12 +183,12 @@ class ListJudges extends ListRecords
                 return $query;
             }
 
-            $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                ->pluck('competition_id')
+            $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                ->pluck('program_id')
                 ->toArray();
 
-            return $query->whereHas('competitions', function ($q) use ($supervisorCompetitions) {
-                $q->whereIn('competitions.id', $supervisorCompetitions);
+            return $query->whereHas('programs', function ($q) use ($supervisorPrograms) {
+                $q->whereIn('programs.id', $supervisorPrograms);
             });
         })
         ->columns(array_merge(Judge::columns(), [
@@ -244,35 +244,35 @@ class ListJudges extends ListRecords
                 })
                 ->visible(fn($record) => $record->isArchived() && JudgeResource::canRestore($record)),
 
-            Tables\Actions\Action::make('assign_competitions')
+            Tables\Actions\Action::make('assign_programs')
                 ->label('Programs')
                 ->icon('heroicon-o-academic-cap')
                 ->visible(fn ($record) => !$record->isArchived() && auth()->user()->can('update Judge'))
                 ->form([
-                    Forms\Components\Select::make('competitions')
+                    Forms\Components\Select::make('programs')
                         ->label('Programs')
                         ->multiple()
                         ->options(function () {
                             $user = auth()->user();
 
                             if ($user->isSuperAdmin()) {
-                                return Competition::pluck('title', 'id');
+                                return Program::pluck('title', 'id');
                             }
 
-                            $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                                ->pluck('competition_id');
+                            $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                                ->pluck('program_id');
 
-                            return Competition::whereIn('id', $supervisorCompetitions)
+                            return Program::whereIn('id', $supervisorPrograms)
                                 ->pluck('title', 'id');
                         })
                         ->preload()
                         ->required()
                         ->default(fn (Judge $record): array =>
-                            $record->competitions()->pluck('competitions.id')->toArray()
+                            $record->programs()->pluck('programs.id')->toArray()
                         ),
                 ])
                 ->action(function (Judge $record, array $data) {
-                    $record->competitions()->sync($data['competitions'] ?? []);
+                    $record->programs()->sync($data['programs'] ?? []);
                     Notification::make()
                         ->success()
                         ->title('Programs updated')
@@ -280,8 +280,8 @@ class ListJudges extends ListRecords
                 }),
         ])
         ->filters([
-            Tables\Filters\SelectFilter::make('competition')
-                ->relationship('competitions', 'title')
+            Tables\Filters\SelectFilter::make('program')
+                ->relationship('programs', 'title')
                 ->multiple()
                 ->preload()
                 ->label('Program'),
@@ -394,25 +394,25 @@ class ListJudges extends ListRecords
                     ->authorize(fn () => auth()->user()?->can('restore Judge'))
                     ->deselectRecordsAfterCompletion(),
 
-                Tables\Actions\BulkAction::make('assign_competitions')
+                Tables\Actions\BulkAction::make('assign_programs')
                     ->label('Assign Programs')
                     ->icon('heroicon-o-academic-cap')
                     ->visible(fn () => auth()->user()->can('update Judge'))
                     ->form([
-                        Forms\Components\Select::make('competitions')
+                        Forms\Components\Select::make('programs')
                             ->label('Programs')
                             ->multiple()
                             ->options(function () {
                                 $user = auth()->user();
 
                                 if ($user->isSuperAdmin()) {
-                                    return Competition::pluck('title', 'id');
+                                    return Program::pluck('title', 'id');
                                 }
 
-                                $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                                    ->pluck('competition_id');
+                                $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                                    ->pluck('program_id');
 
-                                return Competition::whereIn('id', $supervisorCompetitions)
+                                return Program::whereIn('id', $supervisorPrograms)
                                     ->pluck('title', 'id');
                             })
                             ->preload()
@@ -428,7 +428,7 @@ class ListJudges extends ListRecords
                                 $skippedArchived++;
                                 continue;
                             }
-                            $record->competitions()->sync($data['competitions'] ?? []);
+                            $record->programs()->sync($data['programs'] ?? []);
                             $count++;
                         }
                         
@@ -462,14 +462,14 @@ class ListJudges extends ListRecords
         $user = auth()->user();
         $baseQuery = Judge::query();
 
-        // Apply competition filtering for non-super admins
+        // Apply program filtering for non-super admins
         if (!$user->isSuperAdmin()) {
-            $supervisorCompetitions = UserCompetition::where('user_id', $user->id)
-                ->pluck('competition_id')
+            $supervisorPrograms = UserProgram::where('user_id', $user->id)
+                ->pluck('program_id')
                 ->toArray();
 
-            $baseQuery = $baseQuery->whereHas('competitions', function ($q) use ($supervisorCompetitions) {
-                $q->whereIn('competitions.id', $supervisorCompetitions);
+            $baseQuery = $baseQuery->whereHas('programs', function ($q) use ($supervisorPrograms) {
+                $q->whereIn('programs.id', $supervisorPrograms);
             });
         }
 

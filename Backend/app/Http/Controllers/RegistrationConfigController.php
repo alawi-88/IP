@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\RegistrationFormConfigResource;
-use App\Models\Competition;
+use App\Models\Program;
 use Illuminate\Http\Request;
 
 class RegistrationConfigController extends Controller
@@ -11,12 +11,12 @@ class RegistrationConfigController extends Controller
     public function __invoke(Request $request)
     {
         $request->validate([
-            'competition_id' => 'required|integer|exists:competitions,id',
+            'program_id' => 'required|integer|exists:programs,id',
         ]);
 
-        $competition = Competition::find($request->competition_id);
+        $program = Program::find($request->program_id);
 
-        $registrationConfig = $competition->registrationFormConfig;
+        $registrationConfig = $program->registrationFormConfig;
 
         if (!$registrationConfig) {
             return response()->json([

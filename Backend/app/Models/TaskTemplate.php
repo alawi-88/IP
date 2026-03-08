@@ -15,7 +15,7 @@ class TaskTemplate extends Model
     use HasFactory, HasTranslations, LogsActivity;
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'form_id',
         'title',
         'description',
@@ -47,9 +47,9 @@ class TaskTemplate extends Model
     }
 
     // Relationships
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function form(): BelongsTo
@@ -73,8 +73,8 @@ class TaskTemplate extends Model
         return $query->where('is_archived', false);
     }
 
-    public function scopeForCompetition($query, int $competitionId)
+    public function scopeForProgram($query, int $programId)
     {
-        return $query->where('competition_id', $competitionId);
+        return $query->where('program_id', $programId);
     }
 }

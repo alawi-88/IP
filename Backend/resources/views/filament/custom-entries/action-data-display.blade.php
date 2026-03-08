@@ -28,7 +28,7 @@
 
     $rawData = $getState() ?? null;
     $record = $record ?? null;
-    $competition_id = $competition_id ?? '';
+    $program_id = $program_id ?? '';
 
     // Handle null or empty data
     if (empty($rawData)) {
@@ -48,14 +48,14 @@
 
             // Extract new (current) values
             if (is_array($rawData)) {
-                if($competition_id){
-                    $competition = \App\Models\Competition::find($competition_id);
-                    $old_titleEn = $competition->title['en'] ?? '';
-                    $old_titleAr = $competition->title['ar'] ?? '';
-                    $old_aboutEn = $competition->about['en'] ?? '';
-                    $old_aboutAr = $competition->about['ar'] ?? '';
-                    $old_termsEn = $competition->terms_and_conditions['en'] ?? '';
-                    $old_termsAr = $competition->terms_and_conditions['ar'] ?? '';
+                if($program_id){
+                    $program = \App\Models\Program::find($program_id);
+                    $old_titleEn = $program->title['en'] ?? '';
+                    $old_titleAr = $program->title['ar'] ?? '';
+                    $old_aboutEn = $program->about['en'] ?? '';
+                    $old_aboutAr = $program->about['ar'] ?? '';
+                    $old_termsEn = $program->terms_and_conditions['en'] ?? '';
+                    $old_termsAr = $program->terms_and_conditions['ar'] ?? '';
                 }else{
                     // If there is a "record" (Eloquent model), extract "old" values from getOriginal for comparison
                 if (isset($rawData['old_values'])  && !empty($rawData['old_values'])) {
@@ -105,7 +105,7 @@
                     
                     $types = [
                         'Hackathon' => 'هاكاثون',
-                        'Competition' => 'مسابقة',
+                        'Program' => 'مسابقة',
                         'Event' => 'فعالية',
                         'Workshop' => 'ورشة عمل',
                     ];
@@ -148,7 +148,7 @@
                     } elseif ($key === 'type') {
                         $types = [
                             'Hackathon' => 'هاكاثون',
-                            'Competition' => 'مسابقة',
+                            'Program' => 'مسابقة',
                             'Event' => 'فعالية',
                             'Workshop' => 'ورشة عمل'
                         ];

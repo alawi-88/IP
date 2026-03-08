@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import Empty from "@/components/Empty";
 import dayjs from "dayjs";
-import { Competition, MyCompetition, Program } from "@/lib/interfaces";
+import { ProgramList, ProgramApplicationList, Program, ProgramApplication } from "@/lib/interfaces";
 import { programsTypes } from "@/lib/constants";
 import { useSearchParams } from "next/navigation";
 
@@ -38,12 +38,12 @@ export default function ParticipantDashboard() {
     data: programs,
     isLoading,
     isRefetching,
-  } = useQuery<Program>({
-    queryKey: ["competitions", query, locale, currentProgramType],
+  } = useQuery<ProgramList | undefined>({
+    queryKey: ["programs", query, locale, currentProgramType],
     queryFn: async () => {
       const params = { ...query };
       const response = await axiosInstance.get(
-        `/competitions?program_type=${currentProgramType}`,
+        `/programs?program_type=${currentProgramType}`,
         {
           params,
         }
@@ -54,11 +54,11 @@ export default function ParticipantDashboard() {
     refetchOnWindowFocus: false,
   });
 
-  const { data: myCompetitions } = useQuery<MyCompetition[]>({
-    queryKey: ["my-competitions"],
+  const { data: myPrograms } = useQuery<ProgramApplication[]>({
+    queryKey: ["my-programs"],
     queryFn: async () => {
       const response = await axiosInstance.get(
-        `/participants/competition-applications`
+        `/participants/program-applications`
       );
       return response.data.data;
     },
@@ -102,7 +102,7 @@ export default function ParticipantDashboard() {
       <section className="flex flex-col gap-y-6 ">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl text-primary-900 font-bold">
-            {/* {t("competitions")} */}
+            {/* {t("programs")} */}
             {t(`programs-types.${currentProgramType}`)}
           </h1>
           <FilterResultsModal filterResults={onSubmit} form={form}>
@@ -151,22 +151,22 @@ export default function ParticipantDashboard() {
           </ConfigProvider>
         )} */}
         {!programs?.data?.length && !isLoading && !isRefetching ? (
-          <Empty description={t("sorry-no-competitions-available")} />
+          <Empty description={t("sorry-no-programs-available")} />
         ) : (
           programs?.data.length && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {programs?.data?.map((competition) => (
+              {programs?.data?.map((program) => (
                 <div
                   onClick={() =>
                     router.push(
-                      `/participant-dashboard/competitions/${competition.id}/info`
+                      `/participant-dashboard/programs/${program.id}/info`
                     )
                   }
-                  key={competition.id}
+                  key={program.id}
                   className="rounded-xl shadow-md overflow-hidden p-6 max-w-[33.125rem] h-[26.25rem] relative flex flex-col justify-between cursor-pointer"
                 >
                   <Image
-                    src={competition.banner}
+                    src={program.banner}
                     alt="Card Image"
                     className="w-full h-full object-cover absolute inset-0 "
                     width={300}
@@ -176,14 +176,14 @@ export default function ParticipantDashboard() {
                   <div className="z-10 w-full h-full flex flex-col justify-between">
                     <div className="flex justify-between gap-x-4 gap-y-2 items-center flex-wrap">
                       <p className="text-sm font-medium bg-success text-[#4B736F] p-2 rounded-[40px] w-48 flex items-center justify-center">
-                        {!competition.registration_closed_date ||
-                        competition.is_closed
+                        {!program.registration_closed_date ||
+                        program.is_closed
                           ? t("registration-closed")
                           : t("registration-open")}
                       </p>
-                      {myCompetitions?.find(
-                        (myCompetition) =>
-                          myCompetition.competition.id === competition.id
+                      {myPrograms?.find(
+                        (myProgram) =>
+                          myProgram.program.id === program.id
                       )?.has_comment ? (
                         <span className="inline-block text-sm py-1 px-2 rounded-lg font-medium border bg-[#E1F7F6] text-[#08BCB8] border-[#CEF2F1]">
                           {t("new-comment")}
@@ -193,26 +193,26 @@ export default function ParticipantDashboard() {
 
                     <div className="flex flex-col gap-y-3 p-6 bg-card rounded-lg w-full">
                       <h2 className="font-medium text-primary-900 text-2xl">
-                        {competition.title}
+                        {program.title}
                       </h2>
                       <div className="flex justify-between gap-3 xl:items-center xl:flex-row flex-col">
                         <p className="text-[#98A2B3] text-sm font-medium">
                           {t("registration-closed-0")}:{" "}
-                          {competition.registration_closed_date
+                          {program.registration_closed_date
                             ? dayjs(
-                                competition.registration_closed_date
+                                program.registration_closed_date
                               ).format("D-MM-YYYY")
                             : t("undefined-date")}
                         </p>
 
-                        {!competition.registration_closed_date ||
-                        competition.is_closed ||
-                        myCompetitions?.some(
-                          (myCompetition) =>
-                            myCompetition.competition.id === competition.id
+                        {!program.registration_closed_date ||
+                        program.is_closed ||
+                        myPrograms?.some(
+                          (myProgram) =>
+                            myProgram.program.id === program.id
                         ) ? (
                           <Link
-                            href={`/participant-dashboard/competitions/${competition.id}/info`}
+                            href={`/participant-dashboard/programs/${program.id}/info`}
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Button type="primary" size="small">
@@ -221,7 +221,7 @@ export default function ParticipantDashboard() {
                           </Link>
                         ) : (
                           <Link
-                            href={`/participant-dashboard/competitions/${competition.id}/register`}
+                            href={`/participant-dashboard/programs/${program.id}/register`}
                             onClick={(e) => e.stopPropagation()}
                           >
                             <Button
@@ -252,16 +252,16 @@ export default function ParticipantDashboard() {
         {/* {isLoading ? (
           <Spin />
         ) : !programs?.data?.length ? (
-          <Empty description={t("sorry-no-competitions-available")} />
+          <Empty description={t("sorry-no-programs-available")} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {programs?.data?.map((competition) => (
+            {programs?.data?.map((program) => (
               <div
-                key={competition.id}
+                key={program.id}
                 className="rounded-xl shadow-md overflow-hidden p-6 max-w-[33.125rem] h-[26.25rem] relative flex flex-col justify-between"
               >
                 <Image
-                  src={competition.banner}
+                  src={program.banner}
                   alt="Card Image"
                   className="w-full h-full object-cover absolute inset-0 "
                   width={300}
@@ -270,8 +270,8 @@ export default function ParticipantDashboard() {
 
                 <div className="z-10 w-full h-full flex flex-col justify-between">
                   <p className="text-sm font-medium bg-success text-[#4B736F] p-2 rounded-[40px] w-48 flex items-center justify-center">
-                    {!competition.registration_closed_date ||
-                    dayjs(competition.registration_closed_date).isBefore(
+                    {!program.registration_closed_date ||
+                    dayjs(program.registration_closed_date).isBefore(
                       dayjs()
                     )
                       ? t("registration-closed")
@@ -280,28 +280,28 @@ export default function ParticipantDashboard() {
 
                   <div className="flex flex-col gap-y-3 p-6 bg-card rounded-lg w-full">
                     <h2 className="font-medium text-primary-900 text-2xl">
-                      {competition.title}
+                      {program.title}
                     </h2>
                     <div className="flex items-center justify-between">
                       <p className="text-[#98A2B3] text-sm font-medium">
                         {t("registration-closed-0")}:{" "}
-                        {competition.registration_closed_date
-                          ? dayjs(competition.registration_closed_date).format(
+                        {program.registration_closed_date
+                          ? dayjs(program.registration_closed_date).format(
                               "D-MM-YYYY"
                             )
                           : t("undefined-date")}
                       </p>
 
-                      {!competition.registration_closed_date ||
-                      dayjs(competition.registration_closed_date).isBefore(
+                      {!program.registration_closed_date ||
+                      dayjs(program.registration_closed_date).isBefore(
                         dayjs()
                       ) ||
-                      myCompetitions?.some(
-                        (myCompetition) =>
-                          myCompetition.competition.id === competition.id
+                      myPrograms?.some(
+                        (myProgram) =>
+                          myProgram.program.id === program.id
                       ) ? (
                         <Link
-                          href={`/participant-dashboard/competitions/${competition.id}/info`}
+                          href={`/participant-dashboard/programs/${program.id}/info`}
                         >
                           <Button type="primary" size="small">
                             {t("more-details")}
@@ -309,7 +309,7 @@ export default function ParticipantDashboard() {
                         </Link>
                       ) : (
                         <Link
-                          href={`/participant-dashboard/competitions/${competition.id}/register`}
+                          href={`/participant-dashboard/programs/${program.id}/register`}
                         >
                           <Button
                             type="primary"

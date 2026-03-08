@@ -36,7 +36,7 @@ class SessionController extends Controller
     {
         try {
             $mentor = Auth::user();
-            $query = $mentor->sessions()->with(['participant', 'competition']);
+            $query = $mentor->sessions()->with(['participant', 'program']);
 
             // Filter by status
             if ($request->has('status')) {
@@ -92,7 +92,7 @@ class SessionController extends Controller
     {
         try {
             $mentor = Auth::user();
-            $baseQuery = $mentor->sessions()->with(['participant', 'competition']);
+            $baseQuery = $mentor->sessions()->with(['participant', 'program']);
 
             // Get category filter (upcoming, past, canceled)
             // Support both 'category' and 'status' parameters for backward compatibility
@@ -197,7 +197,7 @@ class SessionController extends Controller
             ], 404);
         }
 
-        $session->load(['participant', 'competition']);
+        $session->load(['participant', 'program']);
 
         return response()->json([
             'success' => true,
@@ -345,7 +345,7 @@ class SessionController extends Controller
                                 'success' => true,
                                 'message' => __('sessions.session_scheduled'),
                                 'warning' => $warningMsg,
-                                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
                             ], 201);
                         }
 
@@ -357,7 +357,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_scheduled'),
-                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
             ], 201);
 
         } catch (\Exception $e) {
@@ -394,7 +394,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_updated'),
-                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
             ]);
 
         } catch (\Exception $e) {
@@ -431,7 +431,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_cancelled'),
-                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
             ]);
 
         } catch (\Exception $e) {
@@ -468,7 +468,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_started'),
-                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
             ]);
 
         } catch (\Exception $e) {
@@ -499,7 +499,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_ended'),
-                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
             ]);
 
         } catch (\Exception $e) {
@@ -570,7 +570,7 @@ class SessionController extends Controller
         return response()->json([
             'success' => true,
             'message' => __('sessions.feedback_submitted'),
-            'data' => new MentorSessionResource($session->fresh(['participant', 'competition'])),
+            'data' => new MentorSessionResource($session->fresh(['participant', 'program'])),
         ]);
     }
 
@@ -593,7 +593,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_marked_no_show'),
-                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
             ]);
 
         } catch (\Exception $e) {
@@ -645,7 +645,7 @@ class SessionController extends Controller
             $mentor = Auth::user();
             $query = $mentor->sessions()
                 ->pendingRequests()
-                ->with(['participant', 'competition']);
+                ->with(['participant', 'program']);
 
             $sessions = $query->orderBy('scheduled_at', 'asc')->paginate(15);
 
@@ -725,7 +725,7 @@ class SessionController extends Controller
             // Send notification after transaction commits to ensure data is persisted
             DB::afterCommit(function () use ($sessionId, $participantId, $locale) {
                 try {
-                    $freshSession = MentorSession::with(['mentor', 'participant', 'competition'])->find($sessionId);
+                    $freshSession = MentorSession::with(['mentor', 'participant', 'program'])->find($sessionId);
                     if ($freshSession && $freshSession->participant) {
                         $notification = new \App\Notifications\Participant\SessionAcceptedNotification($freshSession);
                         $notification->locale = $locale;
@@ -739,7 +739,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_accepted'),
-                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
             ]);
 
         } catch (\Exception $e) {
@@ -810,7 +810,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.session_declined'),
-                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
             ]);
 
         } catch (\Exception $e) {
@@ -880,7 +880,7 @@ class SessionController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => __('sessions.new_time_proposed'),
-                'data' => new MentorSessionResource($session->load(['participant', 'competition'])),
+                'data' => new MentorSessionResource($session->load(['participant', 'program'])),
             ]);
 
         } catch (\Exception $e) {

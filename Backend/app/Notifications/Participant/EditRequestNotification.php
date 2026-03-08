@@ -2,7 +2,7 @@
 
 namespace App\Notifications\Participant;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -13,7 +13,7 @@ class EditRequestNotification extends Notification implements ShouldQueue
     use Queueable;
 
     public function __construct(
-        protected CompetitionApplication $application
+        protected ProgramApplication $application
     ) {}
 
     public function via(object $notifiable): array
@@ -23,14 +23,14 @@ class EditRequestNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $competitionTitle = $this->application->competition?->getTranslation('title', 'en') ?? 'Unknown Program';
+        $programTitle = $this->application->program?->getTranslation('title', 'en') ?? 'Unknown Program';
         $editNotes = $this->application->edit_notes;
         $notesEn = is_array($editNotes) ? ($editNotes['en'] ?? '') : ($editNotes ?? '');
 
         return (new MailMessage)
-            ->subject("Edit Request - {$competitionTitle}")
+            ->subject("Edit Request - {$programTitle}")
             ->greeting('Dear Participant,')
-            ->line("The administrators have requested changes to your application for **{$competitionTitle}**.")
+            ->line("The administrators have requested changes to your application for **{$programTitle}**.")
             ->line("**Instructions:** {$notesEn}")
             ->line('Please log in to your account to make the requested changes.')
             ->line('Thank you for your participation.');
@@ -38,7 +38,7 @@ class EditRequestNotification extends Notification implements ShouldQueue
 
     public function toArray(object $notifiable): array
     {
-        $competitionTitle = $this->application->competition?->title;
+        $programTitle = $this->application->program?->title;
         $editNotes = $this->application->edit_notes;
 
         return [
@@ -47,11 +47,11 @@ class EditRequestNotification extends Notification implements ShouldQueue
                 'ar' => 'طلب تعديل لطلبك',
             ],
             'body' => [
-                'en' => "Changes have been requested for your application in " . (is_array($competitionTitle) ? ($competitionTitle['en'] ?? '') : $competitionTitle) . ". " . (is_array($editNotes) ? ($editNotes['en'] ?? '') : ''),
-                'ar' => "تم طلب تغييرات على طلبك في " . (is_array($competitionTitle) ? ($competitionTitle['ar'] ?? '') : $competitionTitle) . ". " . (is_array($editNotes) ? ($editNotes['ar'] ?? '') : ''),
+                'en' => "Changes have been requested for your application in " . (is_array($programTitle) ? ($programTitle['en'] ?? '') : $programTitle) . ". " . (is_array($editNotes) ? ($editNotes['en'] ?? '') : ''),
+                'ar' => "تم طلب تغييرات على طلبك في " . (is_array($programTitle) ? ($programTitle['ar'] ?? '') : $programTitle) . ". " . (is_array($editNotes) ? ($editNotes['ar'] ?? '') : ''),
             ],
             'application_id' => $this->application->id,
-            'competition_id' => $this->application->competition_id,
+            'program_id' => $this->application->program_id,
             'editable_fields' => $this->application->editable_fields,
         ];
     }

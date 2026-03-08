@@ -27,8 +27,8 @@ class StageResource extends JsonResource
         // First, try to find projects for individual applications or team leader
         // (Team leaders are the participant_id in the application)
         $projects = Project::whereIn('projects.form_id', $formIds)
-            ->join('competition_applications', 'projects.application_id', '=', 'competition_applications.id')
-            ->where('competition_applications.participant_id', $userId)
+            ->join('program_applications', 'projects.application_id', '=', 'program_applications.id')
+            ->where('program_applications.participant_id', $userId)
             ->where('projects.is_archived', false)
             ->where('projects.type', 'submission') // Only check for submitted projects, not drafts
             ->orderBy('projects.created_at', 'desc')
@@ -39,8 +39,8 @@ class StageResource extends JsonResource
         // This handles the case where team members need to see if their team's projects are already submitted
         if ($projects->isEmpty()) {
             $projects = Project::whereIn('projects.form_id', $formIds)
-                ->join('competition_applications', 'projects.application_id', '=', 'competition_applications.id')
-                ->join('teams', 'competition_applications.id', '=', 'teams.application_id')
+                ->join('program_applications', 'projects.application_id', '=', 'program_applications.id')
+                ->join('teams', 'program_applications.id', '=', 'teams.application_id')
                 ->join('team_members', 'teams.id', '=', 'team_members.team_id')
                 ->where('team_members.participant_id', $userId)
                 ->where('projects.is_archived', false)

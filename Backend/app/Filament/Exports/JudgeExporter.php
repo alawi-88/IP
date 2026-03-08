@@ -29,10 +29,10 @@ class JudgeExporter extends Exporter
                     $pendingCount = $totalProjects - $completedCount;
                     return "{$pendingCount} Pending, {$completedCount} Completed";
                 }),
-            ExportColumn::make('competitions')
+            ExportColumn::make('programs')
                 ->getStateUsing(function ($record) {
-                    return $record->competitions->map(function ($competition) {
-                        return $competition->title;
+                    return $record->programs->map(function ($program) {
+                        return $program->title;
                     })->join(', ');
                 }),
             ExportColumn::make('phone_number'),

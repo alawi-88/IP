@@ -13,12 +13,12 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    {{ __('dashboard.filter_by_competition') }}
+                    {{ __('dashboard.filter_by_program') }}
                 </label>
-                <select wire:model.live="filterCompetition"
+                <select wire:model.live="filterProgram"
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white text-sm">
                     <option value="">{{ __('dashboard.all') }}</option>
-                    @foreach($this->getCompetitionOptions() as $id => $name)
+                    @foreach($this->getProgramOptions() as $id => $name)
                         <option value="{{ $id }}">{{ $name }}</option>
                     @endforeach
                 </select>

@@ -29,14 +29,14 @@ class ListGuidelines extends ListRecords
     {
         return [
             'all' => Tab::make(__('guideline_archive.all_guidelines'))
-                ->badge(Guideline::byCompetition()->count()),
+                ->badge(Guideline::byProgram()->count()),
             
             'active' => Tab::make(__('guideline_archive.active'))
-                ->badge(Guideline::byCompetition()->active()->count())
+                ->badge(Guideline::byProgram()->active()->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->active()),
             
             'archived' => Tab::make(__('guideline_archive.archived'))
-                ->badge(Guideline::byCompetition()->archived()->count())
+                ->badge(Guideline::byProgram()->archived()->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->archived()),
         ];
     }
@@ -51,7 +51,7 @@ class ListGuidelines extends ListRecords
     public function table(Table $table): Table
     {
         return $table
-            ->query(Guideline::byCompetition())
+            ->query(Guideline::byProgram())
             ->columns(Guideline::columns())
             ->actions([
                 ViewAction::make(),

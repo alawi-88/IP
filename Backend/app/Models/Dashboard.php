@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\Competition\FilterByCompetition;
+use App\Traits\Program\FilterByProgram;
 use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,12 +13,12 @@ use Spatie\Translatable\HasTranslations;
 
 class Dashboard extends Model
 {
-    use HasFactory, HasTranslations, FilterByCompetition, LogsActivity, HasActivityLog;
+    use HasFactory, HasTranslations, FilterByProgram, LogsActivity, HasActivityLog;
 
     public array $translatable = ['name', 'description'];
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'name',
         'description',
         'data_sources',
@@ -45,7 +45,7 @@ class Dashboard extends Model
         'data_sources',
         'filters',
         'group_by',
-        'competition_id',
+        'program_id',
     ];
 
     protected string $moduleName = 'Dashboard';
@@ -53,9 +53,9 @@ class Dashboard extends Model
 
     // ─── Relationships ──────────────────────────────────────────────
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function widgets(): HasMany

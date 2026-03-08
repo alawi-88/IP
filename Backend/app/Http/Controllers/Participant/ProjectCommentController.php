@@ -113,11 +113,11 @@ class ProjectCommentController extends Controller
                 }
             } else {
                 // This is a participant comment, notify admins assigned to this program
-                $competition = $project->competition ?? $project->application?->competition;
+                $program = $project->program ?? $project->application?->program;
                 
-                if ($competition) {
-                    // Get admins assigned to this competition
-                    $assignedAdminIds = \App\Models\UserCompetition::where('competition_id', $competition->id)
+                if ($program) {
+                    // Get admins assigned to this program
+                    $assignedAdminIds = \App\Models\UserProgram::where('program_id', $program->id)
                         ->pluck('user_id');
                     
                     // Get super admins (they should always be notified)
@@ -133,7 +133,7 @@ class ProjectCommentController extends Controller
                         ->where('is_archived', false)
                         ->get();
                 } else {
-                    // Fallback: if no competition found, use permission-based approach
+                    // Fallback: if no program found, use permission-based approach
                     $adminsToNotify = \App\Models\User::permission('create ProjectComment')
                         ->where('is_archived', false)
                         ->get();

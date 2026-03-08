@@ -4,9 +4,9 @@ use App\Http\Controllers\Api\NafathIamController;
 use App\Http\Controllers\Api\Participant\TaskController as ParticipantTaskController;
 use App\Http\Controllers\Api\Participant\ApplicationEditController;
 use App\Http\Controllers\CityController;
-use App\Http\Controllers\CompetitionApplicationController;
-use App\Http\Controllers\CompetitionController;
-use App\Http\Controllers\CompetitionTabController;
+use App\Http\Controllers\ProgramApplicationController;
+use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\ProgramTabController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\CountryController;
 use App\Http\Controllers\EvaluationController;
@@ -92,11 +92,11 @@ Route::prefix('participants')->group(function () {
             Route::post('profile/recovery-email/request-otp', [ParticipantProfileController::class, 'requestRecoveryEmailOtp']);
             Route::post('profile/recovery-email/verify-otp', [ParticipantProfileController::class, 'verifyRecoveryEmailOtp']);
 
-            // Competition Applications
-            Route::apiResource('competition-applications', CompetitionApplicationController::class)->missing(function () {
+            // Program Applications
+            Route::apiResource('program-applications', ProgramApplicationController::class)->missing(function () {
                 return response()->json(['message' => 'Application not found'], 404);
             });
-            Route::post('competition-applications/reset-draft', [CompetitionApplicationController::class, 'resetDraft'])->name('competition-applications.reset-draft');
+            Route::post('program-applications/reset-draft', [ProgramApplicationController::class, 'resetDraft'])->name('program-applications.reset-draft');
 
                 Route::get('projects/{project}/comments', [ProjectCommentController::class, 'index']);
                 Route::post('projects/{project}/comments', [ProjectCommentController::class, 'store']);
@@ -106,8 +106,8 @@ Route::prefix('participants')->group(function () {
                 Route::post('applications/{application}/comments', [ApplicationCommentController::class, 'store']);
                 Route::post('applications/{application}/comments/mark-read', [ApplicationCommentController::class, 'markRead']);
 
-            // For Approved Competition Applications
-            Route::middleware(['approved_competition_application', 'approved_competition_tab'])->group(function () {
+            // For Approved Program Applications
+            Route::middleware(['approved_program_application', 'approved_program_tab'])->group(function () {
                 Route::apiResource('events', EventController::class)->only(['index', 'show']);
 
                 // Mentor Routes
@@ -145,7 +145,7 @@ Route::prefix('participants')->group(function () {
                     ->missing(fn() => response()->json(['message' => 'Project not found'], 404));
 
                 Route::apiSingleton('my-team', TeamController::class);
-                Route::get('my-competition-applications', [CompetitionApplicationController::class, 'myApplications']);
+                Route::get('my-program-applications', [ProgramApplicationController::class, 'myApplications']);
                 Route::apiResource('guidelines', GuidelineController::class)->only(['index', 'show']);
                 Route::get('winners', [WinnerController::class, 'index'])->name('winners.index');
                 Route::get('leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
@@ -161,7 +161,7 @@ Route::prefix('participants')->group(function () {
                 });
             });
 
-            // Application Edit Routes (IN-2025 - available without approved_competition_application middleware)
+            // Application Edit Routes (IN-2025 - available without approved_program_application middleware)
             Route::prefix('applications/{application}')->name('applications.')->group(function () {
                 Route::get('decision', [ApplicationEditController::class, 'getDecisionDetails'])->name('decision');
                 Route::get('edit-request', [ApplicationEditController::class, 'checkEditRequest'])->name('edit-request');
@@ -171,7 +171,7 @@ Route::prefix('participants')->group(function () {
 
         Route::get('satisfactions/is-submitted', [SatisfactionController::class, 'isSubmitted']);
         Route::apiResource('satisfactions', SatisfactionController::class)->only(['index', 'store']);
-        Route::get('competition-tabs', CompetitionTabController::class);
+        Route::get('program-tabs', ProgramTabController::class);
 
         Route::post('auth/logout', [ParticipantAuthController::class, 'logout']);
     });
@@ -335,10 +335,10 @@ Route::middleware(['jwt.auth'])->group(function () {
         Route::post('enhance', [FormController::class, 'enhance']);
     });
 
-    Route::apiResource('competitions', CompetitionController::class)->only(['index', 'show'])->missing(function () {
-        return response()->json(['message' => 'Competition not found'], 404);
+    Route::apiResource('programs', ProgramController::class)->only(['index', 'show'])->missing(function () {
+        return response()->json(['message' => 'Program not found'], 404);
     });
-    Route::get('competitions/{competition}/labels', [CompetitionController::class, 'labels']);
+    Route::get('programs/{program}/labels', [ProgramController::class, 'labels']);
 });
 // countries
 Route::get('countries', CountryController::class);

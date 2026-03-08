@@ -17,7 +17,7 @@ Route::middleware(['web'])->group(function () {
 });
 
 
-Route::post('/filament/competition-switch', function (Request $request) {
-     session()->put(['current_competition_id' => $request->competition_id]);
+Route::post('/filament/program-switch', function (Request $request) {
+     session()->put(['current_program_id' => $request->program_id]);
     return redirect()->back();
-})->name('filament.competition.switch')->middleware(['auth']);
+})->name('filament.program.switch')->middleware(['auth']);

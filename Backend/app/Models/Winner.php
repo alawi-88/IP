@@ -12,7 +12,7 @@ class Winner extends Model
     use HasFactory, LogsActivity, HasActivityLog;
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'track_id',
         'rank',
         'name',
@@ -33,8 +33,8 @@ class Winner extends Model
         'name',
         'subtitle',
         'image',
-        'competition.title',
-        'competition_id',
+        'program.title',
+        'program_id',
         'track.name'
     ];
 
@@ -47,9 +47,9 @@ class Winner extends Model
         return $query->where('is_visible', true);
     }
 
-    public function competition()
+    public function program()
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
 

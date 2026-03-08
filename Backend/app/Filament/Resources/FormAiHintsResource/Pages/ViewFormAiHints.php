@@ -21,21 +21,21 @@ class ViewFormAiHints extends ViewRecord
             ->schema([
                 Section::make('Form Information / معلومات النموذج')
                     ->schema([
-                        TextEntry::make('form.competition.title')
+                        TextEntry::make('form.program.title')
                             ->label('Program / البرنامج')
                             ->getStateUsing(function ($record) {
-                                if (!$record->form || !$record->form->competition) {
+                                if (!$record->form || !$record->form->program) {
                                     return 'N/A';
                                 }
-                                $competition = $record->form->competition;
-                                $title = $competition->title;
+                                $program = $record->form->program;
+                                $title = $program->title;
                                 
                                 if (is_array($title)) {
                                     return $title['en'] ?? reset($title);
                                 }
                                 
-                                if (method_exists($competition, 'getTranslation')) {
-                                    return $competition->getTranslation('title', 'en') ?? $title;
+                                if (method_exists($program, 'getTranslation')) {
+                                    return $program->getTranslation('title', 'en') ?? $title;
                                 }
                                 
                                 return $title;

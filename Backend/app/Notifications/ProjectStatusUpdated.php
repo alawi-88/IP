@@ -47,12 +47,12 @@ class ProjectStatusUpdated extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $competition = $this->project->form->competition;
-        $competitionName = $competition->title;
+        $program = $this->project->form->program;
+        $programName = $program->title;
         $projectTitle = $this->project?->form_submissions?->project_name ?? __('project_status.Untitled Project');
         $data = $this->renderEmailTemplate('user.project_status_updates', [
             'project' => $projectTitle,
-            'competition' => $competitionName,
+            'program' => $programName,
             'oldStatus' => __("project_status.statuses.{$this->oldStatus}"),
             'newStatus' => __("project_status.statuses.{$this->newStatus}")
         ]);
@@ -74,7 +74,7 @@ class ProjectStatusUpdated extends Notification
             //->salutation(' ')
             ->line(__('project_status.status_updated_message', [
                 'project' => $projectTitle,
-                'competition' => $competitionName,
+                'program' => $programName,
                 'old_status' => __("project_status.statuses.{$this->oldStatus}"),
                 'new_status' => __("project_status.statuses.{$this->newStatus}")
             ]))
@@ -94,19 +94,19 @@ class ProjectStatusUpdated extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        $competition = $this->project?->form?->competition;
-        $competitionName = $competition->title;
+        $program = $this->project?->form?->program;
+        $programName = $program->title;
         $projectTitle = $this->project?->form_submissions?->project_name ?? getTranslationForLocale('project_status.Untitled Project', app()->getLocale());
 
         $data = $this->renderNotificationMessage('user.project_status_updates', [
             'project' => $projectTitle,
-            'competition' => $competitionName,
+            'program' => $programName,
             'old_status' => getTranslationForLocale("project_status.statuses.{$this->oldStatus}", 'ar'),
             'new_status' => getTranslationForLocale("project_status.statuses.{$this->newStatus}", 'ar')
         ]);
         $data_en = $this->renderNotificationMessage('user.project_status_updates', [
             'project' => $projectTitle,
-            'competition' => $competitionName,
+            'program' => $programName,
             'old_status' => getTranslationForLocale("project_status.statuses.{$this->oldStatus}", 'en'),
             'new_status' => getTranslationForLocale("project_status.statuses.{$this->newStatus}", 'en')
         ]);
@@ -124,13 +124,13 @@ class ProjectStatusUpdated extends Notification
             $body = [
                 'ar' => getTranslationForLocale('project_status.status_updated_message', 'ar', [
                     'project' => $projectTitle,
-                    'competition' => $competitionName,
+                    'program' => $programName,
                     'old_status' => getTranslationForLocale("project_status.statuses.{$this->oldStatus}", 'ar'),
                     'new_status' => getTranslationForLocale("project_status.statuses.{$this->newStatus}", 'ar')
                 ]),
                 'en' => getTranslationForLocale('project_status.status_updated_message', 'en', [
                     'project' => $projectTitle,
-                    'competition' => $competitionName,
+                    'program' => $programName,
                     'old_status' => getTranslationForLocale("project_status.statuses.{$this->oldStatus}", 'en'),
                     'new_status' => getTranslationForLocale("project_status.statuses.{$this->newStatus}", 'en')
                 ])
@@ -139,8 +139,8 @@ class ProjectStatusUpdated extends Notification
 
         return [
             'project_id' => $this->project->id,
-            'competition_id' => $this->project->form->competition_id,
-            'competition_name' => $competitionName,
+            'program_id' => $this->project->form->program_id,
+            'program_name' => $programName,
             'title' => $subject,
             'body' => $body,
             'status' => 'updated',

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\RegistrationEvaluatorResource\Pages;
 
 use App\Filament\Resources\RegistrationEvaluatorResource;
-use App\Models\Competition;
+use App\Models\Program;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;
@@ -28,11 +28,11 @@ class ListRegistrationEvaluators extends ListRecords
                 Tables\Columns\TextColumn::make('id')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('competition.title')
+                Tables\Columns\TextColumn::make('program.title')
                     ->label('Program')
-                    ->getStateUsing(fn ($record) => $record->competition?->getTranslation('title', 'en') ?? 'N/A')
+                    ->getStateUsing(fn ($record) => $record->program?->getTranslation('title', 'en') ?? 'N/A')
                     ->searchable(query: function ($query, $search) {
-                        $query->whereHas('competition', function ($q) use ($search) {
+                        $query->whereHas('program', function ($q) use ($search) {
                             $q->where('title->en', 'like', "%{$search}%");
                         });
                     })
@@ -64,9 +64,9 @@ class ListRegistrationEvaluators extends ListRecords
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('competition_id')
+                SelectFilter::make('program_id')
                     ->label('Program')
-                    ->options(fn () => Competition::pluck('title', 'id')->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t))
+                    ->options(fn () => Program::pluck('title', 'id')->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t))
                     ->searchable(),
 
                 SelectFilter::make('is_active')

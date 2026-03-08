@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\CustomDashboardResource\Pages;
 
 use App\Filament\Resources\CustomDashboardResource;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Dashboard;
 use App\Services\DashboardAggregationService;
 use Filament\Actions;
@@ -18,7 +18,7 @@ class ViewCustomDashboard extends ViewRecord
     protected static string $view = 'filament.resources.custom-dashboard-resource.pages.view-custom-dashboard';
 
     #[Url]
-    public ?string $filterCompetition = null;
+    public ?string $filterProgram = null;
 
     #[Url]
     public ?string $filterStatus = null;
@@ -88,14 +88,14 @@ class ViewCustomDashboard extends ViewRecord
 
         try {
             $filters = array_filter([
-                'competition_id' => $this->filterCompetition,
+                'program_id' => $this->filterProgram,
                 'status' => $this->filterStatus,
                 'date_from' => $this->filterDateFrom,
                 'date_to' => $this->filterDateTo,
             ]);
 
             $service = new DashboardAggregationService(
-                $this->record->competition_id ?? currentCompetitionId(),
+                $this->record->program_id ?? currentProgramId(),
                 $filters
             );
 
@@ -116,7 +116,7 @@ class ViewCustomDashboard extends ViewRecord
 
     public function resetFilters(): void
     {
-        $this->filterCompetition = null;
+        $this->filterProgram = null;
         $this->filterStatus = null;
         $this->filterDateFrom = null;
         $this->filterDateTo = null;
@@ -127,9 +127,9 @@ class ViewCustomDashboard extends ViewRecord
     {
         try {
             $service = new DashboardAggregationService(
-                $this->record->competition_id ?? currentCompetitionId(),
+                $this->record->program_id ?? currentProgramId(),
                 array_filter([
-                    'competition_id' => $this->filterCompetition,
+                    'program_id' => $this->filterProgram,
                     'status' => $this->filterStatus,
                     'date_from' => $this->filterDateFrom,
                     'date_to' => $this->filterDateTo,
@@ -163,9 +163,9 @@ class ViewCustomDashboard extends ViewRecord
         return $this->exportCsv();
     }
 
-    public function getCompetitionOptions(): array
+    public function getProgramOptions(): array
     {
-        return Competition::active()
+        return Program::active()
             ->pluck('title', 'id')
             ->map(fn ($title) => is_array($title) ? ($title[app()->getLocale()] ?? $title['en'] ?? '') : $title)
             ->toArray();

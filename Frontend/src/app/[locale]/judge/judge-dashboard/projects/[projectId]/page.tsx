@@ -3,7 +3,7 @@
 import axiosInstance from "@/axios";
 import Empty from "@/components/Empty";
 import { useRenderFieldType } from "@/hooks/useRenderField";
-import { DynamicForm, Field, MyCompetition } from "@/lib/interfaces";
+import { DynamicForm, Field, ProgramApplication } from "@/lib/interfaces";
 import { useUserStore } from "@/store/user";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -35,7 +35,7 @@ export default function ProjectDetails() {
   const router = useRouter();
   const { projectId } = useParams<{ projectId: string }>();
   const [currentStage, setCurrentStage] = useState<
-    MyCompetition["competition"]["stages"][number] | null
+    ProgramApplication["program"]["stages"][number] | null
   >(null);
   const [disclaimerOpen, setDisclaimerOpen] = useState(false);
   const [shouldShowDisclaimer, setShouldShowDisclaimer] = useState(false);
@@ -97,7 +97,7 @@ export default function ProjectDetails() {
 
   //get project
   const { data: project, isLoading: isProjectLoading } =
-    useQuery<MyCompetition>({
+    useQuery<ProgramApplication>({
       queryKey: ["judge-project", projectId],
       queryFn: async () => {
         const response = await axiosInstance.get(
@@ -149,7 +149,7 @@ export default function ProjectDetails() {
   // check current stage is evaluation 
   useEffect(() => {
     if (!project?.id) return;
-    const currentStage = project.competition.current_stage;
+    const currentStage = project.program.current_stage;
     if (currentStage?.slug?.startsWith("evaluation")) {
       setCurrentStage(currentStage);
     }
@@ -258,17 +258,17 @@ export default function ProjectDetails() {
                       {dayjs(project.created_at).format("DD/MM/YYYY")}
                     </span>
                   </div>
-                  {project.competition.stages.find(
-                    (stage) => stage.id === project.competition.current_stage_id
+                  {project.program.stages.find(
+                    (stage) => stage.id === project.program.current_stage_id
                   ) && (
                     <div className="flex items-center gap-2 text-[#98A1B2]  text-sm font-medium">
                       <FiFlag className="w-4 h-4" />
                       <span>{t("stage")}:</span>
                       <span className="text-foreground">
                         {
-                          project.competition.stages.find(
+                          project.program.stages.find(
                             (stage) =>
-                              stage.id === project.competition.current_stage_id
+                              stage.id === project.program.current_stage_id
                           )?.title
                         }
                       </span>
@@ -276,13 +276,13 @@ export default function ProjectDetails() {
                   )}
                 </div>
 
-                {project?.competition?.tracks?.length > 0 && (
+                {project?.program?.tracks?.length > 0 && (
                   <>
                     <div className="flex flex-col gap-y-2">
                       <h3 className="text-base font-bold m-0">{t("track")}</h3>
                       <p className="text-sm font-medium m-0 text-[#626262]">
                         {
-                          project.competition.tracks.find(
+                          project.program.tracks.find(
                             (track) => track.is_selected
                           )?.name
                         }
@@ -293,7 +293,7 @@ export default function ProjectDetails() {
                         {t("sub-track")}
                       </h3>
                       <p className="text-sm font-medium m-0 text-[#626262]">
-                        {project.competition.tracks
+                        {project.program.tracks
                           .find((track) => track.is_selected)
                           ?.sub_tracks?.find((subTrack) => subTrack.is_selected)
                           ?.name || "-"}

@@ -17,7 +17,7 @@ class StageResource extends Resource
 
     protected static ?int $navigationSort = 9;
     protected static ?string $navigationGroup = 'Program Management';
-    // Managed via Competition Hub
+    // Managed via Program Hub
     protected static bool $shouldRegisterNavigation = false;
 
     public static function getPages(): array

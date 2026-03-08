@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\Competition\FilterByCompetition;
+use App\Traits\Program\FilterByProgram;
 use App\Traits\HasActivityLog;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -13,11 +13,11 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
- * @method static byCompetition()
+ * @method static byProgram()
  */
 class ContactUs extends Model
 {
-    use LogsActivity, HasActivityLog, FilterByCompetition;
+    use LogsActivity, HasActivityLog, FilterByProgram;
 
     // pending and resolved constants
     const PENDING = 'pending';

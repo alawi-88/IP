@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Participant;
 
 use App\Http\Controllers\Controller;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -17,7 +17,7 @@ class ApplicationEditController extends Controller
     {
         $participant = $request->user();
 
-        $application = CompetitionApplication::where('id', $applicationId)
+        $application = ProgramApplication::where('id', $applicationId)
             ->where('participant_id', $participant->id)
             ->first();
 
@@ -48,7 +48,7 @@ class ApplicationEditController extends Controller
     {
         $participant = $request->user();
 
-        $application = CompetitionApplication::where('id', $applicationId)
+        $application = ProgramApplication::where('id', $applicationId)
             ->where('participant_id', $participant->id)
             ->first();
 
@@ -76,7 +76,7 @@ class ApplicationEditController extends Controller
     {
         $participant = $request->user();
 
-        $application = CompetitionApplication::where('id', $applicationId)
+        $application = ProgramApplication::where('id', $applicationId)
             ->where('participant_id', $participant->id)
             ->where('status', 'edit_requested')
             ->first();

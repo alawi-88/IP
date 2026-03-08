@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\Team;
 use App\Models\TeamFormConfig;
 use App\Rules\QualifiedMember;
@@ -52,7 +52,7 @@ class UpdateTeamMemberRequest extends FormRequest
             // Get team configuration - prioritize RegistrationFormConfig over TeamFormConfig
             // RegistrationFormConfig is the source of truth for team size limits
             // Note: scopeActive() already checks is_archived, so we don't need notArchived()
-            $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', $application->competition_id)
+            $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', $application->program_id)
                 ->active()
                 ->first();
             
@@ -63,7 +63,7 @@ class UpdateTeamMemberRequest extends FormRequest
                 $maxTeamMembers = $registrationConfig->max_team_members !== null ? $registrationConfig->max_team_members : config('team.max_members', 6);
             } else {
                 // Fallback to TeamFormConfig if RegistrationFormConfig doesn't exist
-                $teamConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+                $teamConfig = TeamFormConfig::where('program_id', $application->program_id)
                     ->active()
                     ->notArchived()
                     ->first();
@@ -117,7 +117,7 @@ class UpdateTeamMemberRequest extends FormRequest
             if ($totalMembers < $minTeamMembers) {
                 $validator->errors()->add(
                     'serial_numbers',
-                    __('competition_application.The total number of team members must be at least :min.', ['min' => $minTeamMembers])
+                    __('program_application.The total number of team members must be at least :min.', ['min' => $minTeamMembers])
                         ?: "The total number of team members must be at least {$minTeamMembers}."
                 );
             }
@@ -126,7 +126,7 @@ class UpdateTeamMemberRequest extends FormRequest
             if ($totalMembers > $maxTeamMembers) {
                 $validator->errors()->add(
                     'serial_numbers',
-                    __('competition_application.The total number of team members must not exceed :max.', ['max' => $maxTeamMembers])
+                    __('program_application.The total number of team members must not exceed :max.', ['max' => $maxTeamMembers])
                 );
             }
         });

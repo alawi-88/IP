@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\RegistrationEvaluatorResource\Pages;
 
 use App\Filament\Resources\RegistrationEvaluatorResource;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\RegistrationEvaluation;
 use App\Models\RegistrationEvaluationCriterion;
 use App\Models\RegistrationEvaluationForm;
@@ -31,9 +31,9 @@ class ViewRegistrationEvaluator extends ViewRecord
                         ->label('Evaluator Name'),
                     TextEntry::make('user.email')
                         ->label('Email'),
-                    TextEntry::make('competition.title')
+                    TextEntry::make('program.title')
                         ->label('Program')
-                        ->getStateUsing(fn ($record) => $record->competition?->getTranslation('title', 'en')),
+                        ->getStateUsing(fn ($record) => $record->program?->getTranslation('title', 'en')),
                     IconEntry::make('is_active')
                         ->boolean()
                         ->label('Active'),
@@ -57,7 +57,7 @@ class ViewRegistrationEvaluator extends ViewRecord
                         ->getStateUsing(fn ($record) => $record->evaluations()->count()),
                     TextEntry::make('applications_evaluated')
                         ->label('Applications Evaluated')
-                        ->getStateUsing(fn ($record) => $record->evaluations()->distinct('competition_application_id')->count('competition_application_id')),
+                        ->getStateUsing(fn ($record) => $record->evaluations()->distinct('program_application_id')->count('program_application_id')),
                 ]),
         ]);
     }
@@ -70,14 +70,14 @@ class ViewRegistrationEvaluator extends ViewRecord
                 ->icon('heroicon-o-pencil-square')
                 ->color('primary')
                 ->form(function () {
-                    $competitionId = $this->record->competition_id;
+                    $programId = $this->record->program_id;
                     $assignedFormIds = $this->record->assignedForms()->pluck('registration_evaluation_forms.id')->toArray();
 
                     return [
                         Forms\Components\Select::make('application_id')
                             ->label('Application / الطلب')
-                            ->options(function () use ($competitionId) {
-                                return CompetitionApplication::where('competition_id', $competitionId)
+                            ->options(function () use ($programId) {
+                                return ProgramApplication::where('program_id', $programId)
                                     ->where('status', 'pending')
                                     ->get()
                                     ->mapWithKeys(fn ($a) => [$a->id => "#{$a->id} - " . ($a->participant?->name ?? 'N/A')]);
@@ -128,7 +128,7 @@ class ViewRegistrationEvaluator extends ViewRecord
 
                         RegistrationEvaluation::updateOrCreate(
                             [
-                                'competition_application_id' => $applicationId,
+                                'program_application_id' => $applicationId,
                                 'registration_evaluator_id' => $this->record->id,
                                 'registration_evaluation_criterion_id' => $criterion->id,
                             ],
@@ -168,10 +168,10 @@ class ViewRegistrationEvaluator extends ViewRecord
 
     private function updateApplicationFinalScore(int $applicationId): void
     {
-        $application = CompetitionApplication::find($applicationId);
+        $application = ProgramApplication::find($applicationId);
         if (!$application) return;
 
-        $totalScore = RegistrationEvaluation::where('competition_application_id', $applicationId)->sum('score');
+        $totalScore = RegistrationEvaluation::where('program_application_id', $applicationId)->sum('score');
 
         $application->update([
             'final_evaluation_score' => $totalScore,

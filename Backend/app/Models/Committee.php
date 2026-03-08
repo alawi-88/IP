@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\Competition\FilterByCompetition;
+use App\Traits\Program\FilterByProgram;
 use App\Traits\HasActivityLog;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
@@ -14,21 +14,21 @@ use Filament\Tables;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
- * @method static byCompetition()
+ * @method static byProgram()
  */
 class Committee extends Model
 {
-    use FilterByCompetition, LogsActivity, HasActivityLog;
+    use FilterByProgram, LogsActivity, HasActivityLog;
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'title',
     ];
 
     protected array $logFields = [
         'title',
-        'competition.title',
-        'competition_id'
+        'program.title',
+        'program_id'
     ];
 
     protected string $moduleName = 'Committee';
@@ -39,7 +39,7 @@ class Committee extends Model
         parent::boot();
 
         static::creating(function ($committee) {
-            $committee->competition_id = currentCompetitionId() ?? Competition::first()->id;
+            $committee->program_id = currentProgramId() ?? Program::first()->id;
         });
 
         static::deleting(function ($committee) {
@@ -48,9 +48,9 @@ class Committee extends Model
         });
     }
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function judges(): BelongsToMany
@@ -70,9 +70,9 @@ class Committee extends Model
                 ->label('Judge')
                 ->preload()
                 ->maxItems(5)
-                ->options(CompetitionJudge::query()
+                ->options(ProgramJudge::query()
                     ->select('id', 'judge_id')
-                    ->where('competition_id', 1)
+                    ->where('program_id', 1)
                     ->get()
                     ->pluck('judge.name', 'id')
                     ->toArray()

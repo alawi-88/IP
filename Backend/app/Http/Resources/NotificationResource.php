@@ -44,12 +44,12 @@ class NotificationResource extends JsonResource
                 return __('passwords.reset_password');
             }
             
-            // Only use competition_application translation if message looks like a key (no spaces, simple format)
+            // Only use program_application translation if message looks like a key (no spaces, simple format)
             // Otherwise, treat it as already translated text
             if (is_string($message) && !preg_match('/\s/', $message) && strlen($message) < 50) {
-                $translated = __('competition_application.' . $message);
+                $translated = __('program_application.' . $message);
                 // If translation returns the key itself (not found), return the message as is
-                if ($translated === 'competition_application.' . $message) {
+                if ($translated === 'program_application.' . $message) {
                     return $message;
                 }
                 return $translated;

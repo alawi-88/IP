@@ -111,16 +111,16 @@ class MentorSessionResource extends JsonResource
                     'current_role' => $this->participant->current_role ? __('participant.' . $this->participant->current_role) : null,
                 ];
             }, null),
-            'competition' => $this->when($this->competition, function () {
-                // Get translated competition title based on request locale
+            'program' => $this->when($this->program, function () {
+                // Get translated program title based on request locale
                 $lang = request()->getPreferredLanguage(['en', 'ar']);
-                $competitionTitle = is_array($this->competition->title)
-                    ? ($this->competition->title[$lang] ?? $this->competition->title['en'] ?? $this->competition->title['ar'] ?? 'N/A')
-                    : ($this->competition->title ?? 'N/A');
+                $programTitle = is_array($this->program->title)
+                    ? ($this->program->title[$lang] ?? $this->program->title['en'] ?? $this->program->title['ar'] ?? 'N/A')
+                    : ($this->program->title ?? 'N/A');
 
                 return [
-                    'id' => $this->competition->id ?? null,
-                    'title' => $competitionTitle,
+                    'id' => $this->program->id ?? null,
+                    'title' => $programTitle,
                 ];
             }, null),
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),

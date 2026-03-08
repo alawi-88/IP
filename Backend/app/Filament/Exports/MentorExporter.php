@@ -15,7 +15,7 @@ class MentorExporter extends Exporter
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('competition.title')->label('Program'),
+            ExportColumn::make('program.title')->label('Program'),
             ExportColumn::make('name'),
             ExportColumn::make('image')->formatStateUsing(fn($record) => $record->image ? Storage::url($record->image) : null),
             ExportColumn::make('experience'),

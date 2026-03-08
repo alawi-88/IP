@@ -12,7 +12,7 @@ class CreateCustomDashboard extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['competition_id'] = currentCompetitionId();
+        $data['program_id'] = currentProgramId();
         $data['created_by'] = auth()->id();
         $data['sort_order'] = $data['sort_order'] ?? 0;
 

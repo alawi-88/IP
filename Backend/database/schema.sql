@@ -85,7 +85,7 @@ CREATE TABLE `application_comments` (
   KEY `application_comments_application_id_foreign` (`application_id`),
   KEY `application_comments_user_id_foreign` (`user_id`),
   KEY `application_comments_author_type_author_id_index` (`author_type`,`author_id`),
-  CONSTRAINT `application_comments_application_id_foreign` FOREIGN KEY (`application_id`) REFERENCES `competition_applications` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `application_comments_application_id_foreign` FOREIGN KEY (`application_id`) REFERENCES `program_applications` (`id`) ON DELETE CASCADE,
   CONSTRAINT `application_comments_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -288,15 +288,15 @@ CREATE TABLE `assessment_criteria` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `branding_competitions`
+-- Table structure for table `branding_programs`
 --
 
-DROP TABLE IF EXISTS `branding_competitions`;
+DROP TABLE IF EXISTS `branding_programs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `branding_competitions` (
+CREATE TABLE `branding_programs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned DEFAULT NULL,
+  `program_id` bigint unsigned DEFAULT NULL,
   `logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `white_logo` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `favicon` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -307,8 +307,8 @@ CREATE TABLE `branding_competitions` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `branding_competitions_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `branding_competitions_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `branding_programs_program_id_foreign` (`program_id`),
+  CONSTRAINT `branding_programs_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -419,26 +419,26 @@ DROP TABLE IF EXISTS `committees`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `committees` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `committees_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `committees_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`)
+  KEY `committees_program_id_foreign` (`program_id`),
+  CONSTRAINT `committees_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `competition_applications`
+-- Table structure for table `program_applications`
 --
 
-DROP TABLE IF EXISTS `competition_applications`;
+DROP TABLE IF EXISTS `program_applications`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `competition_applications` (
+CREATE TABLE `program_applications` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `participant_id` bigint unsigned NOT NULL,
   `has_idea` tinyint(1) NOT NULL,
   `idea_description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -472,53 +472,53 @@ CREATE TABLE `competition_applications` (
   `is_archived` tinyint(1) NOT NULL DEFAULT '0',
   `archived_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `competition_applications_competition_id_foreign` (`competition_id`),
-  KEY `competition_applications_participant_id_foreign` (`participant_id`),
-  KEY `competition_applications_idea_path_id_foreign` (`idea_path_id`),
-  KEY `competition_applications_idea_challenge_id_foreign` (`idea_challenge_id`),
-  KEY `competition_applications_form_id_foreign` (`form_id`),
+  KEY `program_applications_program_id_foreign` (`program_id`),
+  KEY `program_applications_participant_id_foreign` (`participant_id`),
+  KEY `program_applications_idea_path_id_foreign` (`idea_path_id`),
+  KEY `program_applications_idea_challenge_id_foreign` (`idea_challenge_id`),
+  KEY `program_applications_form_id_foreign` (`form_id`),
   KEY `idx_applications_id_participant` (`id`,`participant_id`),
-  KEY `competition_applications_reviewed_by_foreign` (`reviewed_by`),
-  CONSTRAINT `competition_applications_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `competition_applications_form_id_foreign` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `competition_applications_idea_challenge_id_foreign` FOREIGN KEY (`idea_challenge_id`) REFERENCES `challenges` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `competition_applications_idea_path_id_foreign` FOREIGN KEY (`idea_path_id`) REFERENCES `paths` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `competition_applications_participant_id_foreign` FOREIGN KEY (`participant_id`) REFERENCES `participants` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `competition_applications_reviewed_by_foreign` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  KEY `program_applications_reviewed_by_foreign` (`reviewed_by`),
+  CONSTRAINT `program_applications_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `program_applications_form_id_foreign` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `program_applications_idea_challenge_id_foreign` FOREIGN KEY (`idea_challenge_id`) REFERENCES `challenges` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `program_applications_idea_path_id_foreign` FOREIGN KEY (`idea_path_id`) REFERENCES `paths` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `program_applications_participant_id_foreign` FOREIGN KEY (`participant_id`) REFERENCES `participants` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `program_applications_reviewed_by_foreign` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `competition_judge`
+-- Table structure for table `program_judge`
 --
 
-DROP TABLE IF EXISTS `competition_judge`;
+DROP TABLE IF EXISTS `program_judge`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `competition_judge` (
+CREATE TABLE `program_judge` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `judge_id` bigint unsigned NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `competition_judge_competition_id_foreign` (`competition_id`),
-  KEY `competition_judge_judge_id_foreign` (`judge_id`),
-  CONSTRAINT `competition_judge_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `competition_judge_judge_id_foreign` FOREIGN KEY (`judge_id`) REFERENCES `judges` (`id`) ON DELETE CASCADE
+  KEY `program_judge_program_id_foreign` (`program_id`),
+  KEY `program_judge_judge_id_foreign` (`judge_id`),
+  CONSTRAINT `program_judge_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `program_judge_judge_id_foreign` FOREIGN KEY (`judge_id`) REFERENCES `judges` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `competition_labels`
+-- Table structure for table `program_labels`
 --
 
-DROP TABLE IF EXISTS `competition_labels`;
+DROP TABLE IF EXISTS `program_labels`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `competition_labels` (
+CREATE TABLE `program_labels` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `key` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `category` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'general',
   `label_en` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -526,40 +526,40 @@ CREATE TABLE `competition_labels` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `competition_labels_competition_id_key_unique` (`competition_id`,`key`),
-  KEY `competition_labels_key_index` (`key`),
-  CONSTRAINT `competition_labels_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  UNIQUE KEY `program_labels_program_id_key_unique` (`program_id`,`key`),
+  KEY `program_labels_key_index` (`key`),
+  CONSTRAINT `program_labels_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `competition_tabs`
+-- Table structure for table `program_tabs`
 --
 
-DROP TABLE IF EXISTS `competition_tabs`;
+DROP TABLE IF EXISTS `program_tabs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `competition_tabs` (
+CREATE TABLE `program_tabs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `tab` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `is_visible` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `competition_tabs_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `competition_tabs_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `program_tabs_program_id_foreign` (`program_id`),
+  CONSTRAINT `program_tabs_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `competitions`
+-- Table structure for table `programs`
 --
 
-DROP TABLE IF EXISTS `competitions`;
+DROP TABLE IF EXISTS `programs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `competitions` (
+CREATE TABLE `programs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `title` json NOT NULL,
   `about` json NOT NULL,
@@ -658,7 +658,7 @@ DROP TABLE IF EXISTS `dashboards`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dashboards` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned DEFAULT NULL,
+  `program_id` bigint unsigned DEFAULT NULL,
   `name` json NOT NULL,
   `description` json DEFAULT NULL,
   `data_sources` json NOT NULL,
@@ -672,12 +672,12 @@ CREATE TABLE `dashboards` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_dashboards_competition` (`competition_id`),
+  KEY `idx_dashboards_program` (`program_id`),
   KEY `idx_dashboards_sort` (`sort_order`),
   KEY `idx_dashboards_archived` (`is_archived`),
   KEY `fk_dashboards_created_by` (`created_by`),
   KEY `fk_dashboards_updated_by` (`updated_by`),
-  CONSTRAINT `fk_dashboards_competition` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_dashboards_program` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_dashboards_created_by` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_dashboards_updated_by` FOREIGN KEY (`updated_by`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -738,15 +738,15 @@ DROP TABLE IF EXISTS `evaluation_stage_configs`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `evaluation_stage_configs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `number_of_stages` tinyint NOT NULL DEFAULT '1',
   `stages` json DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `evaluation_stage_configs_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `evaluation_stage_configs_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `evaluation_stage_configs_program_id_foreign` (`program_id`),
+  CONSTRAINT `evaluation_stage_configs_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -759,7 +759,7 @@ DROP TABLE IF EXISTS `events`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `events` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `title` json NOT NULL,
   `brief` json NOT NULL,
   `badge` enum('upcoming','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -774,8 +774,8 @@ CREATE TABLE `events` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `events_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `events_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `events_program_id_foreign` (`program_id`),
+  CONSTRAINT `events_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1057,7 +1057,7 @@ DROP TABLE IF EXISTS `forms`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `forms` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `type` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `name` json NOT NULL,
   `description` json NOT NULL,
@@ -1069,8 +1069,8 @@ CREATE TABLE `forms` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `forms_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `forms_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`)
+  KEY `forms_program_id_foreign` (`program_id`),
+  CONSTRAINT `forms_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1105,7 +1105,7 @@ DROP TABLE IF EXISTS `guidelines`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `guidelines` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `title` json NOT NULL,
   `is_visible` tinyint(1) NOT NULL DEFAULT '1',
   `is_archived` tinyint(1) NOT NULL DEFAULT '0',
@@ -1113,8 +1113,8 @@ CREATE TABLE `guidelines` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `guidelines_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `guidelines_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `guidelines_program_id_foreign` (`program_id`),
+  CONSTRAINT `guidelines_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1302,23 +1302,23 @@ CREATE TABLE `mentor_availabilities` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `mentor_competitions`
+-- Table structure for table `mentor_programs`
 --
 
-DROP TABLE IF EXISTS `mentor_competitions`;
+DROP TABLE IF EXISTS `mentor_programs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `mentor_competitions` (
+CREATE TABLE `mentor_programs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `mentor_id` bigint unsigned NOT NULL,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `mentor_competitions_mentor_id_competition_id_unique` (`mentor_id`,`competition_id`),
-  KEY `mentor_competitions_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `mentor_competitions_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `mentor_competitions_mentor_id_foreign` FOREIGN KEY (`mentor_id`) REFERENCES `mentors` (`id`) ON DELETE CASCADE
+  UNIQUE KEY `mentor_programs_mentor_id_program_id_unique` (`mentor_id`,`program_id`),
+  KEY `mentor_programs_program_id_foreign` (`program_id`),
+  CONSTRAINT `mentor_programs_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `mentor_programs_mentor_id_foreign` FOREIGN KEY (`mentor_id`) REFERENCES `mentors` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1333,7 +1333,7 @@ CREATE TABLE `mentor_participant` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `mentor_id` bigint unsigned NOT NULL,
   `participant_id` bigint unsigned NOT NULL,
-  `competition_id` bigint unsigned DEFAULT NULL,
+  `program_id` bigint unsigned DEFAULT NULL,
   `assigned_by` bigint unsigned DEFAULT NULL,
   `assigned_at` timestamp NULL DEFAULT NULL,
   `notes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
@@ -1343,9 +1343,9 @@ CREATE TABLE `mentor_participant` (
   UNIQUE KEY `mentor_participant_mentor_id_participant_id_unique` (`mentor_id`,`participant_id`),
   KEY `mentor_participant_assigned_by_foreign` (`assigned_by`),
   KEY `mentor_participant_participant_id_index` (`participant_id`),
-  KEY `mentor_participant_competition_id_foreign` (`competition_id`),
+  KEY `mentor_participant_program_id_foreign` (`program_id`),
   CONSTRAINT `mentor_participant_assigned_by_foreign` FOREIGN KEY (`assigned_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `mentor_participant_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `mentor_participant_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE SET NULL,
   CONSTRAINT `mentor_participant_mentor_id_foreign` FOREIGN KEY (`mentor_id`) REFERENCES `mentors` (`id`) ON DELETE CASCADE,
   CONSTRAINT `mentor_participant_participant_id_foreign` FOREIGN KEY (`participant_id`) REFERENCES `participants` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1362,7 +1362,7 @@ CREATE TABLE `mentor_sessions` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `mentor_id` bigint unsigned NOT NULL,
   `participant_id` bigint unsigned DEFAULT NULL,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `scheduled_at` datetime NOT NULL,
@@ -1389,10 +1389,10 @@ CREATE TABLE `mentor_sessions` (
   PRIMARY KEY (`id`),
   KEY `mentor_sessions_mentor_id_scheduled_at_index` (`mentor_id`,`scheduled_at`),
   KEY `mentor_sessions_participant_id_scheduled_at_index` (`participant_id`,`scheduled_at`),
-  KEY `mentor_sessions_competition_id_scheduled_at_index` (`competition_id`,`scheduled_at`),
+  KEY `mentor_sessions_program_id_scheduled_at_index` (`program_id`,`scheduled_at`),
   KEY `mentor_sessions_status_scheduled_at_index` (`status`,`scheduled_at`),
   KEY `mentor_sessions_video_tool_scheduled_at_index` (`video_tool`,`scheduled_at`),
-  CONSTRAINT `mentor_sessions_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `mentor_sessions_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
   CONSTRAINT `mentor_sessions_mentor_id_foreign` FOREIGN KEY (`mentor_id`) REFERENCES `mentors` (`id`) ON DELETE CASCADE,
   CONSTRAINT `mentor_sessions_participant_id_foreign` FOREIGN KEY (`participant_id`) REFERENCES `participants` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -1465,7 +1465,7 @@ DROP TABLE IF EXISTS `mentors`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `mentors` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned DEFAULT NULL,
+  `program_id` bigint unsigned DEFAULT NULL,
   `name` json NOT NULL,
   `experience` json NOT NULL,
   `brief` json NOT NULL,
@@ -1494,11 +1494,11 @@ CREATE TABLE `mentors` (
   `instagram` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `mentors_email_unique` (`email`),
-  KEY `mentors_competition_id_foreign` (`competition_id`),
+  KEY `mentors_program_id_foreign` (`program_id`),
   KEY `mentors_track_id_foreign` (`track_id`),
   KEY `mentors_approved_by_foreign` (`approved_by`),
   CONSTRAINT `mentors_approved_by_foreign` FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`),
-  CONSTRAINT `mentors_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `mentors_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
   CONSTRAINT `mentors_track_id_foreign` FOREIGN KEY (`track_id`) REFERENCES `tracks` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1621,7 +1621,7 @@ CREATE TABLE `notification_management` (
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `body` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_type` enum('participant','judge','all') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `competition_id` bigint unsigned DEFAULT NULL,
+  `program_id` bigint unsigned DEFAULT NULL,
   `user_ids` json DEFAULT NULL,
   `recipient_count` int NOT NULL DEFAULT '0',
   `admin_id` bigint unsigned NOT NULL,
@@ -1629,10 +1629,10 @@ CREATE TABLE `notification_management` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `notification_management_competition_id_foreign` (`competition_id`),
+  KEY `notification_management_program_id_foreign` (`program_id`),
   KEY `notification_management_admin_id_foreign` (`admin_id`),
   CONSTRAINT `notification_management_admin_id_foreign` FOREIGN KEY (`admin_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `notification_management_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE SET NULL
+  CONSTRAINT `notification_management_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1869,7 +1869,7 @@ CREATE TABLE `program_approval_requests` (
   KEY `par_status_created_idx` (`status`,`created_at`),
   KEY `par_requested_status_idx` (`requested_by`,`status`),
   KEY `par_action_status_idx` (`action_type`,`status`),
-  CONSTRAINT `par_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `par_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
   CONSTRAINT `par_requested_by_foreign` FOREIGN KEY (`requested_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `par_workflow_id_foreign` FOREIGN KEY (`approval_workflow_id`) REFERENCES `approval_workflows` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -2008,7 +2008,7 @@ DROP TABLE IF EXISTS `projects`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `projects` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `team_id` bigint unsigned DEFAULT NULL,
   `total_score` double NOT NULL DEFAULT '0',
   `ai_evaluation_response` json DEFAULT NULL,
@@ -2024,12 +2024,12 @@ CREATE TABLE `projects` (
   `form_submissions` json DEFAULT NULL,
   `application_id` bigint unsigned DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `projects_competition_id_foreign` (`competition_id`),
+  KEY `projects_program_id_foreign` (`program_id`),
   KEY `projects_team_id_foreign` (`team_id`),
   KEY `idx_projects_form_archived_created` (`form_id`,`is_archived`,`created_at`),
   KEY `idx_projects_application_archived` (`application_id`,`is_archived`),
-  CONSTRAINT `projects_application_id_foreign` FOREIGN KEY (`application_id`) REFERENCES `competition_applications` (`id`) ON DELETE SET NULL,
-  CONSTRAINT `projects_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `projects_application_id_foreign` FOREIGN KEY (`application_id`) REFERENCES `program_applications` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `projects_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
   CONSTRAINT `projects_form_id_foreign` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=150 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2066,7 +2066,7 @@ DROP TABLE IF EXISTS `registration_evaluation_forms`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `registration_evaluation_forms` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `name` json NOT NULL,
   `description` json DEFAULT NULL,
   `dimension` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -2076,8 +2076,8 @@ CREATE TABLE `registration_evaluation_forms` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `registration_evaluation_forms_competition_id_status_index` (`competition_id`,`status`),
-  CONSTRAINT `registration_evaluation_forms_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `registration_evaluation_forms_program_id_status_index` (`program_id`,`status`),
+  CONSTRAINT `registration_evaluation_forms_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2090,7 +2090,7 @@ DROP TABLE IF EXISTS `registration_evaluations`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `registration_evaluations` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_application_id` bigint unsigned NOT NULL,
+  `program_application_id` bigint unsigned NOT NULL,
   `registration_evaluator_id` bigint unsigned NOT NULL,
   `registration_evaluation_form_id` bigint unsigned NOT NULL,
   `registration_evaluation_criterion_id` bigint unsigned NOT NULL,
@@ -2099,12 +2099,12 @@ CREATE TABLE `registration_evaluations` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `reg_eval_unique_score` (`competition_application_id`,`registration_evaluator_id`,`registration_evaluation_criterion_id`),
+  UNIQUE KEY `reg_eval_unique_score` (`program_application_id`,`registration_evaluator_id`,`registration_evaluation_criterion_id`),
   KEY `reg_eval_evaluator_fk` (`registration_evaluator_id`),
   KEY `reg_eval_form_fk` (`registration_evaluation_form_id`),
   KEY `reg_eval_criterion_fk` (`registration_evaluation_criterion_id`),
-  KEY `reg_eval_app_idx` (`competition_application_id`),
-  CONSTRAINT `reg_eval_app_fk` FOREIGN KEY (`competition_application_id`) REFERENCES `competition_applications` (`id`) ON DELETE CASCADE,
+  KEY `reg_eval_app_idx` (`program_application_id`),
+  CONSTRAINT `reg_eval_app_fk` FOREIGN KEY (`program_application_id`) REFERENCES `program_applications` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reg_eval_criterion_fk` FOREIGN KEY (`registration_evaluation_criterion_id`) REFERENCES `registration_evaluation_criteria` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reg_eval_evaluator_fk` FOREIGN KEY (`registration_evaluator_id`) REFERENCES `registration_evaluators` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reg_eval_form_fk` FOREIGN KEY (`registration_evaluation_form_id`) REFERENCES `registration_evaluation_forms` (`id`) ON DELETE CASCADE
@@ -2141,15 +2141,15 @@ DROP TABLE IF EXISTS `registration_evaluators`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `registration_evaluators` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `user_id` bigint unsigned NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `registration_evaluators_competition_id_user_id_unique` (`competition_id`,`user_id`),
+  UNIQUE KEY `registration_evaluators_program_id_user_id_unique` (`program_id`,`user_id`),
   KEY `registration_evaluators_user_id_foreign` (`user_id`),
-  CONSTRAINT `registration_evaluators_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `registration_evaluators_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
   CONSTRAINT `registration_evaluators_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2163,7 +2163,7 @@ DROP TABLE IF EXISTS `registration_form_configs`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `registration_form_configs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `registration_type` enum('individual','team','both') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'individual',
   `min_age` tinyint unsigned DEFAULT NULL,
   `max_age` tinyint unsigned DEFAULT NULL,
@@ -2185,8 +2185,8 @@ CREATE TABLE `registration_form_configs` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `registration_form_configs_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `registration_form_configs_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `registration_form_configs_program_id_foreign` (`program_id`),
+  CONSTRAINT `registration_form_configs_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2235,16 +2235,16 @@ DROP TABLE IF EXISTS `satisfactions`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `satisfactions` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `participant_id` bigint unsigned NOT NULL,
   `question` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `answer` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `satisfactions_competition_id_foreign` (`competition_id`),
+  KEY `satisfactions_program_id_foreign` (`program_id`),
   KEY `satisfactions_participant_id_foreign` (`participant_id`),
-  CONSTRAINT `satisfactions_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `satisfactions_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
   CONSTRAINT `satisfactions_participant_id_foreign` FOREIGN KEY (`participant_id`) REFERENCES `participants` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2316,7 +2316,7 @@ DROP TABLE IF EXISTS `stages`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stages` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `title` json NOT NULL,
   `description` json DEFAULT NULL,
@@ -2365,7 +2365,7 @@ DROP TABLE IF EXISTS `task_assignments`;
 CREATE TABLE `task_assignments` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `task_template_id` bigint unsigned NOT NULL,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `stage_id` bigint unsigned DEFAULT NULL,
   `assignment_type` enum('team','participant','all') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'team',
   `team_id` bigint unsigned DEFAULT NULL,
@@ -2390,12 +2390,12 @@ CREATE TABLE `task_assignments` (
   KEY `task_assignments_stage_id_foreign` (`stage_id`),
   KEY `task_assignments_assigned_by_foreign` (`assigned_by`),
   KEY `task_assignments_reviewed_by_foreign` (`reviewed_by`),
-  KEY `task_assignments_competition_id_status_index` (`competition_id`,`status`),
+  KEY `task_assignments_program_id_status_index` (`program_id`,`status`),
   KEY `task_assignments_team_id_status_index` (`team_id`,`status`),
   KEY `task_assignments_participant_id_status_index` (`participant_id`,`status`),
   KEY `task_assignments_due_date_index` (`due_date`),
   CONSTRAINT `task_assignments_assigned_by_foreign` FOREIGN KEY (`assigned_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `task_assignments_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `task_assignments_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
   CONSTRAINT `task_assignments_participant_id_foreign` FOREIGN KEY (`participant_id`) REFERENCES `participants` (`id`) ON DELETE SET NULL,
   CONSTRAINT `task_assignments_reviewed_by_foreign` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
   CONSTRAINT `task_assignments_stage_id_foreign` FOREIGN KEY (`stage_id`) REFERENCES `stages` (`id`) ON DELETE SET NULL,
@@ -2468,7 +2468,7 @@ DROP TABLE IF EXISTS `task_templates`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `task_templates` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `form_id` bigint unsigned DEFAULT NULL,
   `title` json NOT NULL,
   `description` json DEFAULT NULL,
@@ -2484,8 +2484,8 @@ CREATE TABLE `task_templates` (
   PRIMARY KEY (`id`),
   KEY `task_templates_form_id_foreign` (`form_id`),
   KEY `task_templates_created_by_foreign` (`created_by`),
-  KEY `task_templates_competition_id_is_archived_index` (`competition_id`,`is_archived`),
-  CONSTRAINT `task_templates_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
+  KEY `task_templates_program_id_is_archived_index` (`program_id`,`is_archived`),
+  CONSTRAINT `task_templates_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
   CONSTRAINT `task_templates_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `task_templates_form_id_foreign` FOREIGN KEY (`form_id`) REFERENCES `forms` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -2500,7 +2500,7 @@ DROP TABLE IF EXISTS `team_form_configs`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `team_form_configs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '0',
   `min_team_members` tinyint unsigned NOT NULL DEFAULT '2',
   `max_team_members` tinyint unsigned NOT NULL DEFAULT '6',
@@ -2512,8 +2512,8 @@ CREATE TABLE `team_form_configs` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `team_form_configs_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `team_form_configs_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `team_form_configs_program_id_foreign` (`program_id`),
+  CONSTRAINT `team_form_configs_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2566,7 +2566,7 @@ CREATE TABLE `teams` (
   KEY `teams_application_id_foreign` (`application_id`),
   KEY `teams_track_id_foreign` (`track_id`),
   KEY `teams_sub_track_id_foreign` (`sub_track_id`),
-  CONSTRAINT `teams_application_id_foreign` FOREIGN KEY (`application_id`) REFERENCES `competition_applications` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `teams_application_id_foreign` FOREIGN KEY (`application_id`) REFERENCES `program_applications` (`id`) ON DELETE CASCADE,
   CONSTRAINT `teams_sub_track_id_foreign` FOREIGN KEY (`sub_track_id`) REFERENCES `sub_tracks` (`id`) ON DELETE SET NULL,
   CONSTRAINT `teams_track_id_foreign` FOREIGN KEY (`track_id`) REFERENCES `tracks` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -2581,7 +2581,7 @@ DROP TABLE IF EXISTS `tracks`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tracks` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `name` json NOT NULL,
   `slug` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `order` int NOT NULL DEFAULT '0',
@@ -2589,29 +2589,29 @@ CREATE TABLE `tracks` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tracks_slug_unique` (`slug`),
-  KEY `tracks_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `tracks_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `tracks_program_id_foreign` (`program_id`),
+  CONSTRAINT `tracks_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `user_competitions`
+-- Table structure for table `user_programs`
 --
 
-DROP TABLE IF EXISTS `user_competitions`;
+DROP TABLE IF EXISTS `user_programs`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_competitions` (
+CREATE TABLE `user_programs` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint unsigned NOT NULL,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `user_competitions_user_id_competition_id_unique` (`user_id`,`competition_id`),
-  KEY `user_competitions_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `user_competitions_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `user_competitions_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  UNIQUE KEY `user_programs_user_id_program_id_unique` (`user_id`,`program_id`),
+  KEY `user_programs_program_id_foreign` (`program_id`),
+  CONSTRAINT `user_programs_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `user_programs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2648,7 +2648,7 @@ DROP TABLE IF EXISTS `winners`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `winners` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
-  `competition_id` bigint unsigned NOT NULL,
+  `program_id` bigint unsigned NOT NULL,
   `track_id` bigint unsigned DEFAULT NULL,
   `rank` tinyint unsigned NOT NULL,
   `name` json NOT NULL,
@@ -2659,8 +2659,8 @@ CREATE TABLE `winners` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `winners_competition_id_foreign` (`competition_id`),
-  CONSTRAINT `winners_competition_id_foreign` FOREIGN KEY (`competition_id`) REFERENCES `competitions` (`id`) ON DELETE CASCADE
+  KEY `winners_program_id_foreign` (`program_id`),
+  CONSTRAINT `winners_program_id_foreign` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

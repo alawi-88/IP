@@ -16,7 +16,7 @@ class MentorSession extends Model
     protected $fillable = [
         'mentor_id',
         'participant_id',
-        'competition_id',
+        'program_id',
         'title',
         'description',
         'scheduled_at',
@@ -101,11 +101,11 @@ class MentorSession extends Model
     }
 
     /**
-     * Get the competition for this session.
+     * Get the program for this session.
      */
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     /**
@@ -286,11 +286,11 @@ class MentorSession extends Model
     }
 
     /**
-     * Scope to get sessions for a specific competition.
+     * Scope to get sessions for a specific program.
      */
-    public function scopeForCompetition($query, int $competitionId)
+    public function scopeForProgram($query, int $programId)
     {
-        return $query->where('competition_id', $competitionId);
+        return $query->where('program_id', $programId);
     }
 
     /**

@@ -73,7 +73,7 @@ return [
     'restore' => 'استعادة',
 
     // Filter Labels
-    'filter_by_competition' => 'تصفية حسب المسابقة',
+    'filter_by_program' => 'تصفية حسب المسابقة',
     'filter_by_status' => 'تصفية حسب الحالة',
     'date_range' => 'النطاق الزمني',
     'date_from' => 'من تاريخ',

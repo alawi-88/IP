@@ -5,7 +5,7 @@ namespace App\Filament\Resources\ParticipantResource\Pages;
 use App\Filament\Exports\ParticipantExporter;
 use App\Filament\Imports\ParticipantImporter;
 use App\Filament\Resources\ParticipantResource;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Country;
 use App\Models\Participant;
 use Filament\Actions;
@@ -414,7 +414,7 @@ class ListParticipants extends ListRecords
                 SelectFilter::make('applications')
                     ->options(
                         array_merge(['0' => 'No Applications'],
-                            Competition::all()->pluck('id')->mapWithKeys(fn($value) => [$value => $value])->toArray()
+                            Program::all()->pluck('id')->mapWithKeys(fn($value) => [$value => $value])->toArray()
                         )
                     )
                     ->query(

@@ -20,7 +20,7 @@ class EventResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'competition' => new CompetitionResource($this->competition),
+            'program' => new ProgramResource($this->program),
             'title' => $this->getLocalizedTranslatableText($this->title, $preferredLanguage),
             'brief' => $this->getLocalizedTranslatableText($this->brief, $preferredLanguage),
             'badge' => $this->isUpcoming() ? 'upcoming' : 'completed',

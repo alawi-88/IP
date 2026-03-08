@@ -41,7 +41,7 @@ class SessionScheduledNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         // Reload session from database to ensure all data is loaded (important for queued notifications)
-        $this->session = $this->session->fresh(['mentor', 'participant', 'competition']);
+        $this->session = $this->session->fresh(['mentor', 'participant', 'program']);
 
         // Set locale based on user's preference (check notification locale property first)
         $locale = getUserPreferredLocale($notifiable, $this);
@@ -56,18 +56,18 @@ class SessionScheduledNotification extends Notification implements ShouldQueue
 
         $mentorEmail = $this->session->mentor->email ?? '';
 
-        $competitionTitle = '';
-        if ($this->session->relationLoaded('competition') && $this->session->competition) {
-            $competitionTitle = is_array($this->session->competition->title ?? null)
-                ? ($this->session->competition->title[$locale] ?? $this->session->competition->title['en'] ?? '')
-                : ($this->session->competition->title ?? '');
-        } elseif (!$this->session->relationLoaded('competition') && $this->session->competition_id) {
-            // Load competition if not already loaded
-            $competition = \App\Models\Competition::find($this->session->competition_id);
-            if ($competition) {
-                $competitionTitle = is_array($competition->title ?? null)
-                    ? ($competition->title[$locale] ?? $competition->title['en'] ?? '')
-                    : ($competition->title ?? '');
+        $programTitle = '';
+        if ($this->session->relationLoaded('program') && $this->session->program) {
+            $programTitle = is_array($this->session->program->title ?? null)
+                ? ($this->session->program->title[$locale] ?? $this->session->program->title['en'] ?? '')
+                : ($this->session->program->title ?? '');
+        } elseif (!$this->session->relationLoaded('program') && $this->session->program_id) {
+            // Load program if not already loaded
+            $program = \App\Models\Program::find($this->session->program_id);
+            if ($program) {
+                $programTitle = is_array($program->title ?? null)
+                    ? ($program->title[$locale] ?? $program->title['en'] ?? '')
+                    : ($program->title ?? '');
             }
         }
 
@@ -120,8 +120,8 @@ class SessionScheduledNotification extends Notification implements ShouldQueue
         
         $message->line(__('notifications.session_date_label') . ': ' . $this->session->scheduled_at->locale($locale)->translatedFormat('M d, Y'));
         
-        if ($competitionTitle) {
-            $message->line(__('notifications.program_label') . ': ' . $competitionTitle);
+        if ($programTitle) {
+            $message->line(__('notifications.program_label') . ': ' . $programTitle);
         }
         
         $message->line(__('notifications.session_time_label') . ': ' . $this->session->scheduled_at->locale($locale)->translatedFormat('g:i A'));
@@ -156,7 +156,7 @@ class SessionScheduledNotification extends Notification implements ShouldQueue
         app()->setLocale($locale);
 
         // Reload session from database to ensure all data is loaded (important for queued notifications)
-        $this->session = $this->session->fresh(['mentor', 'participant', 'competition']);
+        $this->session = $this->session->fresh(['mentor', 'participant', 'program']);
 
         $mentorName = '';
         if ($this->session->mentor) {

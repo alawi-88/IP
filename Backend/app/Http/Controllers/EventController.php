@@ -6,7 +6,7 @@ use App\Filters\Events\Badge;
 use App\Filters\Events\Location;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pipeline\Pipeline;
@@ -25,8 +25,8 @@ class EventController extends Controller
             return EventResource::collection(collect());
         }
         
-        // Get competition_id from the application
-        $application = CompetitionApplication::findOrFail($applicationId);
+        // Get program_id from the application
+        $application = ProgramApplication::findOrFail($applicationId);
         
         // IDOR Prevention: Verify that the application belongs to the authenticated user
         $userId = auth()->id();
@@ -34,11 +34,11 @@ class EventController extends Controller
             abort(404, 'Application not found');
         }
         
-        $competitionId = $application->competition_id;
+        $programId = $application->program_id;
         
-        // Filter events by competition_id
+        // Filter events by program_id
         $eventsQuery = Event::where('is_visible', 1)
-            ->where('competition_id', $competitionId)
+            ->where('program_id', $programId)
             ->active(); // Only show non-archived events
 
         $filteredEvents = app(Pipeline::class)

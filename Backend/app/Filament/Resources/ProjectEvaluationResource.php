@@ -61,7 +61,7 @@ class ProjectEvaluationResource extends Resource
                     ->join('judges', 'judges.id', '=', 'judge_projects.judge_id')
                     ->join('projects', 'projects.id', '=', 'judge_projects.project_id')
                     ->join('forms', 'forms.id', '=', 'form_evaluation_scores.form_id')
-                    ->whereHas('judgeProject', fn($query) => $query->whereHas('project', fn($query) => $query->byCompetition()))
+                    ->whereHas('judgeProject', fn($query) => $query->whereHas('project', fn($query) => $query->byProgram()))
                     ->where('form_evaluation_scores.is_archived', false)
                     ->orderBy('form_evaluation_scores.form_id')
             )

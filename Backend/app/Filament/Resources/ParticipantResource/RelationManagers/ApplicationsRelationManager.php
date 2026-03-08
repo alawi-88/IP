@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\ParticipantResource\RelationManagers;
 
 use App\Filament\Traits\ManageableRelation;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Filament\Infolists\Infolist;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -21,14 +21,14 @@ class ApplicationsRelationManager extends RelationManager
         
         // Filter applications by admin's assigned programs (unless super admin)
         if ($user && !$user->isSuperAdmin()) {
-            // Get competition IDs the user has access to
-            $competitionIds = \App\Models\UserCompetition::where('user_id', $user->id)
-                ->pluck('competition_id')
+            // Get program IDs the user has access to
+            $programIds = \App\Models\UserProgram::where('user_id', $user->id)
+                ->pluck('program_id')
                 ->toArray();
             
-            if (!empty($competitionIds)) {
-                $table->modifyQueryUsing(function ($query) use ($competitionIds) {
-                    $query->whereIn('competition_id', $competitionIds);
+            if (!empty($programIds)) {
+                $table->modifyQueryUsing(function ($query) use ($programIds) {
+                    $query->whereIn('program_id', $programIds);
                 });
             } else {
                 // If user has no assigned programs, show nothing
@@ -40,7 +40,7 @@ class ApplicationsRelationManager extends RelationManager
         
         return $table
             ->recordTitleAttribute('id')
-            ->columns(CompetitionApplication::columns())
+            ->columns(ProgramApplication::columns())
             ->actions([
                 Tables\Actions\Action::make('approve')
                     ->label('Approve')
@@ -50,18 +50,18 @@ class ApplicationsRelationManager extends RelationManager
                     ->action(function ($record) {
                         // Check authorization before allowing approve action
                         $user = auth()->user();
-                        if (!$user || !$user->can('update CompetitionApplication')) {
+                        if (!$user || !$user->can('update ProgramApplication')) {
                             abort(403, 'You do not have permission to approve this application.');
                         }
                         
                         // Check program access (unless super admin)
-                        if (!$user->isSuperAdmin() && $record->competition && !$record->competition->canAccessProgram()) {
+                        if (!$user->isSuperAdmin() && $record->program && !$record->program->canAccessProgram()) {
                             abort(403, 'You do not have access to this program.');
                         }
                         
                         $record->approve();
                     })
-                    ->visible(fn ($record) => !$record->isArchived() && $record->isPending() && auth()->user()?->can('update CompetitionApplication')),
+                    ->visible(fn ($record) => !$record->isArchived() && $record->isPending() && auth()->user()?->can('update ProgramApplication')),
 
 
                 Tables\Actions\Action::make('reject')
@@ -72,32 +72,32 @@ class ApplicationsRelationManager extends RelationManager
                     ->action(function ($record) {
                         // Check authorization before allowing reject action
                         $user = auth()->user();
-                        if (!$user || !$user->can('update CompetitionApplication')) {
+                        if (!$user || !$user->can('update ProgramApplication')) {
                             abort(403, 'You do not have permission to reject this application.');
                         }
                         
                         // Check program access (unless super admin)
-                        if (!$user->isSuperAdmin() && $record->competition && !$record->competition->canAccessProgram()) {
+                        if (!$user->isSuperAdmin() && $record->program && !$record->program->canAccessProgram()) {
                             abort(403, 'You do not have access to this program.');
                         }
                         
                         $record->reject();
                     })
-                    ->visible(fn ($record) => !$record->isArchived() && $record->isPending() && auth()->user()?->can('update CompetitionApplication')),
+                    ->visible(fn ($record) => !$record->isArchived() && $record->isPending() && auth()->user()?->can('update ProgramApplication')),
 
 
                 Tables\Actions\ViewAction::make()
-                    ->authorize(fn ($record) => \App\Filament\Resources\CompetitionApplicationResource::canView($record)),
+                    ->authorize(fn ($record) => \App\Filament\Resources\ProgramApplicationResource::canView($record)),
 
                 Tables\Actions\DeleteAction::make()
-                    ->authorize(fn ($record) => \App\Filament\Resources\CompetitionApplicationResource::canDelete($record))
-                    ->visible(fn ($record) => auth()->user()?->can('delete CompetitionApplication')),
+                    ->authorize(fn ($record) => \App\Filament\Resources\ProgramApplicationResource::canDelete($record))
+                    ->visible(fn ($record) => auth()->user()?->can('delete ProgramApplication')),
 
             ]);
     }
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return $infolist->schema(CompetitionApplication::details());
+        return $infolist->schema(ProgramApplication::details());
     }
 }

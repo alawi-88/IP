@@ -55,7 +55,7 @@ export interface Session {
     name: string;
     email: string;
   };
-  competition: {
+  program: {
     id: number;
     title: string;
   };
@@ -151,7 +151,7 @@ const HistortRow = ({ session }: { session: Session }) => {
               <Card className="bg-[#F6F7F9]" size="small" style={{marginTop: "12px", borderRadius: "8px" }}>
                 <Descriptions title={t("session-details")} layout="vertical" column={4} colon={false}>
                   <Descriptions.Item label={t("participant")}>{session.participant.name}</Descriptions.Item>
-                  <Descriptions.Item label={t("competition")}>{session.competition.title}</Descriptions.Item>
+                  <Descriptions.Item label={t("program")}>{session.program.title}</Descriptions.Item>
                   <Descriptions.Item label={t("mentor.date")}>{session.scheduled_at_formatted}</Descriptions.Item>
                   <Descriptions.Item label={t("duration")}>{session.duration_formatted}</Descriptions.Item>
                 </Descriptions>

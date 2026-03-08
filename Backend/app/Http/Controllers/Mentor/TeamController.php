@@ -24,7 +24,7 @@ class TeamController extends Controller
         try {
             $mentor = Auth::user();
             $search = $request->input('search');
-            $competitionId = $request->input('competition_id');
+            $programId = $request->input('program_id');
             $typeFilter = $request->input('type'); // 'team', 'participant', or null for all
             $delivererFilter = $request->input('deliverer'); // 'true', 'false', or null for all
             
@@ -38,13 +38,13 @@ class TeamController extends Controller
                         'track',
                         'subTrack',
                         'project',
-                        'application.competition',
+                        'application.program',
                     ])
                     ->withPivot(['assigned_at', 'notes']);
 
-                if ($competitionId) {
-                    $teamsQuery->whereHas('application', function ($q) use ($competitionId) {
-                        $q->where('competition_id', $competitionId);
+                if ($programId) {
+                    $teamsQuery->whereHas('application', function ($q) use ($programId) {
+                        $q->where('program_id', $programId);
                     });
                 }
 
@@ -68,9 +68,9 @@ class TeamController extends Controller
                 }
 
                 $teams = $teamsQuery->get()->map(function ($team) {
-                    $competitionTitle = $team->application?->competition?->title;
-                    if (is_array($competitionTitle)) {
-                        $competitionTitle = $competitionTitle['en'] ?? $competitionTitle['ar'] ?? 'Unknown';
+                    $programTitle = $team->application?->program?->title;
+                    if (is_array($programTitle)) {
+                        $programTitle = $programTitle['en'] ?? $programTitle['ar'] ?? 'Unknown';
                     }
                 
                     
@@ -99,9 +99,9 @@ class TeamController extends Controller
                                 'is_leader' => $member->is_leader,
                             ];
                         }),
-                        'competition' => $team->application?->competition ? [
-                            'id' => $team->application->competition->id,
-                            'title' => $competitionTitle,
+                        'program' => $team->application?->program ? [
+                            'id' => $team->application->program->id,
+                            'title' => $programTitle,
                         ] : null,
                         'track' => $team->track ? [
                             'id' => $team->track->id,
@@ -133,16 +133,16 @@ class TeamController extends Controller
             // Get Individual Participants (if not filtering by team only)
             if (!$typeFilter || $typeFilter === 'participant') {
                 $participantsQuery = $mentor->participants()
-                    ->with(['applications' => function ($query) use ($competitionId) {
+                    ->with(['applications' => function ($query) use ($programId) {
                         $query->where(function ($q) {
                             $q->where('registered_as', 'individual')
                               ->orWhere('form_submissions->register_as', 'individual');
                         })
-                        ->with(['competition', 'projects' => function ($q) {
+                        ->with(['program', 'projects' => function ($q) {
                             $q->where('type', '!=', 'draft');
                         }]);
-                        if ($competitionId) {
-                            $query->where('competition_id', $competitionId);
+                        if ($programId) {
+                            $query->where('program_id', $programId);
                         }
                     }])
                     ->withPivot(['assigned_at', 'notes']);
@@ -186,11 +186,11 @@ class TeamController extends Controller
                         ? ($participant->name['en'] ?? $participant->name['ar'] ?? 'Unknown')
                         : $participant->name;
 
-                    // Get competition & track from first individual application
+                    // Get program & track from first individual application
                     $application = $participant->applications->first();
-                    $competitionTitle = $application?->competition?->title;
-                    if (is_array($competitionTitle)) {
-                        $competitionTitle = $competitionTitle['en'] ?? $competitionTitle['ar'] ?? 'Unknown';
+                    $programTitle = $application?->program?->title;
+                    if (is_array($programTitle)) {
+                        $programTitle = $programTitle['en'] ?? $programTitle['ar'] ?? 'Unknown';
                     }
                     
                     // Derive track/sub-track for individual participant
@@ -218,9 +218,9 @@ class TeamController extends Controller
                             'email' => $participant->email,
                             'is_leader' => true,
                         ]],
-                        'competition' => $application?->competition ? [
-                            'id' => $application->competition->id,
-                            'title' => $competitionTitle,
+                        'program' => $application?->program ? [
+                            'id' => $application->program->id,
+                            'title' => $programTitle,
                         ] : null,
                         'track' => $trackData,
                         'sub_track' => $subTrackData,
@@ -290,7 +290,7 @@ class TeamController extends Controller
                                 $q->with(['user', 'author'])->orderBy('created_at', 'asc');
                             }]);
                     },
-                    'application.competition',
+                    'application.program',
                 ])
                 ->withPivot(['assigned_at', 'notes'])
                 ->find($id);
@@ -309,7 +309,7 @@ class TeamController extends Controller
                         $q->where('registered_as', 'individual')
                           ->orWhere('form_submissions->register_as', 'individual');
                     })
-                    ->with(['competition', 'projects' => function ($q) {
+                    ->with(['program', 'projects' => function ($q) {
                         $q->where('type', '!=', 'draft')
                             ->with(['comments' => function ($cq) {
                                 $cq->with(['user', 'author'])->orderBy('created_at', 'asc');
@@ -345,9 +345,9 @@ class TeamController extends Controller
      */
     private function formatTeamResponse($team): array
     {
-        $competitionTitle = $team->application?->competition?->title;
-        if (is_array($competitionTitle)) {
-            $competitionTitle = $competitionTitle['en'] ?? $competitionTitle['ar'] ?? 'Unknown';
+        $programTitle = $team->application?->program?->title;
+        if (is_array($programTitle)) {
+            $programTitle = $programTitle['en'] ?? $programTitle['ar'] ?? 'Unknown';
         }
         
         return [
@@ -368,9 +368,9 @@ class TeamController extends Controller
                     'is_leader' => $member->is_leader,
                 ];
             }),
-            'competition' => $team->application?->competition ? [
-                'id' => $team->application->competition->id,
-                'title' => $competitionTitle,
+            'program' => $team->application?->program ? [
+                'id' => $team->application->program->id,
+                'title' => $programTitle,
             ] : null,
             'track' => $team->track ? [
                 'id' => $team->track->id,
@@ -405,19 +405,19 @@ class TeamController extends Controller
 
         // Collect all projects from all applications
         $allProjects = collect();
-        $competition = null;
+        $program = null;
         $firstApplication = $participant->applications->first();
         [$trackData, $subTrackData] = $this->extractTrackData($firstApplication);
         
         foreach ($participant->applications as $application) {
-            if (!$competition && $application->competition) {
-                $competitionTitle = $application->competition->title;
-                if (is_array($competitionTitle)) {
-                    $competitionTitle = $competitionTitle['en'] ?? $competitionTitle['ar'] ?? 'Unknown';
+            if (!$program && $application->program) {
+                $programTitle = $application->program->title;
+                if (is_array($programTitle)) {
+                    $programTitle = $programTitle['en'] ?? $programTitle['ar'] ?? 'Unknown';
                 }
-                $competition = [
-                    'id' => $application->competition->id,
-                    'title' => $competitionTitle,
+                $program = [
+                    'id' => $application->program->id,
+                    'title' => $programTitle,
                 ];
             }
             
@@ -441,7 +441,7 @@ class TeamController extends Controller
                 'phone' => $participant->phone,
                 'is_leader' => true,
             ]],
-            'competition' => $competition,
+            'program' => $program,
             'track' => $trackData,
             'sub_track' => $subTrackData,
             'projects' => $allProjects,
@@ -676,7 +676,7 @@ class TeamController extends Controller
             // Get application IDs for individual participants
             $applicationIds = [];
             if (!empty($participantIds)) {
-                $applicationIds = \App\Models\CompetitionApplication::whereIn('participant_id', $participantIds)
+                $applicationIds = \App\Models\ProgramApplication::whereIn('participant_id', $participantIds)
                     ->where(function ($q) {
                         $q->where('registered_as', 'individual')
                           ->orWhere('form_submissions->register_as', 'individual');
@@ -697,7 +697,7 @@ class TeamController extends Controller
                 'team.members.participant',
                 'team.track',
                 'team.subTrack',
-                'competition',
+                'program',
                 'application.participant',
                 'form',
                 'comments' => function ($query) {
@@ -755,7 +755,7 @@ class TeamController extends Controller
             // Get application IDs for individual participants
             $applicationIds = [];
             if (!empty($participantIds)) {
-                $applicationIds = \App\Models\CompetitionApplication::whereIn('participant_id', $participantIds)
+                $applicationIds = \App\Models\ProgramApplication::whereIn('participant_id', $participantIds)
                     ->where(function ($q) {
                         $q->where('registered_as', 'individual')
                           ->orWhere('form_submissions->register_as', 'individual');
@@ -774,7 +774,7 @@ class TeamController extends Controller
 
             $query = Project::with([
                 'team',
-                'competition',
+                'program',
                 'application.participant',
             ])
             ->where('type', '!=', 'draft')
@@ -794,9 +794,9 @@ class TeamController extends Controller
                 $query->where('status', $request->input('status'));
             }
 
-            // Filter by competition
-            if ($request->has('competition_id')) {
-                $query->where('competition_id', $request->input('competition_id'));
+            // Filter by program
+            if ($request->has('program_id')) {
+                $query->where('program_id', $request->input('program_id'));
             }
 
             // Search by project name

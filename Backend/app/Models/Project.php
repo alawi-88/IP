@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Enums\ProjectStatus;
-use App\Models\Scopes\CompetitionApplicationScope;
-use App\Traits\Competition\FilterByCompetition;
+use App\Models\Scopes\ProgramApplicationScope;
+use App\Traits\Program\FilterByProgram;
 use App\Traits\HasActivityLog;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -33,12 +33,12 @@ use App\Models\FormEvaluationScore;
 /**
  * @method static create(array $data)
  * @method static where(string $string, $teamId)
- * @method static byCompetition()
+ * @method static byProgram()
  */
-//#[ScopedBy([CompetitionApplicationScope::class])]
+//#[ScopedBy([ProgramApplicationScope::class])]
 class Project extends Model
 {
-    use FilterByCompetition, LogsActivity, HasActivityLog;
+    use FilterByProgram, LogsActivity, HasActivityLog;
 
     protected $fillable = [
         'status',
@@ -47,7 +47,7 @@ class Project extends Model
         'form_id',
         'team_id',
         'form_submissions',
-        'competition_id',
+        'program_id',
         'application_id',
         'is_archived',
         'archived_at',
@@ -73,8 +73,8 @@ class Project extends Model
         'total_score',
         'evaluation_status',
         'team.name',
-        'competition.title',
-        'competition_id',
+        'program.title',
+        'program_id',
         'form_submissions',
         'is_archived',
         'archived_at',
@@ -103,7 +103,7 @@ class Project extends Model
             }
 
             //@TODO: convert to helper or something like that.
-            $application = CompetitionApplication::where('id', $applicationId)->firstOrFail();
+            $application = ProgramApplication::where('id', $applicationId)->firstOrFail();
 
 //            try {
 //                $team = Team::where('application_id', $applicationId)->firstOrFail();
@@ -111,17 +111,17 @@ class Project extends Model
 //                throw new ModelNotFoundException('Team not found');
 //            }
 
-            // Only set competition_id if it's not already set (for imports)
-            if (!$project->competition_id) {
-                $project->competition_id = $application->competition_id;
+            // Only set program_id if it's not already set (for imports)
+            if (!$project->program_id) {
+                $project->program_id = $application->program_id;
             }
 //            $project->team_id = $team->id;
         });
     }
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function team(): BelongsTo
@@ -131,7 +131,7 @@ class Project extends Model
 
     public function application(): BelongsTo
     {
-        return $this->belongsTo(CompetitionApplication::class,'application_id');
+        return $this->belongsTo(ProgramApplication::class,'application_id');
     }
 
     public function judges(): BelongsToMany
@@ -276,7 +276,7 @@ class Project extends Model
 
     public function updateScore(): void
     {
-        // Get the last stage for this project's competition
+        // Get the last stage for this project's program
         $lastStage = $this->getLastStage();
 
         if (!$lastStage) {
@@ -312,7 +312,7 @@ class Project extends Model
 
     /**
      * Get AI evaluation display criteria with description from database.
-     * Similar to CompetitionApplication::getAiEvaluationDisplayCriteriaAttribute
+     * Similar to ProgramApplication::getAiEvaluationDisplayCriteriaAttribute
      */
     public function getAiEvaluationDisplayCriteriaAttribute(): array
     {
@@ -343,26 +343,26 @@ class Project extends Model
     }
 
     /**
-     * Get the last stage for this project's competition
+     * Get the last stage for this project's program
      */
     public function getLastStage()
     {
-        // Get the competition from the project's application
-        $competition = $this->application?->competition;
+        // Get the program from the project's application
+        $program = $this->application?->program;
 
-        if (!$competition) {
+        if (!$program) {
             return null;
         }
 
         // Get the last stage by ends_at date (most recent end date)
-        $lastStage = Stage::where('competition_id', $competition->id)
+        $lastStage = Stage::where('program_id', $program->id)
             ->whereNotNull('ends_at')
             ->orderBy('ends_at', 'desc')
             ->first();
 
         // If no stage with ends_at, get the most recent stage by created_at
         if (!$lastStage) {
-            $lastStage = Stage::where('competition_id', $competition->id)
+            $lastStage = Stage::where('program_id', $program->id)
                 ->orderBy('created_at', 'desc')
                 ->first();
         }
@@ -379,15 +379,15 @@ class Project extends Model
             Tables\Columns\TextColumn::make('stage_names')
                 ->label('Stage Name')
                 ->getStateUsing(function ($record) {
-                    if (!$record->form || !$record->competition_id) {
+                    if (!$record->form || !$record->program_id) {
                         return '-';
                     }
 
-                    // Find stages in the same competition that contain this form
+                    // Find stages in the same program that contain this form
                     $formId = $record->form_id;
                     
-                    // Get all stages for this competition
-                    $allStages = \App\Models\Stage::where('competition_id', $record->competition_id)->get();
+                    // Get all stages for this program
+                    $allStages = \App\Models\Stage::where('program_id', $record->program_id)->get();
                     
                     // Filter stages that contain this form
                     $matchingStages = $allStages->filter(function ($stage) use ($formId) {
@@ -448,8 +448,8 @@ class Project extends Model
                     });
                 })
                 ->sortable(query: function ($query, $direction) {
-                    return $query->join('competition_applications', 'projects.application_id', '=', 'competition_applications.id')
-                        ->join('participants', 'competition_applications.participant_id', '=', 'participants.id')
+                    return $query->join('program_applications', 'projects.application_id', '=', 'program_applications.id')
+                        ->join('participants', 'program_applications.participant_id', '=', 'participants.id')
                         ->orderBy('participants.name', $direction)
                         ->select('projects.*');
                 })
@@ -1088,8 +1088,8 @@ class Project extends Model
     public function updateStatusForm(): array
     {
         $stageCount = 0;
-        if ($this->competition) {
-            $stageCount = method_exists($this->competition, 'stages') ? $this->competition->stages()->count() : 0;
+        if ($this->program) {
+            $stageCount = method_exists($this->program, 'stages') ? $this->program->stages()->count() : 0;
         }
         $currentStage = $this->current_stage ?? 1;
 
@@ -1116,14 +1116,14 @@ class Project extends Model
     {
         if ($record instanceof Collection) {
             foreach ($record as $singleRecord) {
-                $judges = Judge::whereHas('competitions', function ($query) use ($singleRecord) {
-                    $query->where('competition_id', $singleRecord->competition_id);
+                $judges = Judge::whereHas('programs', function ($query) use ($singleRecord) {
+                    $query->where('program_id', $singleRecord->program_id);
                 })->pluck('name', 'id')->toArray();
 
             }
         } else {
-            $judges = Judge::whereHas('competitions', function ($query) use ($record) {
-                $query->where('competition_id', $record->competition_id);
+            $judges = Judge::whereHas('programs', function ($query) use ($record) {
+                $query->where('program_id', $record->program_id);
             })->pluck('name', 'id')->toArray();
 
         }
@@ -1144,7 +1144,7 @@ class Project extends Model
 
     public static function assignToCommitteeForm($record): array
     {
-        $committees = Committee::byCompetition()->pluck('title', 'id')->toArray();
+        $committees = Committee::byProgram()->pluck('title', 'id')->toArray();
 
         return [
             Forms\Components\Select::make('committees')

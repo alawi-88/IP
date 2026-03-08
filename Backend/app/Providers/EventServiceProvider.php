@@ -12,9 +12,9 @@ use App\Events\ApproverAssignedToRequest;
 use App\Listeners\SendApproverAssignmentNotification;
 use App\Events\ProgramApprovalRequestCreated;
 use App\Listeners\SendProgramApprovalNotification;
-use App\Events\CompetitionCreated;
-use App\Listeners\CreateCompetitionTabs;
-use App\Listeners\CreateCompetitionStages;
+use App\Events\ProgramCreated;
+use App\Listeners\CreateProgramTabs;
+use App\Listeners\CreateProgramStages;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -36,9 +36,9 @@ class EventServiceProvider extends ServiceProvider
         ProgramApprovalRequestCreated::class => [
             SendProgramApprovalNotification::class,
         ],
-        CompetitionCreated::class => [
-            CreateCompetitionTabs::class,
-            CreateCompetitionStages::class,
+        ProgramCreated::class => [
+            CreateProgramTabs::class,
+            CreateProgramStages::class,
         ],
     ];
 

@@ -393,7 +393,7 @@ class TestNewPolicyCreationChecklist extends Command
         ];
         
         $validator = Validator::make($invalidInputs, [
-            'action' => 'required|string|in:Competition.create,Competition.update,Competition.delete,Event.create,Event.update,Event.delete,Project.update,Project.delete,User.create,User.update,User.delete',
+            'action' => 'required|string|in:Program.create,Program.update,Program.delete,Event.create,Event.update,Event.delete,Project.update,Project.delete,User.create,User.update,User.delete',
             'levels' => 'required|integer|min:1',
             'role_ids' => 'required|array|min:1',
             'required_approvals' => 'required|integer|min:1',

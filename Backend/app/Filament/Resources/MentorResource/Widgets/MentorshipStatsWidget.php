@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\MentorResource\Widgets;
 
 use App\Models\MentorSession;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Mentor;
 use App\Traits\HasDateRangeFilter;
 use Carbon\Carbon;
@@ -20,7 +20,7 @@ class MentorshipStatsWidget extends BaseWidget
 
     protected function getStats(): array
     {
-        $competitionId = $this->filters['competition_id'] ?? null;
+        $programId = $this->filters['program_id'] ?? null;
         $mentorId = $this->filters['mentor_id'] ?? null;
         $startDate = $this->filters['start_date'] ?? null;
         $endDate = $this->filters['end_date'] ?? null;
@@ -28,8 +28,8 @@ class MentorshipStatsWidget extends BaseWidget
         $query = MentorSession::query();
 
         // Apply filters (empty string means "all")
-        if ($competitionId && $competitionId !== '') {
-            $query->where('competition_id', $competitionId);
+        if ($programId && $programId !== '') {
+            $query->where('program_id', $programId);
         }
 
         if ($mentorId && $mentorId !== '') {
@@ -55,8 +55,8 @@ class MentorshipStatsWidget extends BaseWidget
         $reschedules = DB::table('activity_log')
             ->where('log_name', 'mentor_session')
             ->where('event', 'session_rescheduled')
-            ->when($competitionId && $competitionId !== '', function ($q) use ($competitionId) {
-                $sessionIds = MentorSession::where('competition_id', $competitionId)->pluck('id');
+            ->when($programId && $programId !== '', function ($q) use ($programId) {
+                $sessionIds = MentorSession::where('program_id', $programId)->pluck('id');
                 return $q->whereIn('subject_id', $sessionIds);
             })
             ->when($mentorId && $mentorId !== '', function ($q) use ($mentorId) {
@@ -125,7 +125,7 @@ class MentorshipStatsWidget extends BaseWidget
                 ->description(__('analytics.all_time_sessions'))
                 ->descriptionIcon('heroicon-m-calendar')
                 ->color('primary')
-                ->chart($this->getSessionChartData($competitionId, $mentorId, $startDate, $endDate)),
+                ->chart($this->getSessionChartData($programId, $mentorId, $startDate, $endDate)),
 
             Stat::make(__('analytics.completed_sessions'), $completedSessions)
                 ->description(__('analytics.completion_rate', ['rate' => $completionRate . '%']))
@@ -179,15 +179,15 @@ class MentorshipStatsWidget extends BaseWidget
         ];
     }
 
-    protected function getSessionChartData($competitionId, $mentorId, $startDate, $endDate): array
+    protected function getSessionChartData($programId, $mentorId, $startDate, $endDate): array
     {
         $query = MentorSession::query()
             ->select(DB::raw('DATE(scheduled_at) as date'), DB::raw('COUNT(*) as count'))
             ->groupBy('date')
             ->orderBy('date');
 
-        if ($competitionId && $competitionId !== '') {
-            $query->where('competition_id', $competitionId);
+        if ($programId && $programId !== '') {
+            $query->where('program_id', $programId);
         }
 
         if ($mentorId && $mentorId !== '') {

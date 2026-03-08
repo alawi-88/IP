@@ -42,7 +42,7 @@ class MentorResource extends Resource
         //     return false;
         // }
 
-       // return ! empty(currentCompetitionId());
+       // return ! empty(currentProgramId());
        return true;
     }
 

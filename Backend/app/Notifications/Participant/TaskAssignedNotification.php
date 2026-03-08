@@ -24,13 +24,13 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $taskTitle = $this->assignment->getTranslation('title', 'en');
-        $competitionTitle = $this->assignment->competition?->getTranslation('title', 'en') ?? 'Unknown Program';
+        $programTitle = $this->assignment->program?->getTranslation('title', 'en') ?? 'Unknown Program';
         $dueDate = $this->assignment->due_date?->format('M d, Y') ?? 'No deadline';
 
         return (new MailMessage)
-            ->subject("New Task Assigned - {$competitionTitle}")
+            ->subject("New Task Assigned - {$programTitle}")
             ->greeting('Dear Participant,')
-            ->line("A new task has been assigned to you in **{$competitionTitle}**.")
+            ->line("A new task has been assigned to you in **{$programTitle}**.")
             ->line("**Task:** {$taskTitle}")
             ->line("**Due Date:** {$dueDate}")
             ->line('Please log in to your account to view the task details and submit your deliverables.')
@@ -39,7 +39,7 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
 
     public function toArray(object $notifiable): array
     {
-        $competitionTitle = $this->assignment->competition?->title;
+        $programTitle = $this->assignment->program?->title;
 
         return [
             'title' => [
@@ -47,11 +47,11 @@ class TaskAssignedNotification extends Notification implements ShouldQueue
                 'ar' => 'مهمة جديدة معينة',
             ],
             'body' => [
-                'en' => "You have been assigned a new task: " . $this->assignment->getTranslation('title', 'en') . " in " . (is_array($competitionTitle) ? ($competitionTitle['en'] ?? '') : $competitionTitle) . ". Due: " . ($this->assignment->due_date?->format('M d, Y') ?? 'N/A'),
-                'ar' => "تم تعيين مهمة جديدة لك: " . $this->assignment->getTranslation('title', 'ar') . " في " . (is_array($competitionTitle) ? ($competitionTitle['ar'] ?? '') : $competitionTitle),
+                'en' => "You have been assigned a new task: " . $this->assignment->getTranslation('title', 'en') . " in " . (is_array($programTitle) ? ($programTitle['en'] ?? '') : $programTitle) . ". Due: " . ($this->assignment->due_date?->format('M d, Y') ?? 'N/A'),
+                'ar' => "تم تعيين مهمة جديدة لك: " . $this->assignment->getTranslation('title', 'ar') . " في " . (is_array($programTitle) ? ($programTitle['ar'] ?? '') : $programTitle),
             ],
             'task_assignment_id' => $this->assignment->id,
-            'competition_id' => $this->assignment->competition_id,
+            'program_id' => $this->assignment->program_id,
         ];
     }
 }

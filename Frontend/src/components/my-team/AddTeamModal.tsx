@@ -21,14 +21,14 @@ import axiosInstance, { APIError } from "@/axios";
 import FeedbackModal from "../feedback-modal/FeedbackModal";
 import { useWatch } from "antd/es/form/Form";
 import useSetFieldsErrors from "@/hooks/useSetFieldsErrors";
-import { Competition, Field, Team } from "@/lib/interfaces";
+import { Program, Field, Team } from "@/lib/interfaces";
 import { useRenderFieldType } from "@/hooks/useRenderField";
 import { useGetValidationRules } from "@/hooks/useGetValidationRules";
 
 export default function AddTeamModal({
   applicationId,
-  competitionId,
-  competition,
+  programId,
+  program,
   formConfig,
   isFormConfigLoading,
   isEdit,
@@ -37,8 +37,8 @@ export default function AddTeamModal({
   refetch,
 }: {
   applicationId: string;
-  competitionId: string;
-  competition: Competition | undefined;
+  programId: string;
+  program: Program | undefined;
   formConfig: any;
   isFormConfigLoading?: boolean;
   isEdit?: boolean;
@@ -182,7 +182,7 @@ export default function AddTeamModal({
 
   // get sub_tracks
   function getSubTracks(selectedTrackId: any) {
-    const selectedTrack = competition?.tracks?.find(
+    const selectedTrack = program?.tracks?.find(
       (track) => track.id === selectedTrackId
     );
     const subTrack =
@@ -195,20 +195,20 @@ export default function AddTeamModal({
 
   // add sub_tracks
   useEffect(() => {
-    if (!competition?.id) return;
+    if (!program?.id) return;
     const selectedTrackId =
       editData?.track?.id ||
-      competition?.tracks.find((track) => track.is_selected)?.id;
+      program?.tracks.find((track) => track.is_selected)?.id;
     getSubTracks(selectedTrackId);
-  }, [competition, editData]);
+  }, [program, editData]);
 
   // reset fields
   useEffect(() => {
-    if (!competition?.id || !formConfig?.id) return;
+    if (!program?.id || !formConfig?.id) return;
     if (!isEdit) {
       form.resetFields();
     }
-  }, [competition, formConfig, openModal, isEdit]);
+  }, [program, formConfig, openModal, isEdit]);
 
   return (
     <>
@@ -341,14 +341,14 @@ export default function AddTeamModal({
               <Input placeholder={t("enter-team-name")} />
             </Form.Item>
 
-            {competition?.tracks && competition?.tracks?.length > 0 && (
+            {program?.tracks && program?.tracks?.length > 0 && (
               <>
                 <Form.Item
                   label={t("track")}
                   name={"track_id"}
                   initialValue={
                     editData?.track?.id ||
-                    competition.tracks.find((track) => track.is_selected)?.id
+                    program.tracks.find((track) => track.is_selected)?.id
                   }
                   rules={[
                     {
@@ -361,7 +361,7 @@ export default function AddTeamModal({
                     notFoundContent={null}
                     showSearch={true}
                     allowClear={true}
-                    options={competition.tracks?.map((track) => ({
+                    options={program.tracks?.map((track) => ({
                       label: track.name,
                       value: track.id,
                     }))}
@@ -383,7 +383,7 @@ export default function AddTeamModal({
                   name={"sub_track_id"}
                   initialValue={
                     editData?.sub_track?.id ||
-                    competition.tracks
+                    program.tracks
                       .find((track) => track.is_selected)
                       ?.sub_tracks?.find((subTrack) => subTrack.is_selected)?.id
                   }

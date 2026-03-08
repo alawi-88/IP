@@ -217,44 +217,44 @@ class NotificationMessageResource extends Resource
     {
         $placeholders = [
             'user.application_status_updates' => [
-                'en' => 'Available variables: {{competition}}, {{new_status}}, {{old_status}}',
-                'ar' => 'المتغيرات المتاحة: {{competition}}, {{new_status}}, {{old_status}}',
+                'en' => 'Available variables: {{program}}, {{new_status}}, {{old_status}}',
+                'ar' => 'المتغيرات المتاحة: {{program}}, {{new_status}}, {{old_status}}',
             ],
             'user.project_status_updates' => [
-                'en' => 'Available variables: {{project}}, {{competition}}, {{new_status}}, {{old_status}}',
-                'ar' => 'المتغيرات المتاحة: {{project}}, {{competition}}, {{new_status}}, {{old_status}}',
+                'en' => 'Available variables: {{project}}, {{program}}, {{new_status}}, {{old_status}}',
+                'ar' => 'المتغيرات المتاحة: {{project}}, {{program}}, {{new_status}}, {{old_status}}',
             ], 
             'user.winners_announcement' => [
-                'en' => 'Available variables: {{code}},{{name}}, {{competition}}',
+                'en' => 'Available variables: {{code}},{{name}}, {{program}}',
                 'ar' => 'المتغيرات المتاحة: {{code}},{{name}}',
             ],
             'user.team_addition' => [
-                'en' => 'Available variables: {{team}}, {{competition}}',
-                'ar' => 'المتغيرات المتاحة: {{team}}, {{competition}}',
+                'en' => 'Available variables: {{team}}, {{program}}',
+                'ar' => 'المتغيرات المتاحة: {{team}}, {{program}}',
             ],
             'user.project_comment_added' => [
                 'en' => 'Available variables: {{project}}, {{admin}}, {{comment}}',
                 'ar' => 'المتغيرات المتاحة: {{project}}, {{admin}}, {{comment}}',
             ],
             'judge.assigned_to_evaluate' => [
-                'en' => 'Available variables: {{code}}, {{competition}}',
+                'en' => 'Available variables: {{code}}, {{program}}',
                 'ar' => 'المتغيرات المتاحة: {{code}}',
             ], 
             'judge.evaluation_submission_confirmation' => [
-                'en' => 'Available variables: {{name}}, {{url}}, {{competition}}',
+                'en' => 'Available variables: {{name}}, {{url}}, {{program}}',
                 'ar' => 'المتغيرات المتاحة: {{name}}, {{url}}',
             ],
             'user.project_submitted' => [
-                'en' => 'Available variables: {{competition}}',
-                'ar' => 'المتغيرات المتاحة: {{competition}}',
+                'en' => 'Available variables: {{program}}',
+                'ar' => 'المتغيرات المتاحة: {{program}}',
             ],
             'user.application_comment_added' => [
-                'en' => 'Available variables: {{competition}}, {{admin}}, {{comment}}',
-                'ar' => 'المتغيرات المتاحة: {{competition}}, {{admin}}, {{comment}}',
+                'en' => 'Available variables: {{program}}, {{admin}}, {{comment}}',
+                'ar' => 'المتغيرات المتاحة: {{program}}, {{admin}}, {{comment}}',
             ],
             'user.participant_application_reply' => [
-                'en' => 'Available variables: {{competition}}, {{name}}, {{comment}}',
-                'ar' => 'المتغيرات المتاحة: {{competition}}, {{name}}, {{comment}}',
+                'en' => 'Available variables: {{program}}, {{name}}, {{comment}}',
+                'ar' => 'المتغيرات المتاحة: {{program}}, {{name}}, {{comment}}',
             ],
         ];
 

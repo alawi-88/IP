@@ -123,14 +123,14 @@ class MentorTeamResource extends JsonResource
                 ];
             }),
             
-            // Competition/Program information
-            'competition' => $this->whenLoaded('application', function () {
-                if (!$this->application || !$this->application->competition) {
+            // Program/Program information
+            'program' => $this->whenLoaded('application', function () {
+                if (!$this->application || !$this->application->program) {
                     return null;
                 }
                 return [
-                    'id' => $this->application->competition->id,
-                    'title' => $this->application->competition->title,
+                    'id' => $this->application->program->id,
+                    'title' => $this->application->program->title,
                 ];
             }),
             

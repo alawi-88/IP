@@ -63,11 +63,11 @@ class MentorProjectResource extends JsonResource
                 ] : null,
             ]),
 
-            // Competition information
-            'competition' => $this->when($this->competition, [
-                'id' => $this->competition?->id,
-                'title' => $this->competition?->title,
-                'slug' => $this->competition?->slug,
+            // Program information
+            'program' => $this->when($this->program, [
+                'id' => $this->program?->id,
+                'title' => $this->program?->title,
+                'slug' => $this->program?->slug,
             ]),
 
             // Application & Participant info
@@ -210,7 +210,7 @@ class MentorProjectResource extends JsonResource
         $processedKeys = [];
 
         // Fields to skip (already returned at root level or internal)
-        $skipFields = ['_token', 'application_id', 'competition_id', 'project_name', 'track', 'sub_track'];
+        $skipFields = ['_token', 'application_id', 'program_id', 'project_name', 'track', 'sub_track'];
 
         // First, process all form fields (even if missing from submissions)
         foreach ($formFields as $slug => $field) {
@@ -301,7 +301,7 @@ class MentorProjectResource extends JsonResource
             // Convert string to array if needed
             $arrayValue = $isArrayValue ? $value : array_map('trim', explode(',', $value));
             // Pass the field object directly to avoid re-querying
-            $value = \App\Models\CompetitionApplication::formatFormFieldValueStatic($key, $arrayValue, $field);
+            $value = \App\Models\ProgramApplication::formatFormFieldValueStatic($key, $arrayValue, $field);
         }else{
             $value = $this->formatOptionValue($field, $value);
         }

@@ -81,24 +81,24 @@ class Supervisor extends Authenticatable
     }
 
 
-    public function competitions(): BelongsToMany
+    public function programs(): BelongsToMany
     {
         return $this
-            ->belongsToMany(Competition::class, 'supervisor_competitions')
-            ->using(SupervisorCompetition::class)
+            ->belongsToMany(Program::class, 'supervisor_programs')
+            ->using(SupervisorProgram::class)
             ->withTimestamps();
     }
 
     public static function form(): array
     {
         return [
-            Forms\Components\Select::make('competitions')
+            Forms\Components\Select::make('programs')
                 ->label('Programs')
                 ->multiple()
                 ->columnSpanFull()
                 ->required()
-                ->relationship('competitions', 'title')
-                ->options(fn() => Competition::pluck('title', 'id')->toArray()),
+                ->relationship('programs', 'title')
+                ->options(fn() => Program::pluck('title', 'id')->toArray()),
 
             Forms\Components\TextInput::make('name')->label('Name')->required()->columnSpanFull(),
             Forms\Components\TextInput::make('email')->label('Email')
@@ -131,9 +131,9 @@ class Supervisor extends Authenticatable
                 ->badge()
                 ->getStateUsing(fn($record) => $record->roles->pluck('name')->map(fn($role) => ucfirst($role))->join(', ')),
 
-            Tables\Columns\TextColumn::make('competitions_count')
+            Tables\Columns\TextColumn::make('programs_count')
                 ->label('Programs')
-                ->counts('competitions')
+                ->counts('programs')
                 ->sortable(),
 
             Tables\Columns\TextColumn::make('last_login_at')
@@ -162,8 +162,8 @@ class Supervisor extends Authenticatable
                         ->formatStateUsing(fn($record) => $record->roles->pluck('name')->map(fn($role) => ucfirst($role))->join(', ')),
                     TextEntry::make('last_login_at')->default('Never'),
                     TextEntry::make('created_at')->date(),
-                    TextEntry::make('competitions')
-                        ->formatStateUsing(fn($record) => $record->competitions->pluck('title')->implode(', ')),
+                    TextEntry::make('programs')
+                        ->formatStateUsing(fn($record) => $record->programs->pluck('title')->implode(', ')),
                 ])
         ];
     }

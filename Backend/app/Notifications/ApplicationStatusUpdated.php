@@ -47,11 +47,11 @@ class ApplicationStatusUpdated extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $competition = $this->application->competition;
-        $competitionName = $competition->title;
+        $program = $this->application->program;
+        $programName = $program->title;
 
         $data = $this->renderEmailTemplate('user.screening_result', [
-            'competition' => $competitionName,
+            'program' => $programName,
             'old_status' => __("application_status.statuses.{$this->oldStatus}"),
             'new_status' => __("application_status.statuses.{$this->newStatus}")
         ]);
@@ -70,7 +70,7 @@ class ApplicationStatusUpdated extends Notification
             ->subject(__('application_status.Application Status Updated'))
             ->greeting(__('application_status.Dear Participant,'))
             ->line(__('application_status.status_updated_message', [
-                'competition' => $competitionName,
+                'program' => $programName,
                 'old_status' => __("application_status.statuses.{$this->oldStatus}"),
                 'new_status' => __("application_status.statuses.{$this->newStatus}")
             ]))
@@ -82,10 +82,10 @@ class ApplicationStatusUpdated extends Notification
     public function toMail5555(object $notifiable): MailMessage
     {
         $greeting = __('application_status.Dear Participant,');
-        $competition = $this->application->competition;
-        $competitionName = $competition->title;
+        $program = $this->application->program;
+        $programName = $program->title;
         $data = $this->renderEmailTemplate('user.screening_result', [
-            'competition' => $competitionName,
+            'program' => $programName,
             'old_status' => __("application_status.statuses.{$this->oldStatus}"),
             'new_status' => __("application_status.statuses.{$this->newStatus}")
         ]);
@@ -99,7 +99,7 @@ class ApplicationStatusUpdated extends Notification
             $body = "
                 <p>".__('application_status.Dear Participant,')."</p>
                 <p>".__('application_status.status_updated_message', [
-                    'competition' => '{{competition}}',
+                    'program' => '{{program}}',
                     'old_status' => '{{old_status}}',
                     'new_status' => '{{new_status}}'
                 ])."</p>
@@ -110,7 +110,7 @@ class ApplicationStatusUpdated extends Notification
             ";
 
             $vars = [
-                'competition' => $competitionName,
+                'program' => $programName,
                 'old_status' => __("application_status.statuses.{$this->oldStatus}"),
                 'new_status' => __("application_status.statuses.{$this->newStatus}")
             ];
@@ -139,12 +139,12 @@ class ApplicationStatusUpdated extends Notification
             'title' => getMultilingualTranslation('application_status.Application Status Updated'),
             'body' => [
                 'ar' => getTranslationForLocale('application_status.status_updated_message', 'ar', [
-                    'competition' => $this->application->competition?->title,
+                    'program' => $this->application->program?->title,
                     'old_status' => getTranslationForLocale("application_status.statuses.{$this->oldStatus}", 'ar'),
                     'new_status' => getTranslationForLocale("application_status.statuses.{$this->newStatus}", 'ar')
                 ]),
                 'en' => getTranslationForLocale('application_status.status_updated_message', 'en', [
-                    'competition' => $this->application->competition?->title,
+                    'program' => $this->application->program?->title,
                     'old_status' => getTranslationForLocale("application_status.statuses.{$this->oldStatus}", 'en'),
                     'new_status' => getTranslationForLocale("application_status.statuses.{$this->newStatus}", 'en')
                 ])
@@ -155,12 +155,12 @@ class ApplicationStatusUpdated extends Notification
     public function toArray(object $notifiable): array
     {
             $data = $this->renderNotificationMessage('user.application_status_updates', [
-                'competition' => $this->application->competition?->title,
+                'program' => $this->application->program?->title,
                 'old_status' => getTranslationForLocale("application_status.statuses.{$this->oldStatus}", 'ar'),
                 'new_status' => getTranslationForLocale("application_status.statuses.{$this->newStatus}", 'ar'),
             ]);
             $data_en = $this->renderNotificationMessage('user.application_status_updates', [
-                'competition' => $this->application->competition?->title,
+                'program' => $this->application->program?->title,
                 'old_status' => getTranslationForLocale("application_status.statuses.{$this->oldStatus}", 'en'),
                 'new_status' => getTranslationForLocale("application_status.statuses.{$this->newStatus}", 'en')
             ]);
@@ -181,12 +181,12 @@ class ApplicationStatusUpdated extends Notification
                 'title' => getMultilingualTranslation('application_status.Application Status Updated'),
                 'body' => [
                     'ar' => getTranslationForLocale('application_status.status_updated_message', 'ar', [
-                        'competition' => $this->application->competition?->title,
+                        'program' => $this->application->program?->title,
                         'old_status' => getTranslationForLocale("application_status.statuses.{$this->oldStatus}", 'ar'),
                         'new_status' => getTranslationForLocale("application_status.statuses.{$this->newStatus}", 'ar')
                     ]),
                     'en' => getTranslationForLocale('application_status.status_updated_message', 'en', [
-                        'competition' => $this->application->competition?->title,
+                        'program' => $this->application->program?->title,
                         'old_status' => getTranslationForLocale("application_status.statuses.{$this->oldStatus}", 'en'),
                         'new_status' => getTranslationForLocale("application_status.statuses.{$this->newStatus}", 'en')
                     ])

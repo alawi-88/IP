@@ -213,8 +213,8 @@ class ViewMyRequest extends ViewRecord
                                 // Always show the model name, even if it's empty or not string
                                 $modelMap = [
                                     'App\\Models\\Project' => 'Project / مشروع',
-                                    'App\\Models\\Competition' => 'Program / برنامج',
-                                    'App\\Models\\CompetitionApplication' => 'Application / طلب',
+                                    'App\\Models\\Program' => 'Program / برنامج',
+                                    'App\\Models\\ProgramApplication' => 'Application / طلب',
                                     'App\\Models\\Winner' => 'Winner / الفائزين',
                                 ];
                                 if (isset($modelMap[$state])) {
@@ -236,8 +236,8 @@ class ViewMyRequest extends ViewRecord
                                 if (isset($record->action_data['project_id'])) {
                                     return (string) $record->action_data['project_id'];
                                 }
-                                if (isset($record->action_data['competition_id'])) {
-                                    return (string) $record->action_data['competition_id'];
+                                if (isset($record->action_data['program_id'])) {
+                                    return (string) $record->action_data['program_id'];
                                 }
                                 return 'No target ID / لا يوجد معرف هدف';
                             }),
@@ -269,9 +269,9 @@ class ViewMyRequest extends ViewRecord
                                         }
                                     }
                                     
-                                    // If it's a Competition request, try to get the competition name
-                                    if ($record->target_type === 'App\\Models\\Competition') {
-                                        // First, try to get from database (if competition still exists)
+                                    // If it's a Program request, try to get the program name
+                                    if ($record->target_type === 'App\\Models\\Program') {
+                                        // First, try to get from database (if program still exists)
                                         if ($record->program) {
                                             $title = $record->program->title ?? 'N/A';
                                             // Handle translatable/array titles
@@ -282,7 +282,7 @@ class ViewMyRequest extends ViewRecord
                                             return $title;
                                         }
                                         
-                                        // If competition was deleted, fall back to action_data
+                                        // If program was deleted, fall back to action_data
                                         $actionData = $record->action_data ?? [];
                                         if (isset($actionData['title'])) {
                                             $title = $actionData['title'];
@@ -294,11 +294,11 @@ class ViewMyRequest extends ViewRecord
                                         }
                                     }
                                     
-                                    // If it's a CompetitionApplication request, try to get the competition name
-                                    if ($record->target_type === 'App\\Models\\CompetitionApplication') {
+                                    // If it's a ProgramApplication request, try to get the program name
+                                    if ($record->target_type === 'App\\Models\\ProgramApplication') {
                                         // Protect against null $record->application
-                                        if ($record->application && $record->application->competition) {
-                                            $title = $record->application->competition->title ?? 'N/A';
+                                        if ($record->application && $record->application->program) {
+                                            $title = $record->application->program->title ?? 'N/A';
                                             if (is_array($title)) {
                                                 $locale = app()->getLocale();
                                                 return $title[$locale] ?? $title['en'] ?? $title['ar'] ?? reset($title);
@@ -306,7 +306,7 @@ class ViewMyRequest extends ViewRecord
                                             return $title;
                                         }
                                         
-                                        // If competition was deleted, try to get from action_data
+                                        // If program was deleted, try to get from action_data
                                         $actionData = $record->action_data ?? [];
                                         if (isset($actionData['title'])) {
                                             $title = $actionData['title'];
@@ -371,14 +371,14 @@ class ViewMyRequest extends ViewRecord
                             }
                         }
                         
-                        // If it's a Competition request, try to get the competition name
-                        if ($record->target_type === 'App\\Models\\Competition') {
-                            // First, try to get from database (if competition still exists)
+                        // If it's a Program request, try to get the program name
+                        if ($record->target_type === 'App\\Models\\Program') {
+                            // First, try to get from database (if program still exists)
                             if ($record->program) {
                                 return $toString($record->program->title ?? 'N/A');
                             }
                             
-                            // If competition was deleted, fall back to action_data
+                            // If program was deleted, fall back to action_data
                             $actionData = $record->action_data ?? [];
                             if (isset($actionData['title'])) {
                                 $title = $actionData['title'];
@@ -390,14 +390,14 @@ class ViewMyRequest extends ViewRecord
                             }
                         }
                         
-                        // If it's a CompetitionApplication request, try to get the competition name
-                        if ($record->target_type === 'App\\Models\\CompetitionApplication') {
+                        // If it's a ProgramApplication request, try to get the program name
+                        if ($record->target_type === 'App\\Models\\ProgramApplication') {
                             // Protect against null $record->application
-                            if ($record->application && $record->application->competition) {
-                                return $toString($record->application->competition->title ?? 'N/A');
+                            if ($record->application && $record->application->program) {
+                                return $toString($record->application->program->title ?? 'N/A');
                             }
                             
-                            // If competition was deleted, try to get from action_data
+                            // If program was deleted, try to get from action_data
                             $actionData = $record->action_data ?? [];
                             if (isset($actionData['title'])) {
                                 $title = $actionData['title'];
@@ -457,16 +457,16 @@ class ViewMyRequest extends ViewRecord
                                 //         return 'No project information / لا توجد معلومات المشروع';
                                 //     }
 
-                                //     if ($record->target_type === 'App\\Models\\Competition') {
+                                //     if ($record->target_type === 'App\\Models\\Program') {
                                 //         if ($record->program) {
                                 //             return $record->program->title ?? 'N/A';
                                 //         }
                                 //         return 'No program information / لا توجد معلومات البرنامج';
                                 //     }
 
-                                //     if ($record->target_type === 'App\\Models\\CompetitionApplication') {
+                                //     if ($record->target_type === 'App\\Models\\ProgramApplication') {
                                 //         if ($record->application) {
-                                //             return $record->application->competition->title ?? 'N/A';
+                                //             return $record->application->program->title ?? 'N/A';
                                 //         }
                                 //         return 'No application information / لا توجد معلومات الطلب';
                                 //     }
@@ -480,8 +480,8 @@ class ViewMyRequest extends ViewRecord
                                 //     return $ad['name'] ?? 'N/A';
                                 // }
                                 
-                                // if (isset($ad['competition_id']) && !empty($ad['competition_id'])) {
-                                //     return 'Application for #' . $ad['competition_id'];
+                                // if (isset($ad['program_id']) && !empty($ad['program_id'])) {
+                                //     return 'Application for #' . $ad['program_id'];
                                 // }
                                 // return 'No target information / لا توجد معلومات الهدف';
                             }),
@@ -545,7 +545,7 @@ class ViewMyRequest extends ViewRecord
                         ViewEntry::make('action_data')
                             ->label('Updated Content / المحتوى المحدث')
                             ->view('filament.custom-entries.action-data-display', [
-                                'competition_id' => $record->action_data['competition_id'] ?? null
+                                'program_id' => $record->action_data['program_id'] ?? null
                             ])
                             ->columnSpanFull()
                             ->visible(fn ($record) => !empty($record->action_data)),

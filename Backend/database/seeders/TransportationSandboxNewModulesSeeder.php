@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\Participant;
 use App\Models\RegistrationEvaluationCriterion;
 use App\Models\RegistrationEvaluationForm;
@@ -20,7 +20,7 @@ use Carbon\Carbon;
 
 class TransportationSandboxNewModulesSeeder extends Seeder
 {
-    private int $competitionId = 3;
+    private int $programId = 3;
     private int $adminUserId = 166;
 
     public function run(): void
@@ -41,8 +41,8 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         // Reset application review fields
-        DB::table('competition_applications')
-            ->where('competition_id', $this->competitionId)
+        DB::table('program_applications')
+            ->where('program_id', $this->programId)
             ->update([
                 'final_evaluation_score' => null,
                 'minimum_score_threshold' => null,
@@ -71,7 +71,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
 
         // Form 1: Technical Assessment
         $form1 = RegistrationEvaluationForm::create([
-            'competition_id' => $this->competitionId,
+            'program_id' => $this->programId,
             'name' => ['en' => 'Technical Assessment', 'ar' => 'التقييم الفني'],
             'description' => ['en' => 'Evaluate technical readiness and innovation of the applicant', 'ar' => 'تقييم الجاهزية الفنية والابتكار لدى المتقدم'],
             'dimension' => 'Technical',
@@ -100,7 +100,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
 
         // Form 2: Business Viability
         $form2 = RegistrationEvaluationForm::create([
-            'competition_id' => $this->competitionId,
+            'program_id' => $this->programId,
             'name' => ['en' => 'Business Viability', 'ar' => 'الجدوى التجارية'],
             'description' => ['en' => 'Assess business model strength and market potential', 'ar' => 'تقييم قوة نموذج العمل وإمكانات السوق'],
             'dimension' => 'Business',
@@ -134,7 +134,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         $this->command->info('👤 Creating evaluators and assigning sections...');
 
         $evaluator1 = RegistrationEvaluator::create([
-            'competition_id' => $this->competitionId,
+            'program_id' => $this->programId,
             'user_id' => $this->adminUserId,
             'is_active' => true,
         ]);
@@ -156,7 +156,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         // ─────────────────────────────────────────────────────────────
         $this->command->info('📊 Scoring approved applications...');
 
-        $approvedApps = CompetitionApplication::where('competition_id', $this->competitionId)
+        $approvedApps = ProgramApplication::where('program_id', $this->programId)
             ->where('status', 'approved')
             ->get();
 
@@ -184,7 +184,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
             foreach ($allCriteria as $criterion) {
                 RegistrationEvaluation::create([
                     'registration_evaluator_id' => $evaluator1->id,
-                    'competition_application_id' => $app->id,
+                    'program_application_id' => $app->id,
                     'registration_evaluation_form_id' => $criterion->registration_evaluation_form_id,
                     'registration_evaluation_criterion_id' => $criterion->id,
                     'score' => rand($profile['min'], $profile['max']),
@@ -211,7 +211,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         // App 8 (index 7): edit_requested
         // App 9-10 (index 8-9): approved with review
 
-        $rejectedApps = CompetitionApplication::where('competition_id', $this->competitionId)
+        $rejectedApps = ProgramApplication::where('program_id', $this->programId)
             ->where('status', 'approved')
             ->orderBy('id')
             ->skip(6)->take(1)->get();
@@ -225,7 +225,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
             ]);
         }
 
-        $editRequestApps = CompetitionApplication::where('competition_id', $this->competitionId)
+        $editRequestApps = ProgramApplication::where('program_id', $this->programId)
             ->where('status', 'approved')
             ->orderBy('id')
             ->skip(6)->take(1)->get();
@@ -245,7 +245,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         }
 
         // Mark last 2 approved apps as reviewed
-        $reviewedApps = CompetitionApplication::where('competition_id', $this->competitionId)
+        $reviewedApps = ProgramApplication::where('program_id', $this->programId)
             ->where('status', 'approved')
             ->orderBy('id', 'desc')
             ->take(2)->get();
@@ -264,7 +264,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         // ─────────────────────────────────────────────────────────────
         $this->command->info('📝 Creating task templates...');
 
-        $stages = DB::table('stages')->where('competition_id', $this->competitionId)->pluck('id', 'slug');
+        $stages = DB::table('stages')->where('program_id', $this->programId)->pluck('id', 'slug');
 
         $templates = [
             [
@@ -312,7 +312,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         $templateIds = [];
         foreach ($templates as $t) {
             $template = TaskTemplate::create([
-                'competition_id' => $this->competitionId,
+                'program_id' => $this->programId,
                 'form_id' => null,
                 'title' => $t['title'],
                 'description' => $t['description'],
@@ -334,12 +334,12 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         // ─────────────────────────────────────────────────────────────
         $this->command->info('📌 Creating task assignments...');
 
-        // Get all teams for this competition (regardless of current app status since some were rejected/edit_requested above)
+        // Get all teams for this program (regardless of current app status since some were rejected/edit_requested above)
         $teams = DB::table('teams')
-            ->join('competition_applications', 'teams.application_id', '=', 'competition_applications.id')
-            ->where('competition_applications.competition_id', $this->competitionId)
-            ->whereIn('competition_applications.status', ['approved', 'rejected', 'edit_requested'])
-            ->select('teams.id as team_id', 'competition_applications.participant_id')
+            ->join('program_applications', 'teams.application_id', '=', 'program_applications.id')
+            ->where('program_applications.program_id', $this->programId)
+            ->whereIn('program_applications.status', ['approved', 'rejected', 'edit_requested'])
+            ->select('teams.id as team_id', 'program_applications.participant_id')
             ->get();
 
         $stageId = $stages['readiness-assessment'] ?? $stages->first();
@@ -351,7 +351,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         // Template 0 (Business Model Canvas) - Assign to ALL teams
         $allAssignment = TaskAssignment::create([
             'task_template_id' => $templateIds[0],
-            'competition_id' => $this->competitionId,
+            'program_id' => $this->programId,
             'stage_id' => $stageId,
             'assignment_type' => 'all',
             'team_id' => null,
@@ -375,7 +375,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
 
             $assignment = TaskAssignment::create([
                 'task_template_id' => $templateIds[1],
-                'competition_id' => $this->competitionId,
+                'program_id' => $this->programId,
                 'stage_id' => $stageId,
                 'assignment_type' => 'team',
                 'team_id' => $team->team_id,
@@ -486,7 +486,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
             $status = $idx < 3 ? 'approved' : 'in_progress';
             $assignment = TaskAssignment::create([
                 'task_template_id' => $templateIds[2],
-                'competition_id' => $this->competitionId,
+                'program_id' => $this->programId,
                 'stage_id' => $stageId,
                 'assignment_type' => 'team',
                 'team_id' => $team->team_id,
@@ -528,7 +528,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
             $status = $pIdx === 0 ? 'submitted' : 'not_started';
             $assignment = TaskAssignment::create([
                 'task_template_id' => $templateIds[3],
-                'competition_id' => $this->competitionId,
+                'program_id' => $this->programId,
                 'stage_id' => $stageId,
                 'assignment_type' => 'participant',
                 'participant_id' => $participant->id,
@@ -562,7 +562,7 @@ class TransportationSandboxNewModulesSeeder extends Seeder
         // Template 4 (Customer Feedback) - One "all" assignment
         TaskAssignment::create([
             'task_template_id' => $templateIds[4],
-            'competition_id' => $this->competitionId,
+            'program_id' => $this->programId,
             'stage_id' => $stageId,
             'assignment_type' => 'all',
             'title' => ['en' => 'Q1 Customer Feedback Analysis', 'ar' => 'تحليل ملاحظات العملاء للربع الأول'],

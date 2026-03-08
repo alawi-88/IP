@@ -82,7 +82,7 @@ class ProcessProjectAiEvaluation implements ShouldQueue
 
         $response = $result['response'] ?? [];
 
-        // Calculate AI scores similar to CompetitionApplication::summarizeAiEvaluation
+        // Calculate AI scores similar to ProgramApplication::summarizeAiEvaluation
         $criteriaData = collect(data_get($response, 'data.criteria', []));
 
         $totalScore = $criteriaData->sum(fn($criterion) => (float) data_get($criterion, 'totalScore', 0));

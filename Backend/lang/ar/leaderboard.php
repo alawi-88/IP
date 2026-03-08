@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'competition_not_found' => 'المسابقة غير موجودة',
+    'program_not_found' => 'المسابقة غير موجودة',
     'error_loading' => 'تعذر تحميل لوحة المتصدرين',
     'rank_not_available' => 'الترتيب غير متوفر',
     'team_name_not_available' => 'اسم الفريق غير متوفر',

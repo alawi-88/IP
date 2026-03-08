@@ -4,12 +4,12 @@ namespace App\Providers\Filament;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Filament\Pages\Auth\CustomLogin;
-use App\Filament\Pages\CompetitionStatistics;
+use App\Filament\Pages\ProgramStatistics;
 use App\Filament\Pages\Dashboard;
 use App\Http\Middleware\EnsureOtpIsVerified;
 use App\Livewire\CustomProfileComponent;
-use App\Models\Competition;
-use App\Models\UserCompetition;
+use App\Models\Program;
+use App\Models\UserProgram;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -79,30 +79,30 @@ class AdminPanelProvider extends PanelProvider
                 HTML;
             })
             ->renderHook('panels::topbar.start', function () {
-                $current = Competition::find(session('current_competition_id'));
+                $current = Program::find(session('current_program_id'));
 
                 if (! $current) return null;
 
                 $user = auth()->user();
 
                 if ($user->isSuperAdmin()) {
-                    $competitions = Competition::where('id', '!=', $current->id)->active()->get();
+                    $programs = Program::where('id', '!=', $current->id)->active()->get();
                 } else {
-                    $supervisorCompetitions = UserCompetition::where('user_id', $user->id)->pluck('competition_id')->toArray();
+                    $supervisorPrograms = UserProgram::where('user_id', $user->id)->pluck('program_id')->toArray();
 
-                    $competitions = Competition::where('id', '!=', $current->id)
-                        ->whereIn('id', $supervisorCompetitions)
+                    $programs = Program::where('id', '!=', $current->id)
+                        ->whereIn('id', $supervisorPrograms)
                         ->active()
                         ->get();
                 }
 
                 $currentStage = $current->currentStage();
                 $stageTitle = $currentStage ? $currentStage->getTranslation('title', 'en') : null;
-                //return view('filament.components.competition-header', compact('current', 'competitions', 'currentStage'))->render();
+                //return view('filament.components.program-header', compact('current', 'programs', 'currentStage'))->render();
 
-                return view('filament.components.competition-header', [
+                return view('filament.components.program-header', [
                     'current' => $current,
-                    'competitions' => $competitions,
+                    'programs' => $programs,
                     'currentStage' => $currentStage,
                     'stageTitle' => $stageTitle
                 ])->render();
@@ -176,7 +176,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->pages([
                 Dashboard::class,
-                CompetitionStatistics::class,
+                ProgramStatistics::class,
                 BrandingSettings::class,
                 NafathSettingsPage::class,
                 \App\Filament\Pages\MentorshipAnalytics::class,

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\TaskAssignmentResource\Pages;
 
 use App\Filament\Resources\TaskAssignmentResource;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\TaskAssignment;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -29,11 +29,11 @@ class ListTaskAssignments extends ListRecords
                 Tables\Columns\TextColumn::make('id')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('competition.title')
+                Tables\Columns\TextColumn::make('program.title')
                     ->label('Program')
-                    ->getStateUsing(fn ($record) => $record->competition?->getTranslation('title', 'en') ?? 'N/A')
+                    ->getStateUsing(fn ($record) => $record->program?->getTranslation('title', 'en') ?? 'N/A')
                     ->searchable(query: function ($query, $search) {
-                        $query->whereHas('competition', function ($q) use ($search) {
+                        $query->whereHas('program', function ($q) use ($search) {
                             $q->where('title->en', 'like', "%{$search}%");
                         });
                     })
@@ -87,9 +87,9 @@ class ListTaskAssignments extends ListRecords
                     ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('competition_id')
+                SelectFilter::make('program_id')
                     ->label('Program')
-                    ->options(fn () => Competition::pluck('title', 'id')->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t))
+                    ->options(fn () => Program::pluck('title', 'id')->map(fn ($t) => is_array($t) ? ($t['en'] ?? '') : $t))
                     ->searchable(),
 
                 SelectFilter::make('status')

@@ -46,9 +46,9 @@ class ListUsers extends ListRecords
                     ->badge()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('competitions_count')
+                Tables\Columns\TextColumn::make('programs_count')
                     ->label('Programs Count')
-                    ->counts('competitions')
+                    ->counts('programs')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('last_login_at')

@@ -53,7 +53,7 @@ return [
     'full_name_label' => 'الاسم الكامل',
     'email_label' => 'البريد الإلكتروني',
     'session_title_label' => 'ملاحظة',
-    'competition_label' => 'برنامج',
+    'program_label' => 'برنامج',
     'program_label' => 'برنامج',
     'session_date_label' => 'التاريخ',
     'session_time_label' => 'الوقت',

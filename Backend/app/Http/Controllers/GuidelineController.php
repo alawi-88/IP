@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\GuidelineResource;
 use App\Models\Guideline;
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class GuidelineController extends Controller
@@ -21,8 +21,8 @@ class GuidelineController extends Controller
             return GuidelineResource::collection(collect());
         }
         
-        // Get competition_id from the application
-        $application = CompetitionApplication::findOrFail($applicationId);
+        // Get program_id from the application
+        $application = ProgramApplication::findOrFail($applicationId);
         
         // IDOR Prevention: Verify that the application belongs to the authenticated user
         $userId = auth()->id();
@@ -30,11 +30,11 @@ class GuidelineController extends Controller
             abort(404, 'Application not found');
         }
         
-        $competitionId = $application->competition_id;
+        $programId = $application->program_id;
         
-        // Filter guidelines by competition_id
+        // Filter guidelines by program_id
         $guidelines = Guideline::where('is_visible', 1)
-            ->where('competition_id', $competitionId)
+            ->where('program_id', $programId)
             ->active(); // Only show non-archived guidelines
         
         return GuidelineResource::collection(

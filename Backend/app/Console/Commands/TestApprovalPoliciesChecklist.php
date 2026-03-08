@@ -155,8 +155,8 @@ class TestApprovalPoliciesChecklist extends Command
         // Test 7: Verify filtering functionality
         $this->line('7. Testing filtering functionality...');
         
-        $actionFilter = ApprovalWorkflow::where('action', 'like', '%Competition%')->get();
-        $this->line("   ✓ Action filtering works: " . count($actionFilter) . " policies match 'Competition'");
+        $actionFilter = ApprovalWorkflow::where('action', 'like', '%Program%')->get();
+        $this->line("   ✓ Action filtering works: " . count($actionFilter) . " policies match 'Program'");
         
         // Test role filtering
         $roleFilter = ApprovalWorkflow::whereHas('approvalLevels', function ($query) {
@@ -340,12 +340,12 @@ class TestApprovalPoliciesChecklist extends Command
         // Create test policies if they don't exist
         $testPolicies = [
             [
-                'action' => 'Competition.create',
+                'action' => 'Program.create',
                 'levels' => 2,
                 'is_active' => true,
             ],
             [
-                'action' => 'Competition.update',
+                'action' => 'Program.update',
                 'levels' => 3,
                 'is_active' => true,
             ],

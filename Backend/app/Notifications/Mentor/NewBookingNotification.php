@@ -33,7 +33,7 @@ class NewBookingNotification extends Notification implements ShouldQueue
     public function toMail($notifiable): MailMessage
     {
         // Reload session from database to ensure all data is loaded (important for queued notifications)
-        $this->session = $this->session->fresh(['mentor', 'participant', 'competition']);
+        $this->session = $this->session->fresh(['mentor', 'participant', 'program']);
 
         // Set locale based on user's preference (check notification locale property first)
         $locale = getUserPreferredLocale($notifiable, $this);
@@ -80,7 +80,7 @@ class NewBookingNotification extends Notification implements ShouldQueue
 
         $data = $this->renderEmailTemplate('mentor.new_booking_notification', [
             'participant' => $this->session->participant->name ?? '',
-            'program' => $this->session->competition->title ?? '',
+            'program' => $this->session->program->title ?? '',
             'description' => $this->session->description ?? '',
             'date' => $scheduledDate2,
             'time' => $scheduledTime2,
@@ -101,18 +101,18 @@ class NewBookingNotification extends Notification implements ShouldQueue
                 ? ($this->session->participant->name['en'] ?? '')
                 : ($this->session->participant->name ?? '');
 
-            $competitionTitle = '';
-            if ($this->session->relationLoaded('competition') && $this->session->competition) {
-                $competitionTitle = is_array($this->session->competition->title ?? null)
-                    ? ($this->session->competition->title['en'] ?? '')
-                    : ($this->session->competition->title ?? '');
-            } elseif (!$this->session->relationLoaded('competition') && $this->session->competition_id) {
-                // Load competition if not already loaded
-                $competition = \App\Models\Competition::find($this->session->competition_id);
-                if ($competition) {
-                    $competitionTitle = is_array($competition->title ?? null)
-                        ? ($competition->title['en'] ?? '')
-                        : ($competition->title ?? '');
+            $programTitle = '';
+            if ($this->session->relationLoaded('program') && $this->session->program) {
+                $programTitle = is_array($this->session->program->title ?? null)
+                    ? ($this->session->program->title['en'] ?? '')
+                    : ($this->session->program->title ?? '');
+            } elseif (!$this->session->relationLoaded('program') && $this->session->program_id) {
+                // Load program if not already loaded
+                $program = \App\Models\Program::find($this->session->program_id);
+                if ($program) {
+                    $programTitle = is_array($program->title ?? null)
+                        ? ($program->title['en'] ?? '')
+                        : ($program->title ?? '');
                 }
             }
 
@@ -133,8 +133,8 @@ class NewBookingNotification extends Notification implements ShouldQueue
 
             $message->line(__('notifications.session_date_label') . ': ' . $scheduledDate2);
 
-            if ($competitionTitle) {
-                $message->line(__('notifications.program_label') . ': ' . $competitionTitle);
+            if ($programTitle) {
+                $message->line(__('notifications.program_label') . ': ' . $programTitle);
             }
 
             // Display session details
@@ -166,7 +166,7 @@ class NewBookingNotification extends Notification implements ShouldQueue
     public function toArray($notifiable): array
     {
         // Reload session from database to ensure all data is loaded (important for queued notifications)
-        $this->session = $this->session->fresh(['mentor', 'participant', 'competition']);
+        $this->session = $this->session->fresh(['mentor', 'participant', 'program']);
 
         // Set locale based on user's preference (check notification locale property first)
         $locale = getUserPreferredLocale($notifiable, $this);

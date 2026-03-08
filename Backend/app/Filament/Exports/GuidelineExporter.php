@@ -16,7 +16,7 @@ class GuidelineExporter extends Exporter
     {
         return [
             ExportColumn::make('id'),
-            ExportColumn::make('competition.title')->label('Program'),
+            ExportColumn::make('program.title')->label('Program'),
             ExportColumn::make('title')->label('Title'),
             ExportColumn::make('files')->label('Files')->getStateUsing(function ($record) {
                 return $record->files->pluck('attachment')->map(function ($attachment) {

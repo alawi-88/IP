@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Traits\Competition\FilterByCompetition;
+use App\Traits\Program\FilterByProgram;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Tables;
@@ -12,16 +12,16 @@ use Spatie\Translatable\HasTranslations;
 use Carbon\Carbon;
 /**
  * @method static updateOrCreate(array $array, array $array1)
- * @method static byCompetition()
+ * @method static byProgram()
  */
 class Stage extends Model
 {
-    use HasTranslations, FilterByCompetition;
+    use HasTranslations, FilterByProgram;
 
     public array $translatable = ['title', 'description'];
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'form_id', // Keep for backward compatibility
         'form_ids', // JSON array of form IDs
         'slug',
@@ -77,7 +77,7 @@ class Stage extends Model
                     (is_string($stage->slug) && str_starts_with($stage->slug, 'project-'))
                 ) {
                     // Find all form_ids already used by project-submission stages (except this stage)
-                    $usedFormIds = self::where('competition_id', $stage->competition_id)
+                    $usedFormIds = self::where('program_id', $stage->program_id)
                         ->where(function ($q) {
                             $q->where('slug', 'project-submission')
                                 ->orWhere('slug', 'like', 'project-%');
@@ -307,15 +307,15 @@ class Stage extends Model
                 ->required()
                 ->placeholder('Description (en)'),
 
-            Forms\Components\Select::make('competition_id')
+            Forms\Components\Select::make('program_id')
                 ->label('Program / البرنامج')
-                ->relationship('competition', 'title')
+                ->relationship('program', 'title')
                 ->searchable()
                 ->preload()
                 ->required()
                 ->reactive()
                 ->visible(function ($livewire) {
-                    // Show competition field only when creating from standalone page (no ownerRecord)
+                    // Show program field only when creating from standalone page (no ownerRecord)
                     return !isset($livewire->ownerRecord);
                 })
                 ->columnSpanFull(),
@@ -359,11 +359,11 @@ class Stage extends Model
                 ->seconds(false)
                 ->reactive()
                 ->minDate(function ($livewire, callable $get) {
-                    // Get competition_id from form field or ownerRecord
-                    $competitionId = $get('competition_id') ?? ($livewire->ownerRecord->id ?? null);
+                    // Get program_id from form field or ownerRecord
+                    $programId = $get('program_id') ?? ($livewire->ownerRecord->id ?? null);
                     $currentStageId = $get('id');
-                    if ($competitionId) {
-                        $query = Stage::where('competition_id', $competitionId);
+                    if ($programId) {
+                        $query = Stage::where('program_id', $programId);
 
                         if ($currentStageId) {
                             $query->where('id', '!=', $currentStageId);
@@ -404,12 +404,12 @@ class Stage extends Model
                 Forms\Components\Select::make('form_id')
                     ->label('Form / النموذج')
                     ->options(function ($livewire, callable $get) {
-                        // Get competition_id from form field or ownerRecord
-                        $competitionId = $get('competition_id') ?? ($livewire->ownerRecord->id ?? null);
+                        // Get program_id from form field or ownerRecord
+                        $programId = $get('program_id') ?? ($livewire->ownerRecord->id ?? null);
                         $currentSlug = $get('slug');
 
-                        if ($competitionId) {
-                            $query = \App\Models\Form::where('competition_id', $competitionId);
+                        if ($programId) {
+                            $query = \App\Models\Form::where('program_id', $programId);
 
                             // For registration stages, show only registration forms
                             if ($currentSlug === 'registration') {
@@ -430,7 +430,7 @@ class Stage extends Model
                                 $currentStageId = $livewire->record->getKey();
                             }
 
-                            $usedFormIds = \App\Models\Stage::where('competition_id', $competitionId)
+                            $usedFormIds = \App\Models\Stage::where('program_id', $programId)
                                 ->when($currentStageId, fn($q) => $q->where('id', '!=', $currentStageId))
                                 ->get()
                                 ->flatMap(fn($stage) => $stage->getFormIds())
@@ -457,10 +457,10 @@ class Stage extends Model
                     })
                     ->reactive()
                     ->visible(function (callable $get, $livewire) {
-                        // Get competition_id to check if it's available
-                        $competitionId = $get('competition_id') ?? ($livewire->ownerRecord->id ?? null);
-                        if (!$competitionId) {
-                            return false; // Don't show if no competition selected
+                        // Get program_id to check if it's available
+                        $programId = $get('program_id') ?? ($livewire->ownerRecord->id ?? null);
+                        if (!$programId) {
+                            return false; // Don't show if no program selected
                         }
                         
                         $slug = $get('slug');
@@ -496,8 +496,8 @@ class Stage extends Model
                         return empty($slug);
                     })
                     ->options(function ($livewire, callable $get) {
-                        // Get competition_id from form field or ownerRecord
-                        $competitionId = $get('competition_id') ?? ($livewire->ownerRecord->id ?? null);
+                        // Get program_id from form field or ownerRecord
+                        $programId = $get('program_id') ?? ($livewire->ownerRecord->id ?? null);
                         $currentSlug = $get('slug');
                         $currentStageId = null;
                         // Check if running within a table action (like edit in RelationManager)
@@ -509,8 +509,8 @@ class Stage extends Model
                             $currentStageId = $livewire->record->getKey();
                         }
                         
-                        if ($competitionId) {
-                            $query = \App\Models\Form::where('competition_id', $competitionId);
+                        if ($programId) {
+                            $query = \App\Models\Form::where('program_id', $programId);
                             
                             // For evaluation stages, show only evaluation forms
                             if ($currentSlug === 'evaluation' || (is_string($currentSlug) && str_starts_with($currentSlug, 'evaluation'))) {
@@ -519,7 +519,7 @@ class Stage extends Model
                                 // For project-submission stages, show only project forms
                                 $query->where('type', 'project');
                                 // Enforce unique Project Form IDs across all stages
-                                $usedFormIds = \App\Models\Stage::where('competition_id', $competitionId)
+                                $usedFormIds = \App\Models\Stage::where('program_id', $programId)
                                     ->where(function ($q) {
                                         $q->where('slug', 'project-submission')
                                           ->orWhere('slug', 'like', 'project-%');
@@ -559,10 +559,10 @@ class Stage extends Model
                     })
                     ->reactive()
                     ->visible(function (callable $get, $livewire) {
-                        // Get competition_id to check if it's available
-                        $competitionId = $get('competition_id') ?? ($livewire->ownerRecord->id ?? null);
-                        if (!$competitionId) {
-                            return false; // Don't show if no competition selected
+                        // Get program_id to check if it's available
+                        $programId = $get('program_id') ?? ($livewire->ownerRecord->id ?? null);
+                        if (!$programId) {
+                            return false; // Don't show if no program selected
                         }
                         
                         $slug = $get('slug');
@@ -607,14 +607,14 @@ class Stage extends Model
                             }
                         } elseif ($isProjectSubmission) {
                             // For project-submission stages, enforce uniqueness (proactively filter not strictly required since options list will filter already used forms)
-                            $competitionId = $get('competition_id');
+                            $programId = $get('program_id');
                             $recordId = null;
                             // Try to get current record ID if inside edit
                             $idVal = $get('id');
                             if (null !== $idVal) $recordId = $idVal;
                             $usedFormIds = [];
-                            if ($competitionId) {
-                                $usedFormIds = \App\Models\Stage::where('competition_id', $competitionId)
+                            if ($programId) {
+                                $usedFormIds = \App\Models\Stage::where('program_id', $programId)
                                     ->where(function ($q) {
                                         $q->where('slug', 'project-submission')
                                           ->orWhere('slug', 'like', 'project-%');
@@ -667,9 +667,9 @@ class Stage extends Model
         ];
     }
 
-    public function competition()
+    public function program()
     {
-        return $this->belongsTo(competition::class);
+        return $this->belongsTo(program::class);
     }
 
     /**
@@ -729,7 +729,7 @@ class Stage extends Model
             $this->slug === 'project-submission' ||
             (is_string($this->slug) && str_starts_with($this->slug, 'project-'))
         ) {
-            $usedFormIds = self::where('competition_id', $this->competition_id)
+            $usedFormIds = self::where('program_id', $this->program_id)
                 ->where(function ($q) {
                     $q->where('slug', 'project-submission')
                         ->orWhere('slug', 'like', 'project-%');

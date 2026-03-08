@@ -35,20 +35,20 @@ class MentorResource extends JsonResource
 
         // Public response for participants API - concise, translated, and privacy-safe
         if ($isParticipantsApi) {
-            // Get competition from application_id if provided
-            $competition = null;
+            // Get program from application_id if provided
+            $program = null;
             $applicationId = $request->input('application_id');
             if ($applicationId) {
-                $application = \App\Models\CompetitionApplication::find($applicationId);
-                if ($application && $application->competition) {
-                    $competition = new CompetitionResource($application->competition, null, $applicationId);
+                $application = \App\Models\ProgramApplication::find($applicationId);
+                if ($application && $application->program) {
+                    $program = new ProgramResource($application->program, null, $applicationId);
                 }
-            } elseif ($this->competitions && $this->competitions->isNotEmpty()) {
-                // Fallback to first competition from mentor's competitions
-                $competition = new CompetitionResource($this->competitions->first());
-            } elseif ($this->competition) {
-                // Fallback to mentor's default competition
-                $competition = new CompetitionResource($this->competition);
+            } elseif ($this->programs && $this->programs->isNotEmpty()) {
+                // Fallback to first program from mentor's programs
+                $program = new ProgramResource($this->programs->first());
+            } elseif ($this->program) {
+                // Fallback to mentor's default program
+                $program = new ProgramResource($this->program);
             }
 
             return [
@@ -62,7 +62,7 @@ class MentorResource extends JsonResource
                 'facebook' => $this->facebook,
                 'instagram' => $this->instagram,
                 'is_visible' => $this->is_visible,
-                'competition' => $competition,
+                'program' => $program,
                 // Availability indicators - based on original availability windows
                 'has_available_slots' => (function () use ($request) {
                     $availabilities = \App\Models\MentorAvailability::where('mentor_id', $this->id)
@@ -337,8 +337,8 @@ class MentorResource extends JsonResource
         // Default/full response
         return [
             'id' => $this->id,
-            'competition' => new CompetitionResource($this->competition),
-            'competitions' => CompetitionResource::collection($this->competitions),
+            'program' => new ProgramResource($this->program),
+            'programs' => ProgramResource::collection($this->programs),
             'track' => new TrackResource($this->track),
             'name' => $this->name,
             'experience' => $this->experience,

@@ -43,7 +43,7 @@ class ProjectResource extends JsonResource
 
                 // Ensure stage_id is part of the condition and filter out archived evaluations
                 return ProjectEvaluation::where('judge_project_id', $judgeProjectId)
-                    ->where('stage_id',$this->competition?->currentStage()?->id) // replace with actual stage context
+                    ->where('stage_id',$this->program?->currentStage()?->id) // replace with actual stage context
                     ->where('is_archived', false) // Filter out archived evaluations
                     ->exists();
             }),
@@ -60,7 +60,7 @@ class ProjectResource extends JsonResource
                 }
             ),
 
-            'competition' => new CompetitionResource($this->competition, $this->id),
+            'program' => new ProgramResource($this->program, $this->id),
             'form_id'        => $this->form_id,
             'form'           => new ListProjectsFormResource(
                 $this->form,

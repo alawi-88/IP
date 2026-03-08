@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Competition;
-use App\Models\CompetitionApplication;
+use App\Models\Program;
+use App\Models\ProgramApplication;
 use App\Models\Form;
 use App\Models\FormField;
 use App\Models\Judge;
@@ -19,7 +19,7 @@ use Carbon\Carbon;
 
 class TransportationSandboxDemoSeeder extends Seeder
 {
-    private int $competitionId = 3;
+    private int $programId = 3;
     private int $regFormId = 10;
 
     public function run(): void
@@ -78,10 +78,10 @@ class TransportationSandboxDemoSeeder extends Seeder
         // ─────────────────────────────────────────────────────────────
         // 2. CREATE 15 APPLICATIONS (10 approved, 5 rejected)
         // ─────────────────────────────────────────────────────────────
-        $this->command->info('📝 Creating 15 competition applications...');
+        $this->command->info('📝 Creating 15 program applications...');
 
-        // Delete existing applications for this competition (clean slate)
-        CompetitionApplication::where('competition_id', $this->competitionId)->delete();
+        // Delete existing applications for this program (clean slate)
+        ProgramApplication::where('program_id', $this->programId)->delete();
 
         $applicationIds = [];
         $approvedAppIds = [];
@@ -98,8 +98,8 @@ class TransportationSandboxDemoSeeder extends Seeder
 
             $pId = $participantIds[$i];
 
-            $appId = DB::table('competition_applications')->insertGetId([
-                'competition_id'   => $this->competitionId,
+            $appId = DB::table('program_applications')->insertGetId([
+                'program_id'   => $this->programId,
                 'form_id'          => $this->regFormId,
                 'participant_id'   => $pId,
                 'status'           => $status,
@@ -215,7 +215,7 @@ class TransportationSandboxDemoSeeder extends Seeder
                 };
 
                 $projectId = DB::table('projects')->insertGetId([
-                    'competition_id'   => $this->competitionId,
+                    'program_id'   => $this->programId,
                     'application_id'   => $appId,
                     'team_id'          => $teamId,
                     'form_id'          => $formId,
@@ -289,10 +289,10 @@ class TransportationSandboxDemoSeeder extends Seeder
             ]);
         }
 
-        // Link judges to competition
+        // Link judges to program
         foreach ($judgeIds as $jid) {
-            DB::table('competition_judge')->updateOrInsert(
-                ['competition_id' => $this->competitionId, 'judge_id' => $jid],
+            DB::table('program_judge')->updateOrInsert(
+                ['program_id' => $this->programId, 'judge_id' => $jid],
                 ['created_at' => now(), 'updated_at' => now()]
             );
         }
@@ -325,7 +325,7 @@ class TransportationSandboxDemoSeeder extends Seeder
                     ['question' => 'Financial Viability', 'weight' => 25],
                 ];
 
-                $evalStageId = Stage::where('competition_id', $this->competitionId)
+                $evalStageId = Stage::where('program_id', $this->programId)
                     ->where('slug', 'evaluation')->value('id');
 
                 foreach ($evalCriteria as $ec) {
@@ -439,12 +439,12 @@ class TransportationSandboxDemoSeeder extends Seeder
         // ─────────────────────────────────────────────────────────────
         $this->command->info('🎓 Assigning mentors to teams...');
 
-        $mentorIds = Mentor::whereHas('competitions', function ($q) {
-            $q->where('competition_id', $this->competitionId);
+        $mentorIds = Mentor::whereHas('programs', function ($q) {
+            $q->where('program_id', $this->programId);
         })->pluck('id')->toArray();
 
-        // Also check via direct competition_id
-        $directMentors = Mentor::where('competition_id', $this->competitionId)->pluck('id')->toArray();
+        // Also check via direct program_id
+        $directMentors = Mentor::where('program_id', $this->programId)->pluck('id')->toArray();
         $mentorIds = array_unique(array_merge($mentorIds, $directMentors));
 
         if (!empty($mentorIds)) {
@@ -808,7 +808,7 @@ class TransportationSandboxDemoSeeder extends Seeder
                 'role'             => 'university_student',
                 'experience'       => 'less_than_one',
                 'skills'           => 'Delivery app design, customer service',
-                'achievements'     => 'Won university entrepreneurship competition. Currently completing final year at KFUPM.',
+                'achievements'     => 'Won university entrepreneurship program. Currently completing final year at KFUPM.',
                 'company_type'     => 'Private Company',
                 'business_overview' => 'On-demand delivery service for small packages within Riyadh using bicycle couriers.',
                 'idea_description' => 'Bicycle-based package delivery within neighborhoods with a mobile app.',

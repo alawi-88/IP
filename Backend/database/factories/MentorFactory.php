@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Path;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,12 +18,12 @@ class MentorFactory extends Factory
      */
     public function definition(): array
     {
-        $competitionId = Competition::first()->id;
+        $programId = Program::first()->id;
         $pathId = Path::first()->id;
 
         return [
             'track_id' => $pathId,
-            'competition_id' => $competitionId,
+            'program_id' => $programId,
             'name' => [
                 'en' => $this->faker->name,
                 'id' => $this->faker->name,

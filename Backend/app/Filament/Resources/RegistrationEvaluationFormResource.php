@@ -12,7 +12,7 @@ class RegistrationEvaluationFormResource extends Resource
 {
     protected static ?string $model = RegistrationEvaluationForm::class;
 
-    // Managed via Competition Hub
+    // Managed via Program Hub
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
@@ -46,7 +46,7 @@ class RegistrationEvaluationFormResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->can('view CompetitionApplication') ?? false;
+        return auth()->user()?->can('view ProgramApplication') ?? false;
     }
 
     public static function canView(Model $record): bool
@@ -54,15 +54,15 @@ class RegistrationEvaluationFormResource extends Resource
         $user = auth()->user();
         if (!$user) return false;
         if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) return true;
-        if ($record->competition) {
-            return $record->competition->canAccessProgram();
+        if ($record->program) {
+            return $record->program->canAccessProgram();
         }
         return false;
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()?->can('view CompetitionApplication') ?? false;
+        return auth()->user()?->can('view ProgramApplication') ?? false;
     }
 
     public static function canEdit(Model $record): bool
@@ -75,7 +75,7 @@ class RegistrationEvaluationFormResource extends Resource
         $user = auth()->user();
         if (!$user) return false;
         if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) return true;
-        if ($record->competition && !$record->competition->canAccessProgram()) return false;
-        return $user->can('delete CompetitionApplication');
+        if ($record->program && !$record->program->canAccessProgram()) return false;
+        return $user->can('delete ProgramApplication');
     }
 }

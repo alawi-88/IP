@@ -20,7 +20,7 @@ class MentorApprovalController extends Controller
     public function index(Request $request): JsonResponse
     {
         $mentors = Mentor::where('status', 'pending')
-            ->with(['competition', 'track'])
+            ->with(['program', 'track'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
@@ -32,7 +32,7 @@ class MentorApprovalController extends Controller
      */
     public function show(Mentor $mentor): JsonResponse
     {
-        $mentor->load(['competition', 'track']);
+        $mentor->load(['program', 'track']);
         
         return response()->json([
             'mentor' => $mentor,
@@ -71,7 +71,7 @@ class MentorApprovalController extends Controller
 
         return response()->json([
             'message' => __('mentor.approved_successfully'),
-            'mentor' => $mentor->fresh(['competition', 'track']),
+            'mentor' => $mentor->fresh(['program', 'track']),
         ], Response::HTTP_OK);
     }
 
@@ -98,7 +98,7 @@ class MentorApprovalController extends Controller
 
         return response()->json([
             'message' => __('mentor.rejected_successfully'),
-            'mentor' => $mentor->fresh(['competition', 'track']),
+            'mentor' => $mentor->fresh(['program', 'track']),
         ], Response::HTTP_OK);
     }
 

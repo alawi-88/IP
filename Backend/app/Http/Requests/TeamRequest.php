@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\TeamFormConfig;
 use App\Rules\QualifiedMember;
 use Illuminate\Foundation\Http\FormRequest;
@@ -39,14 +39,14 @@ class TeamRequest extends FormRequest
             $applicationId = $this->input('application_id');
             if (!$applicationId) return;
 
-            $application = CompetitionApplication::find($applicationId);
+            $application = ProgramApplication::find($applicationId);
 
             if (!$application) return;
 
             // Get team configuration - prioritize RegistrationFormConfig over TeamFormConfig
             // RegistrationFormConfig is the source of truth for team size limits
             // Note: scopeActive() already checks is_archived, so we don't need notArchived()
-            $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', $application->competition_id)
+            $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', $application->program_id)
                 ->active()
                 ->first();
             
@@ -57,7 +57,7 @@ class TeamRequest extends FormRequest
                 $maxTeamMembers = $registrationConfig->max_team_members !== null ? $registrationConfig->max_team_members : config('team.max_members', 6);
             } else {
                 // Fallback to TeamFormConfig if RegistrationFormConfig doesn't exist
-                $teamConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+                $teamConfig = TeamFormConfig::where('program_id', $application->program_id)
                     ->active()
                     ->notArchived()
                     ->first();
@@ -115,7 +115,7 @@ class TeamRequest extends FormRequest
             if ($totalMembers < $minTeamMembers) {
                 $validator->errors()->add(
                     'serial_numbers',
-                    __('competition_application.The total number of team members must be at least :min.', ['min' => $minTeamMembers]) 
+                    __('program_application.The total number of team members must be at least :min.', ['min' => $minTeamMembers]) 
                         ?: "The total number of team members must be at least {$minTeamMembers}."
                 );
             }
@@ -124,7 +124,7 @@ class TeamRequest extends FormRequest
             if ($totalMembers > $maxTeamMembers) {
                 $validator->errors()->add(
                     'serial_numbers',
-                    __('competition_application.The total number of team members must not exceed :max.', ['max' => $maxTeamMembers])
+                    __('program_application.The total number of team members must not exceed :max.', ['max' => $maxTeamMembers])
                 );
             }
 
@@ -149,7 +149,7 @@ class TeamRequest extends FormRequest
     {
 
         return [
-            'application_id' => ['required', 'exists:competition_applications,id'],
+            'application_id' => ['required', 'exists:program_applications,id'],
             'name' => ['required_if:has_team,1', 'string', 'max:255'],
             'logo' => ['nullable', 'image', 'mimes:jpg,png', 'max:1024'],
             'strength' => ['required_if:has_team,1', 'max:500'],
@@ -174,21 +174,21 @@ class TeamRequest extends FormRequest
     {
         return [
             // Step 1 Errors
-            'logo.image' => __('competition_application.The team logo must be a valid image.'),
-            'logo.max' => __('competition_application.Image size must not exceed 1MB.'),
-            'strength.required_if' => __('competition_application.Please describe your team\'s strengths.'),
-            'strength.max' => __('competition_application.The maximum message limit is 500 characters.'),
-            'serial_numbers.min' => __('competition_application.At least one member must be added to the team.'),
-            'serial_numbers.required_if' => __('competition_application.At least one member must be added to the team.'),
-            'serial_numbers.max' => __('competition_application.The maximum number of team members is 6.'),
+            'logo.image' => __('program_application.The team logo must be a valid image.'),
+            'logo.max' => __('program_application.Image size must not exceed 1MB.'),
+            'strength.required_if' => __('program_application.Please describe your team\'s strengths.'),
+            'strength.max' => __('program_application.The maximum message limit is 500 characters.'),
+            'serial_numbers.min' => __('program_application.At least one member must be added to the team.'),
+            'serial_numbers.required_if' => __('program_application.At least one member must be added to the team.'),
+            'serial_numbers.max' => __('program_application.The maximum number of team members is 6.'),
 
             // Step 2 Errors
-            'track_id.exists' => __('competition_application.Please select a valid path.'),
-            'idea_challenge_id.exists' => __('competition_application.Please select a valid challenge.'),
-            'idea_description.max' => __('competition_application.The maximum description limit is 300 characters.'),
+            'track_id.exists' => __('program_application.Please select a valid path.'),
+            'idea_challenge_id.exists' => __('program_application.Please select a valid challenge.'),
+            'idea_description.max' => __('program_application.The maximum description limit is 300 characters.'),
 
             // Step 3 Errors
-            'previous_participation.required' => __('competition_application.Please specify if you or your team members have participated before.'),
+            'previous_participation.required' => __('program_application.Please specify if you or your team members have participated before.'),
         ];
     }
 }

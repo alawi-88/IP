@@ -15,7 +15,7 @@ class EvaluationStageConfigResource extends Resource
 {
     protected static ?string $model = EvaluationStageConfig::class;
 
-    // Managed via Competition Hub
+    // Managed via Program Hub
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-flag';
@@ -30,9 +30,9 @@ class EvaluationStageConfigResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Evaluation Stages Configuration')
                     ->schema([
-                        Forms\Components\Select::make('competition_id')
+                        Forms\Components\Select::make('program_id')
                             ->label('Program')
-                            ->options(fn() => \App\Models\Competition::pluck('title', 'id')->toArray())
+                            ->options(fn() => \App\Models\Program::pluck('title', 'id')->toArray())
                             ->searchable()
                             ->required()
                             ->columnSpanFull(),
@@ -49,7 +49,7 @@ class EvaluationStageConfigResource extends Resource
                                     ->options(
                                         fn(callable $get) =>
                                         Form::availableEvaluationForms(
-                                            (int) $get('../../competition_id'),
+                                            (int) $get('../../program_id'),
                                             $get('../../stages') ?? [],
                                             $get('../../') ?? [],
                                         )
@@ -146,7 +146,7 @@ class EvaluationStageConfigResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('competition.title')
+                Tables\Columns\TextColumn::make('program.title')
                     ->label('Program')
                     ->sortable()
                     ->searchable(),

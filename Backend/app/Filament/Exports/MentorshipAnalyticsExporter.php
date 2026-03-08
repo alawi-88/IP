@@ -19,15 +19,15 @@ class MentorshipAnalyticsExporter extends Exporter
             ExportColumn::make('id')
                 ->label(__('analytics.session_id')),
             
-            ExportColumn::make('competition.title')
+            ExportColumn::make('program.title')
                 ->label(__('analytics.program'))
                 ->formatStateUsing(function ($record) {
-                    if (!$record->competition) {
+                    if (!$record->program) {
                         return 'N/A';
                     }
-                    return is_array($record->competition->title)
-                        ? ($record->competition->title[app()->getLocale()] ?? $record->competition->title['en'] ?? 'N/A')
-                        : ($record->competition->title ?? 'N/A');
+                    return is_array($record->program->title)
+                        ? ($record->program->title[app()->getLocale()] ?? $record->program->title['en'] ?? 'N/A')
+                        : ($record->program->title ?? 'N/A');
                 }),
             
             ExportColumn::make('mentor.name')
@@ -78,8 +78,8 @@ class MentorshipAnalyticsExporter extends Exporter
             return $query;
         }
 
-        if (isset($data['competition_id'])) {
-            $query->where('competition_id', $data['competition_id']);
+        if (isset($data['program_id'])) {
+            $query->where('program_id', $data['program_id']);
         }
 
         if (isset($data['mentor_id'])) {

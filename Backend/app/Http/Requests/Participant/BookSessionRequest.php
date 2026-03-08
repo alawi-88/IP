@@ -21,7 +21,7 @@ class BookSessionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'application_id' => ['required', 'exists:competition_applications,id'],
+            'application_id' => ['required', 'exists:program_applications,id'],
             'mentor_id' => ['sometimes', 'exists:mentors,id'], // Optional when coming from route parameter
             'title' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:1000'],

@@ -80,7 +80,7 @@ class CheckApprovalRequired
 
         // Check for admin routes that might require approval
         $adminRoutes = [
-            'admin/competitions',
+            'admin/programs',
             'admin/events',
             'admin/projects',
             'admin/users',
@@ -105,11 +105,11 @@ class CheckApprovalRequired
 
         // Map routes to actions
         $actionMap = [
-            'admin/competitions' => [
-                'POST' => 'Competition.create',
-                'PUT' => 'Competition.update',
-                'PATCH' => 'Competition.update',
-                'DELETE' => 'Competition.delete',
+            'admin/programs' => [
+                'POST' => 'Program.create',
+                'PUT' => 'Program.update',
+                'PATCH' => 'Program.update',
+                'DELETE' => 'Program.delete',
             ],
             'admin/events' => [
                 'POST' => 'Event.create',

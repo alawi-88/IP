@@ -12,7 +12,7 @@ class TeamFormConfig extends Model
     use LogsActivity, HasActivityLog;
 
     protected $fillable = [
-        'competition_id',
+        'program_id',
         'is_active',
         'min_team_members',
         'max_team_members',
@@ -41,8 +41,8 @@ class TeamFormConfig extends Model
         'auto_publish_teams',
         'is_archived',
         'archived_at',
-        'competition.title',
-        'competition_id',
+        'program.title',
+        'program_id',
     ];
 
     protected string $moduleName = 'Team Form Config';
@@ -53,9 +53,9 @@ class TeamFormConfig extends Model
         'updated_at',
     ];
 
-    public function competition(): BelongsTo
+    public function program(): BelongsTo
     {
-        return $this->belongsTo(Competition::class);
+        return $this->belongsTo(Program::class);
     }
 
     public function scopeActive($query)

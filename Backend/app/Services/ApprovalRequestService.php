@@ -252,8 +252,8 @@ class ApprovalRequestService
             // In a real implementation, you would have specific handlers for each action
             // For example:
             // switch ($action) {
-            //     case 'Competition.update':
-            //         return $this->executeCompetitionUpdate($actionData);
+            //     case 'Program.update':
+            //         return $this->executeProgramUpdate($actionData);
             //     case 'Event.create':
             //         return $this->executeEventCreate($actionData);
             //     // etc.

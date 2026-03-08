@@ -342,7 +342,7 @@ class TestApprovalPolicyReflectionChecklist extends Command
         if (ApprovalWorkflow::count() === 0) {
             $workflows = [
                 [
-                    'action' => 'Competition.update',
+                    'action' => 'Program.update',
                     'levels' => 2,
                     'is_active' => true,
                 ],

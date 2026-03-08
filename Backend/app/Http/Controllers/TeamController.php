@@ -30,8 +30,8 @@ class TeamController extends Controller
             return TeamResource::collection(collect());
         }
         
-        // Get competition_id from the application
-        $application = \App\Models\CompetitionApplication::findOrFail($applicationId);
+        // Get program_id from the application
+        $application = \App\Models\ProgramApplication::findOrFail($applicationId);
         
         // IDOR Prevention: Verify that the application belongs to the authenticated user
         $userId = auth()->id();
@@ -39,12 +39,12 @@ class TeamController extends Controller
             abort(404, 'Application not found');
         }
         
-        $competitionId = $application->competition_id;
+        $programId = $application->program_id;
         
-        // Filter teams by competition_id through the application relationship
+        // Filter teams by program_id through the application relationship
         $teamsQuery = TeamModel::published()
-            ->whereHas('application', function ($query) use ($competitionId) {
-                $query->where('competition_id', $competitionId);
+            ->whereHas('application', function ($query) use ($programId) {
+                $query->where('program_id', $programId);
             })
             ->active(); // Only show non-archived teams
 
@@ -163,7 +163,7 @@ class TeamController extends Controller
             }
         }
 
-        if ($team->application->competition->currentStage()?->slug != 'team-formation') {
+        if ($team->application->program->currentStage()?->slug != 'team-formation') {
             abort(403, 'You cannot update a team in the team formation stage');
         }
     }

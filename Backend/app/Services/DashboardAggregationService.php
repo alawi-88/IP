@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\CompetitionApplication;
+use App\Models\ProgramApplication;
 use App\Models\Dashboard;
 use App\Models\DashboardWidget;
 use App\Models\FormField;
@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardAggregationService
 {
-    protected ?int $competitionId;
+    protected ?int $programId;
     protected array $runtimeFilters;
     protected int $cacheTtl = 600; // 10 minutes
 
-    public function __construct(?int $competitionId = null, array $runtimeFilters = [])
+    public function __construct(?int $programId = null, array $runtimeFilters = [])
     {
-        $this->competitionId = $competitionId;
+        $this->programId = $programId;
         $this->runtimeFilters = $runtimeFilters;
     }
 
@@ -85,22 +85,22 @@ class DashboardAggregationService
     }
 
     /**
-     * Build query for competition_applications.form_submissions.
+     * Build query for program_applications.form_submissions.
      */
     protected function buildApplicationQuery(string $parameterKey)
     {
-        $query = CompetitionApplication::query()
+        $query = ProgramApplication::query()
             ->select([
                 'id',
-                'competition_id',
+                'program_id',
                 'status',
                 'form_id',
                 'form_submissions',
                 'created_at',
             ]);
 
-        if ($this->competitionId) {
-            $query->where('competition_id', $this->competitionId);
+        if ($this->programId) {
+            $query->where('program_id', $this->programId);
         }
 
         $this->applyRuntimeFilters($query, 'applications');
@@ -116,15 +116,15 @@ class DashboardAggregationService
         $query = Project::query()
             ->select([
                 'id',
-                'competition_id',
+                'program_id',
                 'status',
                 'form_id',
                 'form_submissions',
                 'created_at',
             ]);
 
-        if ($this->competitionId) {
-            $query->where('competition_id', $this->competitionId);
+        if ($this->programId) {
+            $query->where('program_id', $this->programId);
         }
 
         $this->applyRuntimeFilters($query, 'projects');
@@ -137,8 +137,8 @@ class DashboardAggregationService
      */
     protected function applyRuntimeFilters($query, string $source): void
     {
-        if (!empty($this->runtimeFilters['competition_id'])) {
-            $query->where('competition_id', $this->runtimeFilters['competition_id']);
+        if (!empty($this->runtimeFilters['program_id'])) {
+            $query->where('program_id', $this->runtimeFilters['program_id']);
         }
 
         if (!empty($this->runtimeFilters['status'])) {
@@ -349,7 +349,7 @@ class DashboardAggregationService
     /**
      * Get available form fields for given data sources.
      */
-    public static function getAvailableFields(array $dataSources, ?int $competitionId = null): Collection
+    public static function getAvailableFields(array $dataSources, ?int $programId = null): Collection
     {
         $formTypes = [];
 
@@ -362,10 +362,10 @@ class DashboardAggregationService
         }
 
         $query = FormField::query()
-            ->whereHas('form', function ($q) use ($formTypes, $competitionId) {
+            ->whereHas('form', function ($q) use ($formTypes, $programId) {
                 $q->whereIn('type', $formTypes);
-                if ($competitionId) {
-                    $q->where('competition_id', $competitionId);
+                if ($programId) {
+                    $q->where('program_id', $programId);
                 }
             })
             ->whereNotIn('type', ['section_header', 'paragraph'])

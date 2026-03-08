@@ -73,7 +73,7 @@ return [
     'restore' => 'Restore',
 
     // Filter Labels
-    'filter_by_competition' => 'Filter by Competition',
+    'filter_by_program' => 'Filter by Program',
     'filter_by_status' => 'Filter by Status',
     'date_range' => 'Date Range',
     'date_from' => 'Date From',

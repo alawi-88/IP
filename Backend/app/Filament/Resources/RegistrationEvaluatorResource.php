@@ -11,7 +11,7 @@ class RegistrationEvaluatorResource extends Resource
 {
     protected static ?string $model = RegistrationEvaluator::class;
 
-    // Managed via Competition Hub
+    // Managed via Program Hub
     protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
@@ -38,12 +38,12 @@ class RegistrationEvaluatorResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->can('view CompetitionApplication') ?? false;
+        return auth()->user()?->can('view ProgramApplication') ?? false;
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()?->can('view CompetitionApplication') ?? false;
+        return auth()->user()?->can('view ProgramApplication') ?? false;
     }
 
     public static function canView(Model $record): bool
@@ -51,8 +51,8 @@ class RegistrationEvaluatorResource extends Resource
         $user = auth()->user();
         if (!$user) return false;
         if (method_exists($user, 'isSuperAdmin') && $user->isSuperAdmin()) return true;
-        if ($record->competition) {
-            return $record->competition->canAccessProgram();
+        if ($record->program) {
+            return $record->program->canAccessProgram();
         }
         return false;
     }

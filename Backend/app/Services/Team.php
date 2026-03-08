@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\Participant;
 use App\Models\Team as TeamModel;
 use Illuminate\Support\Arr;
-use App\Models\CompetitionApplication as CompetitionApplicationModel;
+use App\Models\ProgramApplication as ProgramApplicationModel;
 use App\Notifications\ParticipantAddedAsTeamMember;
 use App\Models\TeamFormConfig;
 
@@ -27,23 +27,23 @@ class Team
             return null;
         }
 
-        // Get application_id from request to filter by competition
+        // Get application_id from request to filter by program
         $applicationId = request('application_id');
 
         if (!$applicationId) {
             return null;
         }
 
-        // Get the application to find the competition
-        $application = CompetitionApplicationModel::findOrFail($applicationId);
-        $competitionId = $application->competition_id;
+        // Get the application to find the program
+        $application = ProgramApplicationModel::findOrFail($applicationId);
+        $programId = $application->program_id;
 
-        // Find team where user is a member and the team belongs to the current competition
+        // Find team where user is a member and the team belongs to the current program
         $userTeam = TeamModel::whereHas('members', function ($query) use ($user) {
                 $query->where('participant_id', $user->id);
             })
-            ->whereHas('application', function ($query) use ($competitionId) {
-                $query->where('competition_id', $competitionId);
+            ->whereHas('application', function ($query) use ($programId) {
+                $query->where('program_id', $programId);
             })
             ->active()
             ->first();
@@ -60,8 +60,8 @@ class Team
         // Validate team size BEFORE creating the team
         // Always validate if has_team is true, even if serial_numbers is empty
         if (isset($data['serial_numbers']) || (isset($data['has_team']) && $data['has_team'])) {
-            // Get the application to access competition_id
-            $application = \App\Models\CompetitionApplication::find($applicationId);
+            // Get the application to access program_id
+            $application = \App\Models\ProgramApplication::find($applicationId);
             if ($application) {
                 // Create a temporary team object for validation
                 $tempTeam = new TeamModel();
@@ -108,7 +108,7 @@ class Team
             // This handles the case where user submits team registration without members
             $application = $team->application;
             if ($application) {
-                $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', $application->competition_id)
+                $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', $application->program_id)
                     ->active()
                     ->first();
                 
@@ -117,7 +117,7 @@ class Team
                 if ($registrationConfig) {
                     $minTeamMembers = $registrationConfig->min_team_members !== null ? $registrationConfig->min_team_members : 2;
                 } else {
-                    $teamConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+                    $teamConfig = TeamFormConfig::where('program_id', $application->program_id)
                         ->active()
                         ->notArchived()
                         ->first();
@@ -133,7 +133,7 @@ class Team
                 if ($minTeamMembers > 1) {
                     throw \Illuminate\Validation\ValidationException::withMessages([
                         'serial_numbers' => [
-                            __('competition_application.The total number of team members must be at least :min.', [
+                            __('program_application.The total number of team members must be at least :min.', [
                                 'min' => $minTeamMembers,
                             ]) ?: "The total number of team members must be at least {$minTeamMembers}.",
                         ],
@@ -145,8 +145,8 @@ class Team
         $team->application()->update(['has_team' => true]);
 
         $application = $team->application()->first();
-        if ($application && $application->competition_id) {
-            $teamFormConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+        if ($application && $application->program_id) {
+            $teamFormConfig = TeamFormConfig::where('program_id', $application->program_id)
                 ->active()
                 ->notArchived() // Only use non-archived Team Form Configurations
                 ->first();
@@ -245,14 +245,14 @@ class Team
                     $application = $team->application;
                     if ($application) {
                         // Get team configuration - try TeamFormConfig first, then RegistrationFormConfig as fallback
-                        $teamConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+                        $teamConfig = TeamFormConfig::where('program_id', $application->program_id)
                             ->active()
                             ->notArchived()
                             ->first();
                         
                         // If TeamFormConfig doesn't exist, try RegistrationFormConfig
                         if (!$teamConfig) {
-                            $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', $application->competition_id)
+                            $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', $application->program_id)
                                 ->active()
                                 ->notArchived()
                                 ->first();
@@ -277,7 +277,7 @@ class Team
                         if ($totalAfterAdd < $minTeamMembers) {
                             throw \Illuminate\Validation\ValidationException::withMessages([
                                 'serial_numbers' => [
-                                    __('competition_application.The total number of team members must be at least :min.', [
+                                    __('program_application.The total number of team members must be at least :min.', [
                                         'min' => $minTeamMembers,
                                     ]) ?: "The total number of team members must be at least {$minTeamMembers}.",
                                 ],
@@ -288,7 +288,7 @@ class Team
                         if ($totalAfterAdd > $maxTeamMembers) {
                             throw \Illuminate\Validation\ValidationException::withMessages([
                                 'serial_numbers' => [
-                                    __('competition_application.The total number of team members must not exceed :max.', [
+                                    __('program_application.The total number of team members must not exceed :max.', [
                                         'max' => $maxTeamMembers,
                                     ]),
                                 ],
@@ -298,8 +298,8 @@ class Team
                 }
 
                 // update has_team for each participant
-                CompetitionApplicationModel::where('participant_id', $participant->id)
-                    ->where('competition_id', $team->application->competition_id)
+                ProgramApplicationModel::where('participant_id', $participant->id)
+                    ->where('program_id', $team->application->program_id)
                     ->update(['has_team' => true]);
 
                 $team->members()->updateOrCreate(
@@ -321,7 +321,7 @@ class Team
         
         if ($application) {
             // Get team configuration for final validation
-            $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', $application->competition_id)
+            $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', $application->program_id)
                 ->active()
                 ->first();
             
@@ -331,7 +331,7 @@ class Team
                 $minTeamMembers = $registrationConfig->min_team_members !== null ? $registrationConfig->min_team_members : 2;
                 $maxTeamMembers = $registrationConfig->max_team_members !== null ? $registrationConfig->max_team_members : config('team.max_members', 6);
             } else {
-                $teamConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+                $teamConfig = TeamFormConfig::where('program_id', $application->program_id)
                     ->active()
                     ->notArchived()
                     ->first();
@@ -349,7 +349,7 @@ class Team
             if ($finalCount < $minTeamMembers) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'serial_numbers' => [
-                        __('competition_application.The total number of team members must be at least :min.', [
+                        __('program_application.The total number of team members must be at least :min.', [
                             'min' => $minTeamMembers,
                         ]) ?: "The total number of team members must be at least {$minTeamMembers}.",
                     ],
@@ -360,7 +360,7 @@ class Team
             if ($finalCount > $maxTeamMembers) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'serial_numbers' => [
-                        __('competition_application.The total number of team members must not exceed :max.', [
+                        __('program_application.The total number of team members must not exceed :max.', [
                             'max' => $maxTeamMembers,
                         ]),
                     ],
@@ -390,7 +390,7 @@ class Team
         $application = $team->application;
         if ($application) {
             // Get team configuration
-            $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', $application->competition_id)
+            $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', $application->program_id)
                 ->active()
                 ->first();
             
@@ -400,7 +400,7 @@ class Team
                 $minTeamMembers = $registrationConfig->min_team_members !== null ? $registrationConfig->min_team_members : 2;
                 $maxTeamMembers = $registrationConfig->max_team_members !== null ? $registrationConfig->max_team_members : config('team.max_members', 6);
             } else {
-                $teamConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+                $teamConfig = TeamFormConfig::where('program_id', $application->program_id)
                     ->active()
                     ->notArchived()
                     ->first();
@@ -425,7 +425,7 @@ class Team
             if ($finalTeamSize < $minTeamMembers) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'serial_numbers' => [
-                        __('competition_application.The total number of team members must be at least :min.', [
+                        __('program_application.The total number of team members must be at least :min.', [
                             'min' => $minTeamMembers,
                         ]) ?: "The total number of team members must be at least {$minTeamMembers}.",
                     ],
@@ -436,7 +436,7 @@ class Team
             if ($finalTeamSize > $maxTeamMembers) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'serial_numbers' => [
-                        __('competition_application.The total number of team members must not exceed :max.', [
+                        __('program_application.The total number of team members must not exceed :max.', [
                             'max' => $maxTeamMembers,
                         ]),
                     ],
@@ -470,8 +470,8 @@ class Team
                 }
 
                 // update has_team for each participant
-                CompetitionApplicationModel::where('participant_id', $participant->id)
-                    ->where('competition_id', $team->application->competition_id)
+                ProgramApplicationModel::where('participant_id', $participant->id)
+                    ->where('program_id', $team->application->program_id)
                     ->update(['has_team' => true]);
 
                 $team->members()->create([
@@ -492,7 +492,7 @@ class Team
         
         if ($application) {
             // Get team configuration again for final validation
-            $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', $application->competition_id)
+            $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', $application->program_id)
                 ->active()
                 ->first();
             
@@ -502,7 +502,7 @@ class Team
                 $minTeamMembers = $registrationConfig->min_team_members !== null ? $registrationConfig->min_team_members : 2;
                 $maxTeamMembers = $registrationConfig->max_team_members !== null ? $registrationConfig->max_team_members : config('team.max_members', 6);
             } else {
-                $teamConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+                $teamConfig = TeamFormConfig::where('program_id', $application->program_id)
                     ->active()
                     ->notArchived()
                     ->first();
@@ -520,7 +520,7 @@ class Team
             if ($finalCount < $minTeamMembers) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'serial_numbers' => [
-                        __('competition_application.The total number of team members must be at least :min.', [
+                        __('program_application.The total number of team members must be at least :min.', [
                             'min' => $minTeamMembers,
                         ]) ?: "The total number of team members must be at least {$minTeamMembers}.",
                     ],
@@ -531,7 +531,7 @@ class Team
             if ($finalCount > $maxTeamMembers) {
                 throw \Illuminate\Validation\ValidationException::withMessages([
                     'serial_numbers' => [
-                        __('competition_application.The total number of team members must not exceed :max.', [
+                        __('program_application.The total number of team members must not exceed :max.', [
                             'max' => $maxTeamMembers,
                         ]),
                     ],
@@ -569,8 +569,8 @@ class Team
                 }
 
                 // update has_team for each participant
-                CompetitionApplicationModel::where('participant_id', $participant->id)
-                    ->where('competition_id', $team->application->competition_id)
+                ProgramApplicationModel::where('participant_id', $participant->id)
+                    ->where('program_id', $team->application->program_id)
                     ->update(['has_team' => false]);
 
                 $team->members()->where('participant_id', $participant->id)->delete();
@@ -600,7 +600,7 @@ class Team
         // Get team configuration - prioritize RegistrationFormConfig over TeamFormConfig
         // RegistrationFormConfig is the source of truth for team size limits
         // Note: scopeActive() already checks is_archived, so we don't need notArchived()
-        $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', $application->competition_id)
+        $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', $application->program_id)
             ->active()
             ->first();
         
@@ -613,7 +613,7 @@ class Team
             $maxTeamMembers = $registrationConfig->max_team_members !== null ? $registrationConfig->max_team_members : config('team.max_members', 6);
         } else {
             // Fallback to TeamFormConfig if RegistrationFormConfig doesn't exist
-            $teamConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+            $teamConfig = TeamFormConfig::where('program_id', $application->program_id)
                 ->active()
                 ->notArchived()
                 ->first();
@@ -662,7 +662,7 @@ class Team
         if ($totalMembers < $minTeamMembers) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'serial_numbers' => [
-                    __('competition_application.The total number of team members must be at least :min.', [
+                    __('program_application.The total number of team members must be at least :min.', [
                         'min' => $minTeamMembers,
                     ]) ?: "The total number of team members must be at least {$minTeamMembers}.",
                 ],
@@ -673,7 +673,7 @@ class Team
         if ($totalMembers > $maxTeamMembers) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'serial_numbers' => [
-                    __('competition_application.The total number of team members must not exceed :max.', [
+                    __('program_application.The total number of team members must not exceed :max.', [
                         'max' => $maxTeamMembers,
                     ]),
                 ],
@@ -700,7 +700,7 @@ class Team
         // Get team configuration - prioritize RegistrationFormConfig over TeamFormConfig
         // RegistrationFormConfig is the source of truth for team size limits
         // Note: scopeActive() already checks is_archived, so we don't need notArchived()
-        $registrationConfig = \App\Models\RegistrationFormConfig::where('competition_id', $application->competition_id)
+        $registrationConfig = \App\Models\RegistrationFormConfig::where('program_id', $application->program_id)
             ->active()
             ->first();
         
@@ -713,7 +713,7 @@ class Team
             $maxTeamMembers = $registrationConfig->max_team_members !== null ? $registrationConfig->max_team_members : config('team.max_members', 6);
         } else {
             // Fallback to TeamFormConfig if RegistrationFormConfig doesn't exist
-            $teamConfig = TeamFormConfig::where('competition_id', $application->competition_id)
+            $teamConfig = TeamFormConfig::where('program_id', $application->program_id)
                 ->active()
                 ->notArchived()
                 ->first();
@@ -756,7 +756,7 @@ class Team
         if ($totalAfterAdd < $minTeamMembers) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'serial_numbers' => [
-                    __('competition_application.The total number of team members must be at least :min.', [
+                    __('program_application.The total number of team members must be at least :min.', [
                         'min' => $minTeamMembers,
                     ]) ?: "The total number of team members must be at least {$minTeamMembers}.",
                 ],
@@ -767,7 +767,7 @@ class Team
         if ($totalAfterAdd > $maxTeamMembers) {
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'serial_numbers' => [
-                    __('competition_application.The total number of team members must not exceed :max.', [
+                    __('program_application.The total number of team members must not exceed :max.', [
                         'max' => $maxTeamMembers,
                     ]),
                 ],

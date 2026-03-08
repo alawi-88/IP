@@ -10,7 +10,7 @@ use App\Http\Resources\ProjectsFormResource;
 use App\Http\Resources\RegistrationFormResource;
 use App\Http\Resources\StageEvaluationResource;
 use App\Http\Resources\StageResource;
-use App\Models\Competition;
+use App\Models\Program;
 use App\Models\Form;
 use App\Models\ProjectFormConfig;
 use App\Models\Stage;
@@ -23,17 +23,17 @@ class FormController extends Controller
 {
     public function registration(ListFormRequest $request): JsonResponse
     {
-        // Check if competition exists and is not closed
-        $competition = Competition::where('id', $request->competition_id)
+        // Check if program exists and is not closed
+        $program = Program::where('id', $request->program_id)
             ->published()
             ->active()
             ->first();
 
-        if (!$competition || $competition->isClosed()) {
+        if (!$program || $program->isClosed()) {
             return response()->json([]);
         }
 
-        $form = Form::with('FormSteps')->where('competition_id', $request->competition_id)
+        $form = Form::with('FormSteps')->where('program_id', $request->program_id)
             ->registrationType()
             ->published()
             ->active()
@@ -46,7 +46,7 @@ class FormController extends Controller
         $submitType = 'submission';
         $applicationId = null;
         if (auth()->check()) {
-            $application = auth()->user()->competitionApplications()
+            $application = auth()->user()->programApplications()
                 ->where('form_id', $form->id)
                 ->where('is_archived', false)
                 ->first();
@@ -67,7 +67,7 @@ class FormController extends Controller
 
     public function projects(ListFormRequest $request): JsonResponse
     {
-        $form = Form::with('ProjectSteps')->where('competition_id', $request->competition_id)
+        $form = Form::with('ProjectSteps')->where('program_id', $request->program_id)
             ->projectType()
             ->published()
             ->active()
@@ -93,7 +93,7 @@ class FormController extends Controller
             ->first();
 
         if ($participant) {
-            $application = $participant->competitionApplications()->where('form_id', $form->id)->first();
+            $application = $participant->programApplications()->where('form_id', $form->id)->first();
         }
 
         if (!$form) {
@@ -149,7 +149,7 @@ class FormController extends Controller
 
     public function team_form_config(ListFormRequest $request): JsonResponse
     {
-        $form = TeamFormConfig::where('competition_id', $request->competition_id)
+        $form = TeamFormConfig::where('program_id', $request->program_id)
             ->active()
             ->notArchived() // Only show non-archived Team Form Configurations
             ->first();
@@ -173,7 +173,7 @@ class FormController extends Controller
     }
     public function evaluations(ListFormRequest $request): JsonResponse
     {
-        $form = Form::where('competition_id', $request->competition_id)
+        $form = Form::where('program_id', $request->program_id)
             ->evaluationType()
             ->published()
             ->active()
@@ -372,7 +372,7 @@ class FormController extends Controller
         $submitType = 'submission';
         $applicationId = null;
         if (auth()->check()) {
-            $application = auth()->user()->competitionApplications()
+            $application = auth()->user()->programApplications()
                 ->where('form_id', $form->id)
                 ->where('is_archived', false)
                 ->first();
@@ -400,7 +400,7 @@ class FormController extends Controller
             $projectId = null;
             $application = null;
             if (auth()->check()) {
-                $application = auth()->user()->competitionApplications()
+                $application = auth()->user()->programApplications()
                     ->where('form_id', $form->id)
                     ->first();
                 if ($application) {

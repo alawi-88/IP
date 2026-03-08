@@ -9,7 +9,7 @@ import { useRouter } from "@/i18n/routing";
 import { useEffect, useState } from "react";
 import FeedbackModal from "@/components/feedback-modal/FeedbackModal";
 import axiosInstance, { APIError } from "@/axios";
-import { DynamicForm, MyCompetition } from "@/lib/interfaces";
+import { DynamicForm, ProgramApplication } from "@/lib/interfaces";
 import Empty from "@/components/Empty";
 import EvaluationCommentInput from "@/components/judge-evaluate/EvolutionCommentInput";
 import { useFormScrollToError } from "@/hooks/useFormScrollToError";
@@ -136,10 +136,10 @@ export default function Rate() {
       const payload: any = {
         form_id: formId,
         project_id: projectId,
-        stage_id: dynamicForm?.competition?.current_stage_slug?.startsWith(
+        stage_id: dynamicForm?.program?.current_stage_slug?.startsWith(
           "evaluation"
         )
-          ? dynamicForm?.competition?.current_stage_id
+          ? dynamicForm?.program?.current_stage_id
           : null,
         answers: {},
       };

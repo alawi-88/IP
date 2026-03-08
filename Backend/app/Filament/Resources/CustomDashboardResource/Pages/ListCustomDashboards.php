@@ -24,8 +24,8 @@ class ListCustomDashboards extends ListRecords
     {
         $baseQuery = Dashboard::query()
             ->where(function ($q) {
-                $q->where('competition_id', currentCompetitionId())
-                  ->orWhereNull('competition_id');
+                $q->where('program_id', currentProgramId())
+                  ->orWhereNull('program_id');
             });
 
         return [
