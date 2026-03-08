@@ -10,7 +10,7 @@ services:
       MYSQL_PASSWORD: innovation
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -40,6 +40,9 @@ services:
       DB_USERNAME: innovation
       DB_PASSWORD: innovation
       REDIS_HOST: redis
+      AI_PROVIDER: ${AI_PROVIDER:-mock}
+      AI_API_KEY: ${AI_API_KEY:-}
+      AI_MODEL: ${AI_MODEL:-}
     depends_on:
       db:
         condition: service_healthy
@@ -90,6 +93,7 @@ services:
     environment:
       NODE_ENV: development
       NEXT_PUBLIC_API_ENDPOINT: "http://localhost:8080/api"
+      NEXT_PUBLIC_RECAPTCHA_SITE_KEY: "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
       INTERNAL_API_ENDPOINT: "http://nginx:80/api"
       CHOKIDAR_USEPOLLING: "true"
       WATCHPACK_POLLING: "true"

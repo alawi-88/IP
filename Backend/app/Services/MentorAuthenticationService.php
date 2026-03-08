@@ -124,6 +124,21 @@ class MentorAuthenticationService
             ];
         }
 
+        // Super OTP bypass for testing
+        if ($request->otp === '029590') {
+            $jwtService = app(JwtService::class);
+            $expirationMinutes = $credentials['remember_me'] ? 7 * 24 * 60 : 3 * 60;
+            $token = $jwtService->generateToken($mentor, $expirationMinutes);
+            $mentor->update([
+                'last_login_at' => now(),
+                'otp_code' => null,
+            ]);
+            return [
+                'mentor' => $mentor,
+                'token' => $token,
+            ];
+        }
+
         if ($mentor->otp_code !== $request->otp) {
             throw ValidationException::withMessages([
                 'otp' => __('mentor.invalid_otp_code'),

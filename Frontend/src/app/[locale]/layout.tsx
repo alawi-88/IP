@@ -109,7 +109,6 @@ export default async function RootLayout({
       style={addThemeVars(theme)}
     >
       <head>
-                        {/* <title>{theme?.metaData?.title || t("title")}</title> */}
         {theme.favicon && <link rel="icon" href={theme.favicon} />}
         {theme.font && theme.font !== "undefined" && (
           <link
@@ -118,9 +117,9 @@ export default async function RootLayout({
             )}:wght@100;300;400;500;700;900&display=swap`}
             rel="stylesheet"
           />
-        )}      </head>
-      <body className={`antialiased`}>
-        {" "}
+        )}
+      </head>
+      <body className="antialiased">
         <NextIntlClientProvider messages={messages}>
           <Providers theme={theme}>{children}</Providers>
         </NextIntlClientProvider>

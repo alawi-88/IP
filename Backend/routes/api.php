@@ -98,6 +98,25 @@ Route::prefix('participants')->group(function () {
             });
             Route::post('program-applications/reset-draft', [ProgramApplicationController::class, 'resetDraft'])->name('program-applications.reset-draft');
 
+            // Startup Management & Venture Analysis
+            Route::post('startups/generate', [\App\Http\Controllers\Api\Participant\StartupController::class, 'generateWithAi']);
+            Route::apiResource('startups', \App\Http\Controllers\Api\Participant\StartupController::class);
+            Route::post('startups/{startup}/restore', [\App\Http\Controllers\Api\Participant\StartupController::class, 'restore']);
+            Route::post('startups/{startup}/export', [\App\Http\Controllers\Api\Participant\StartupController::class, 'export']);
+
+            Route::prefix('startups/{startup}')->scopeBindings()->group(function () {
+                Route::apiResource('sections', \App\Http\Controllers\Api\Participant\VaSectionController::class)->only(['index', 'show']);
+                Route::prefix('sections/{section}')->group(function () {
+                    Route::apiResource('pages', \App\Http\Controllers\Api\Participant\VaPageController::class)->only(['show', 'update']);
+                    Route::post('pages/{page}/complete', [\App\Http\Controllers\Api\Participant\VaPageController::class, 'complete']);
+                    Route::post('pages/{page}/ai-generate', [\App\Http\Controllers\Api\Participant\AiGenerationController::class, 'generate']);
+                    Route::post('ai-generations/{generation}/accept', [\App\Http\Controllers\Api\Participant\AiGenerationController::class, 'accept']);
+                    Route::post('ai-generations/{generation}/modify', [\App\Http\Controllers\Api\Participant\AiGenerationController::class, 'modify']);
+                    Route::post('ai-generations/{generation}/dismiss', [\App\Http\Controllers\Api\Participant\AiGenerationController::class, 'dismiss']);
+                    Route::get('pages/{page}/ai-history', [\App\Http\Controllers\Api\Participant\AiGenerationController::class, 'history']);
+                });
+            });
+
                 Route::get('projects/{project}/comments', [ProjectCommentController::class, 'index']);
                 Route::post('projects/{project}/comments', [ProjectCommentController::class, 'store']);
                 Route::post('projects/{project}/comments/mark-read', [ProjectCommentController::class, 'markRead']);

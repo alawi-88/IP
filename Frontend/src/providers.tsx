@@ -10,7 +10,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, App } from "antd";
 import { form, createThemeConfig } from "./config/antd";
 import { useLocale } from "next-intl";
 import { useEffect } from "react";
@@ -131,7 +131,7 @@ export default function Providers({
               !storeTheme?.theme_status ? "opacity-0" : "opacity-1"
             }`}
           >
-            <BrandingProvider>{children}</BrandingProvider>
+            <App><BrandingProvider>{children}</BrandingProvider></App>
           </div>
         </ConfigProvider>
       </AntdRegistry>
