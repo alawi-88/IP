@@ -6,10 +6,13 @@ use App\Traits\HasActivityLog;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\SchemalessAttributes\Casts\SchemalessAttributes;
+use Spatie\Translatable\HasTranslations;
 
 class FormStep extends Model
 {
-    use LogsActivity, HasActivityLog;
+    use LogsActivity, HasActivityLog, HasTranslations;
+
+    public array $translatable = ['name'];
 
     protected $fillable = [
         'form_id',
