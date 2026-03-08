@@ -19,7 +19,7 @@ class FormAiScoringConfigResource extends Resource
     protected static ?string $model = FormAiScoringConfig::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-sparkles';
-    protected static ?string $navigationGroup = 'AI Agent';
+    protected static ?string $navigationGroup = 'AI & Automation';
     protected static ?string $navigationLabel = 'AI Scoring';
     protected static ?int $navigationSort = 1;
 

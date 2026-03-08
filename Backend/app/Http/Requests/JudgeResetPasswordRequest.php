@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class JudgeResetPasswordRequest extends FormRequest
@@ -29,7 +28,6 @@ class JudgeResetPasswordRequest extends FormRequest
     {
         return
             [
-                'g-recaptcha-response' => ['bail', 'required', new ReCaptcha()],
                 'email' => 'required|email|exists:judges,email',
             ];
     }

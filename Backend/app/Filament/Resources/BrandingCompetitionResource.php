@@ -22,11 +22,11 @@ class BrandingCompetitionResource extends Resource
     protected static ?string $model = BrandingCompetition::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Brandings';
+    protected static ?string $navigationGroup = 'System';
     protected static ?string $navigationLabel = 'Branding Programs';
     protected static ?string $modelLabel = 'Branding Program';
 protected static ?string $pluralModelLabel = 'Branding Programs';
-    protected static ?int $navigationSort = 92;
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

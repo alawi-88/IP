@@ -7,7 +7,7 @@ import { useRouter } from "@/i18n/routing";
 import { useUserStore } from "@/store/user";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Form, message, Button, Spin, Radio, Steps, Select, Modal } from "antd";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useFormScrollToError } from "@/hooks/useFormScrollToError";
@@ -30,6 +30,7 @@ import { PiStarFourFill } from "react-icons/pi";
 
 export default function Register() {
   const t = useTranslations();
+  const locale = useLocale();
   const [form] = Form.useForm();
   const router = useRouter();
   const { id } = useParams();
@@ -1124,7 +1125,7 @@ export default function Register() {
                 size="small"
                 responsive
                 items={dynamicForm?.steps?.map((step: any) => ({
-                  title: step?.name,
+                  title: typeof step?.name === "object" ? (step?.name?.[locale] || step?.name?.en || step?.name?.ar) : step?.name,
                 }))}
               />
             )}

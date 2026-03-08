@@ -21,7 +21,17 @@ class CreateCompetitionTabs
      */
     public function handle(CompetitionCreated $event): void
     {
-        // Create only the Team Formation stage
+        // Create all participation hub tabs for the new competition
+        $tabs = ['events', 'mentors', 'my-team', 'teams', 'projects', 'guidelines', 'leaderboard'];
+
+        foreach ($tabs as $tab) {
+            $event->competition->tabs()->updateOrCreate(
+                ['tab' => $tab],
+                ['is_visible' => true]
+            );
+        }
+
+        // Create the Team Formation stage
         $event->competition->stages()->updateOrCreate(
             ['slug' => 'team-formation'],
             [

@@ -21,7 +21,7 @@ class CompetitionApplicationResource extends Resource
     protected static ?string $modelLabel = 'Program Application';
     protected static ?string $pluralModelLabel = 'Program Applications';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 2;
 
 
     public static function getNavigationLabel(): string

@@ -17,9 +17,9 @@ class ParticipantResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
-    protected static ?string $navigationGroup = 'Users';
+    protected static ?string $navigationGroup = 'Users & Roles';
 
-    protected static ?int $navigationSort = 25;
+    protected static ?int $navigationSort = 1;
 
 
     public static function getRelations(): array

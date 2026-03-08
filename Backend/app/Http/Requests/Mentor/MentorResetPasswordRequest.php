@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Mentor;
 
-use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MentorResetPasswordRequest extends FormRequest
@@ -23,7 +22,6 @@ class MentorResetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'g-recaptcha-response' => ['bail', 'required', new ReCaptcha()],
             'code' => ['required', 'string'],
             'password' => ['required', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*_-]).{12,}$/', 'confirmed'],
         ];

@@ -15,11 +15,11 @@ class TaskAssignmentResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = 'Programs';
+    protected static ?string $navigationGroup = 'AI & Automation';
     protected static ?string $modelLabel = 'Task Assignment';
     protected static ?string $pluralModelLabel = 'Task Assignments';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 4;
 
     public static function getNavigationLabel(): string
     {

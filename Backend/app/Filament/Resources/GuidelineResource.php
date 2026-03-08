@@ -18,9 +18,9 @@ class GuidelineResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 5;
 
-    protected static ?string $navigationGroup = 'Programs';
+    protected static ?string $navigationGroup = 'Forms & Content';
 
 
     public static function getRelations(): array

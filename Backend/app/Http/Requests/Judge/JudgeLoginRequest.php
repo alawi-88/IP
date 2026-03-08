@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Judge;
 
-use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class JudgeLoginRequest extends FormRequest
@@ -29,10 +28,6 @@ class JudgeLoginRequest extends FormRequest
             'password' => 'required',
             'otp' => 'nullable|numeric|digits:6',
         ];
-
-        {
-            $rules['g-recaptcha-response'] = ['bail', 'required', new ReCaptcha()];
-        }
 
         return $rules;
     }

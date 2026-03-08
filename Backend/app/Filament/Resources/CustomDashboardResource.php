@@ -21,9 +21,9 @@ class CustomDashboardResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar-square';
 
-    protected static ?string $navigationGroup = 'Analytics';
+    protected static ?string $navigationGroup = 'System';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $slug = 'dashboards';
 

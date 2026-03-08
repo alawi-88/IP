@@ -338,6 +338,7 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::apiResource('competitions', CompetitionController::class)->only(['index', 'show'])->missing(function () {
         return response()->json(['message' => 'Competition not found'], 404);
     });
+    Route::get('competitions/{competition}/labels', [CompetitionController::class, 'labels']);
 });
 // countries
 Route::get('countries', CountryController::class);

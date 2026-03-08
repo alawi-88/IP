@@ -16,9 +16,9 @@ class JudgeResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-scale';
 
-    protected static ?string $navigationGroup = 'Users';
+    protected static ?string $navigationGroup = 'Users & Roles';
 
-    protected static ?int $navigationSort = 26;
+    protected static ?int $navigationSort = 2;
 
     public static function getPages(): array
     {

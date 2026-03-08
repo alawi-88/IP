@@ -22,10 +22,10 @@ class EmailTemplateResource extends Resource
 {
     protected static ?string $model = EmailTemplate::class;
     protected static ?string $navigationLabel = 'Email Templates';
-    protected static ?string $navigationGroup = 'Notification Management';
+    protected static ?string $navigationGroup = 'Notifications & Approvals';
 
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
-    protected static ?int $navigationSort = 99;
+    protected static ?int $navigationSort = 5;
     public static function form(Form $form): Form
     {
         return $form

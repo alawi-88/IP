@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Mentor;
 
-use App\Rules\ReCaptcha;
 use Illuminate\Foundation\Http\FormRequest;
 
 class MentorForgotPasswordRequest extends FormRequest
@@ -35,7 +34,6 @@ class MentorForgotPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'g-recaptcha-response' => ['bail', 'required', new ReCaptcha()],
             'email' => ['required', 'email', 'exists:mentors,email'],
         ];
     }

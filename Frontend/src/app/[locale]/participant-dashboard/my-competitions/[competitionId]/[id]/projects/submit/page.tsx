@@ -38,6 +38,7 @@ import { PiStarFourFill } from "react-icons/pi";
 
 export default function ProjectSubmit() {
   const t = useTranslations();
+  const locale = useLocale();
   const [form] = Form.useForm();
   const router = useRouter();
   const { id, competitionId, projectId } = useParams<{
@@ -965,7 +966,7 @@ export default function ProjectSubmit() {
             size="small"
             responsive
             items={dynamicForm?.steps?.map((step: any) => ({
-              title: step?.name,
+              title: typeof step?.name === "object" ? (step?.name?.[locale] || step?.name?.en || step?.name?.ar) : step?.name,
             }))}
           />
         )}

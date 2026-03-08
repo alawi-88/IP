@@ -16,9 +16,9 @@ class EventResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationGroup = 'Programs';
+    protected static ?string $navigationGroup = 'Forms & Content';
 
 
     public static function getPages(): array

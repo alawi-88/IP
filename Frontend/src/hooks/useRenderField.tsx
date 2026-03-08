@@ -86,7 +86,7 @@ export function useRenderFieldType() {
             {...commonProps}
           >
             {field?.options?.map((opt, index) => (
-              <Option key={index} value={opt.id.toString()}>
+              <Option key={index} value={opt?.id?.toString() ?? index.toString()}>
                 {opt.label}
               </Option>
             ))}
@@ -106,7 +106,7 @@ export function useRenderFieldType() {
             {...commonProps}
           >
             {field?.options?.map((opt, index) => (
-              <Option key={index} value={opt.id.toString()}>
+              <Option key={index} value={opt?.id?.toString() ?? index.toString()}>
                 {opt.label}
               </Option>
             ))}
@@ -132,7 +132,7 @@ export function useRenderFieldType() {
             {...commonProps}
           >
             {field?.options?.map((opt, index) => (
-              <Radio key={index} value={opt.id.toString()}>
+              <Radio key={index} value={opt?.id?.toString() ?? index.toString()}>
                 {opt.label}
               </Radio>
             ))}
@@ -152,7 +152,7 @@ export function useRenderFieldType() {
             {...commonProps}
           >
             {field?.options?.map((opt, index) => (
-              <Checkbox key={index} value={opt.id.toString()}>
+              <Checkbox key={index} value={opt?.id?.toString() ?? index.toString()}>
                 {opt.label}
               </Checkbox>
             ))}
@@ -167,7 +167,7 @@ export function useRenderFieldType() {
             {field?.options?.map((opt, index) => (
               <Radio.Button
                 key={index}
-                value={opt.id.toString()}
+                value={opt?.id?.toString() ?? index.toString()}
                 rootClassName="evaluate"
               >
                 {opt.label}

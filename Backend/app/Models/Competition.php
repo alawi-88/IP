@@ -309,6 +309,11 @@ class Competition extends Model
         return $this->hasMany(Track::class)->orderBy('order', 'asc');
     }
 
+    public function labels()
+    {
+        return $this->hasMany(CompetitionLabel::class);
+    }
+
     public function winners()
     {
         return $this->hasMany(Winner::class);

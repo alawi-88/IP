@@ -6,6 +6,7 @@ use App\Filters\Competitions\Status;
 use App\Filters\Competitions\ProgramType;
 use App\Http\Resources\CompetitionResource;
 use App\Models\Competition;
+use App\Models\CompetitionLabel;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pipeline\Pipeline;
@@ -96,6 +97,31 @@ class CompetitionController extends Controller
 
         return new CompetitionResource($competition, null, $application?->id);
     }
+    /**
+     * Get all labels for a competition, keyed for easy frontend consumption.
+     */
+    public function labels(Competition $competition): JsonResponse
+    {
+        $labels = $competition->labels()
+            ->orderBy('category')
+            ->orderBy('key')
+            ->get();
+
+        // Return as a flat key-value map for easy frontend usage
+        // e.g., { "btn_register": { "en": "Register Now", "ar": "سجل الآن" }, ... }
+        $mapped = $labels->mapWithKeys(function ($label) {
+            return [$label->key => [
+                'en' => $label->label_en,
+                'ar' => $label->label_ar,
+                'category' => $label->category,
+            ]];
+        });
+
+        return response()->json([
+            'data' => $mapped,
+        ]);
+    }
+
     public function getProgramsCountByType(): array
 {
     $types = ['Hackathon', 'Sandbox', 'Idea Bank'];

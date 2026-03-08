@@ -12,13 +12,16 @@ class RegistrationEvaluationFormResource extends Resource
 {
     protected static ?string $model = RegistrationEvaluationForm::class;
 
+    // Managed via Competition Hub
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
 
-    protected static ?string $navigationGroup = 'Programs';
+    protected static ?string $navigationGroup = 'Forms & Configuration';
     protected static ?string $modelLabel = 'Evaluation Form';
     protected static ?string $pluralModelLabel = 'Evaluation Forms';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 8;
 
     public static function getNavigationLabel(): string
     {

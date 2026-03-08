@@ -239,11 +239,6 @@ return [
         'max' => 'Uploaded files must not exceed 100 MB',
     ],
 
-    'recaptcha' => [
-        'required' => 'The reCAPTCHA code is required.',
-        'failed' => 'Failed to validate reCAPTCHA.',
-        'score_too_low' => 'The reCAPTCHA score is too low.',
-    ],
     'linkedin' => [
         'url' => 'The LinkedIn field must be a valid URL.',
         'max' => 'The LinkedIn field must not exceed 255 characters.',

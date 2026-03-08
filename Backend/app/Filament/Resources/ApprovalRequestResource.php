@@ -21,7 +21,9 @@ class ApprovalRequestResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
-    protected static ?string $navigationGroup = 'Approvals';
+    protected static ?string $navigationGroup = 'Notifications & Approvals';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $navigationLabel = 'Approval Requests';
 

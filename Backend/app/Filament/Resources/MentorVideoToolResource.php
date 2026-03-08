@@ -29,9 +29,9 @@ class MentorVideoToolResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Video Tool Integrations';
 
-    protected static ?string $navigationGroup = 'Mentor Management';
+    protected static ?string $navigationGroup = 'Users & Roles';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
