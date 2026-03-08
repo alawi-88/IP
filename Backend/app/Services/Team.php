@@ -765,14 +765,6 @@ class Team
 
         // Validate MAXIMUM team size - reject if exceeded
         if ($totalAfterAdd > $maxTeamMembers) {
-                'new_members_count' => $newMembersCount,
-                'leader_is_member' => $leaderIsMember,
-                'total_after_add' => $totalAfterAdd,
-                'max_team_members' => $maxTeamMembers,
-                'min_team_members' => $minTeamMembers,
-                'participant_ids' => $participantIds,
-            ]);
-            
             throw \Illuminate\Validation\ValidationException::withMessages([
                 'serial_numbers' => [
                     __('competition_application.The total number of team members must not exceed :max.', [
