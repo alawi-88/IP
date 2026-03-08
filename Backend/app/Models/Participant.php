@@ -42,6 +42,7 @@ class Participant extends Authenticatable implements MustVerifyEmail
         'recovery_email',
         'recovery_email_temp',
         'email_verified_at',
+        'preferred_locale',
         'activation_code',
         'phone',
         'gender',
@@ -121,6 +122,16 @@ class Participant extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
+     * Preferred language for emails and notifications (IN-2052).
+     * Returns 'en' or 'ar'; used by getUserPreferredLocale() and notification locale.
+     */
+    public function preferredLocale(): string
+    {
+        $locale = $this->preferred_locale ?? 'en';
+        return in_array($locale, ['en', 'ar'], true) ? $locale : 'en';
+    }
+
+    /**
      * Override the default notification
      */
     public function sendEmailVerificationNotification(): void
@@ -186,6 +197,11 @@ class Participant extends Authenticatable implements MustVerifyEmail
             'id',
             'team_id'
         );
+    }
+
+    public function ventures(): HasMany
+    {
+        return $this->hasMany(\App\Models\Venture::class);
     }
 
     public function satisfactions(): HasMany
