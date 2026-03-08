@@ -1,0 +1,704 @@
+{
+  "info": {
+    "name": "Innovation Platform API",
+    "description": "Complete API collection for the Innovation Platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000/api" },
+    { "key": "token", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Public",
+      "item": [
+        {
+          "name": "Get Branding Settings",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/branding-settings", "host": ["{{base_url}}"], "path": ["branding-settings"] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Landing Page",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/landing-page", "host": ["{{base_url}}"], "path": ["landing-page"] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Services",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/services", "host": ["{{base_url}}"], "path": ["services"] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Service by ID",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/services/:id", "host": ["{{base_url}}"], "path": ["services", ":id"], "variable": [{ "key": "id", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Page by Slug",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/pages/:slug", "host": ["{{base_url}}"], "path": ["pages", ":slug"], "variable": [{ "key": "slug", "value": "about" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Countries",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/countries", "host": ["{{base_url}}"], "path": ["countries"] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Nationalities",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/nationalities", "host": ["{{base_url}}"], "path": ["nationalities"] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Cities",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/cities?country_id=", "host": ["{{base_url}}"], "path": ["cities"], "query": [{ "key": "country_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Social Links",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/social-links", "host": ["{{base_url}}"], "path": ["social-links"] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Competitions",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/competitions", "host": ["{{base_url}}"], "path": ["competitions"] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Competition by ID",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/competitions/:id", "host": ["{{base_url}}"], "path": ["competitions", ":id"], "variable": [{ "key": "id", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Registration Form",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/registration?competition_id=", "host": ["{{base_url}}"], "path": ["forms", "registration"], "query": [{ "key": "competition_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Projects Form",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/projects?competition_id=", "host": ["{{base_url}}"], "path": ["forms", "projects"], "query": [{ "key": "competition_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Projects Form Detail",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/projects/form?form_id=", "host": ["{{base_url}}"], "path": ["forms", "projects", "form"], "query": [{ "key": "form_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Team Form Config",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/team-form-config?competition_id=", "host": ["{{base_url}}"], "path": ["forms", "team-form-config"], "query": [{ "key": "competition_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Projects Form Config",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/projects-form-config?form_id=", "host": ["{{base_url}}"], "path": ["forms", "projects-form-config"], "query": [{ "key": "form_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Evaluations Form",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/evaluations?competition_id=", "host": ["{{base_url}}"], "path": ["forms", "evaluations"], "query": [{ "key": "competition_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Evaluations Form Detail",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/evaluations/form?form_id=", "host": ["{{base_url}}"], "path": ["forms", "evaluations", "form"], "query": [{ "key": "form_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Evaluations Stages",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/evaluations/stages?competition_id=", "host": ["{{base_url}}"], "path": ["forms", "evaluations", "stages"], "query": [{ "key": "competition_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Field Types",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/field-types", "host": ["{{base_url}}"], "path": ["forms", "field-types"] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Enhance Form Field",
+          "request": { "method": "POST", "url": { "raw": "{{base_url}}/forms/enhance", "host": ["{{base_url}}"], "path": ["forms", "enhance"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"text\": \"\",\n  \"field_type\": \"\"\n}" }, "auth": { "type": "noauth" } }
+        },
+        {
+          "name": "Get Registration Config",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/forms/registration-config", "host": ["{{base_url}}"], "path": ["forms", "registration-config"] }, "header": [{ "key": "Accept", "value": "application/json" }], "auth": { "type": "noauth" } }
+        }
+      ]
+    },
+    {
+      "name": "Participants",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/auth/register", "host": ["{{base_url}}"], "path": ["participants", "auth", "register"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\",\n  \"password\": \"\",\n  \"name\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Login",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/auth/login", "host": ["{{base_url}}"], "path": ["participants", "auth", "login"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\",\n  \"password\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Activate Account",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/activate-account", "host": ["{{base_url}}"], "path": ["participants", "activate-account"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"activation_code\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Resend OTP",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/resend-otp", "host": ["{{base_url}}"], "path": ["participants", "resend-otp"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Forgot Password",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/forgot-password", "host": ["{{base_url}}"], "path": ["participants", "forgot-password"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Reset Password",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/reset-password", "host": ["{{base_url}}"], "path": ["participants", "reset-password"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"code\": \"\",\n  \"password\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Check Password Reset Code",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/check-password-reset-code", "host": ["{{base_url}}"], "path": ["participants", "check-password-reset-code"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"code\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Logout",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/auth/logout", "host": ["{{base_url}}"], "path": ["participants", "auth", "logout"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Profile",
+          "item": [
+            {
+              "name": "Get Profile",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/profile", "host": ["{{base_url}}"], "path": ["participants", "profile"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Request Recovery Email OTP",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/profile/recovery-email/request-otp", "host": ["{{base_url}}"], "path": ["participants", "profile", "recovery-email", "request-otp"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"recovery_email\": \"\"\n}" } }
+            },
+            {
+              "name": "Verify Recovery Email OTP",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/profile/recovery-email/verify-otp", "host": ["{{base_url}}"], "path": ["participants", "profile", "recovery-email", "verify-otp"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"otp_code\": \"\"\n}" } }
+            }
+          ]
+        },
+        {
+          "name": "Notifications",
+          "item": [
+            {
+              "name": "Get Notifications",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/notifications", "host": ["{{base_url}}"], "path": ["participants", "notifications"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Mark Notification as Read",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/notifications/:notification/mark-as-read", "host": ["{{base_url}}"], "path": ["participants", "notifications", ":notification", "mark-as-read"], "variable": [{ "key": "notification", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Mark All Notifications as Read",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/notifications/mark-all-as-read", "host": ["{{base_url}}"], "path": ["participants", "notifications", "mark-all-as-read"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Competition Applications",
+          "item": [
+            {
+              "name": "List Applications",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/competition-applications?program_type=", "host": ["{{base_url}}"], "path": ["participants", "competition-applications"], "query": [{ "key": "program_type", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Create Application",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/competition-applications", "host": ["{{base_url}}"], "path": ["participants", "competition-applications"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"competition_id\": \"\",\n  \"form_id\": \"\",\n  \"answers\": [],\n  \"type\": \"\"\n}" } }
+            },
+            {
+              "name": "Get Application",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/competition-applications/:application", "host": ["{{base_url}}"], "path": ["participants", "competition-applications", ":application"], "variable": [{ "key": "application", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Reset Draft",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/competition-applications/reset-draft", "host": ["{{base_url}}"], "path": ["participants", "competition-applications", "reset-draft"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"application_id\": \"\"\n}" } }
+            },
+            {
+              "name": "My Applications",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/my-competition-applications", "host": ["{{base_url}}"], "path": ["participants", "my-competition-applications"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Comments",
+          "item": [
+            {
+              "name": "Get Project Comments",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/projects/:project/comments", "host": ["{{base_url}}"], "path": ["participants", "projects", ":project", "comments"], "variable": [{ "key": "project", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Add Project Comment",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/projects/:project/comments", "host": ["{{base_url}}"], "path": ["participants", "projects", ":project", "comments"], "variable": [{ "key": "project", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"comment\": \"\",\n  \"attachments\": []\n}" } }
+            },
+            {
+              "name": "Mark Project Comments Read",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/projects/:project/comments/mark-read", "host": ["{{base_url}}"], "path": ["participants", "projects", ":project", "comments", "mark-read"], "variable": [{ "key": "project", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Application Comments",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/applications/:application/comments", "host": ["{{base_url}}"], "path": ["participants", "applications", ":application", "comments"], "variable": [{ "key": "application", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Add Application Comment",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/applications/:application/comments", "host": ["{{base_url}}"], "path": ["participants", "applications", ":application", "comments"], "variable": [{ "key": "application", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"comment\": \"\",\n  \"attachments\": []\n}" } }
+            },
+            {
+              "name": "Mark Application Comments Read",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/applications/:application/comments/mark-read", "host": ["{{base_url}}"], "path": ["participants", "applications", ":application", "comments", "mark-read"], "variable": [{ "key": "application", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Events & Mentors",
+          "item": [
+            {
+              "name": "List Events",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/events", "host": ["{{base_url}}"], "path": ["participants", "events"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Event",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/events/:event", "host": ["{{base_url}}"], "path": ["participants", "events", ":event"], "variable": [{ "key": "event", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "List Mentors",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/mentors", "host": ["{{base_url}}"], "path": ["participants", "mentors"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Mentor",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/mentors/:mentor", "host": ["{{base_url}}"], "path": ["participants", "mentors", ":mentor"], "variable": [{ "key": "mentor", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Mentor Available Slots",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/mentors/:mentorId/available-slots?date=&duration_minutes=&application_id=", "host": ["{{base_url}}"], "path": ["participants", "mentors", ":mentorId", "available-slots"], "variable": [{ "key": "mentorId", "value": "1" }], "query": [{ "key": "date", "value": "" }, { "key": "duration_minutes", "value": "" }, { "key": "application_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Mentor Sessions (by Mentor)",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/mentors/:mentorId/mentor-sessions?application_id=&status=", "host": ["{{base_url}}"], "path": ["participants", "mentors", ":mentorId", "mentor-sessions"], "variable": [{ "key": "mentorId", "value": "1" }], "query": [{ "key": "application_id", "value": "" }, { "key": "status", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Book Mentor Session",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/mentors/:mentorId/mentor-sessions", "host": ["{{base_url}}"], "path": ["participants", "mentors", ":mentorId", "mentor-sessions"], "variable": [{ "key": "mentorId", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"application_id\": \"\",\n  \"scheduled_at\": \"\",\n  \"duration_minutes\": 30\n}" } }
+            },
+            {
+              "name": "List My Mentor Sessions",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/mentor-sessions?application_id=&category=&start_date=&end_date=&status=", "host": ["{{base_url}}"], "path": ["participants", "mentor-sessions"], "query": [{ "key": "application_id", "value": "" }, { "key": "category", "value": "" }, { "key": "start_date", "value": "" }, { "key": "end_date", "value": "" }, { "key": "status", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Mentor Session",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/mentor-sessions/:session", "host": ["{{base_url}}"], "path": ["participants", "mentor-sessions", ":session"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Reschedule Session",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/participants/mentor-sessions/:session/reschedule", "host": ["{{base_url}}"], "path": ["participants", "mentor-sessions", ":session", "reschedule"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"scheduled_at\": \"\",\n  \"duration_minutes\": 30\n}" } }
+            },
+            {
+              "name": "Cancel Session",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/mentor-sessions/:session/cancel", "host": ["{{base_url}}"], "path": ["participants", "mentor-sessions", ":session", "cancel"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"reason\": \"\"\n}" } }
+            }
+          ]
+        },
+        {
+          "name": "Teams",
+          "item": [
+            {
+              "name": "List Teams",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/teams?application_id=", "host": ["{{base_url}}"], "path": ["participants", "teams"], "query": [{ "key": "application_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Create Team",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/teams", "host": ["{{base_url}}"], "path": ["participants", "teams"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"application_id\": \"\",\n  \"members\": [],\n  \"track_id\": \"\",\n  \"sub_track_id\": \"\"\n}" } }
+            },
+            {
+              "name": "Get Team",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/teams/:team", "host": ["{{base_url}}"], "path": ["participants", "teams", ":team"], "variable": [{ "key": "team", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Update Team",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/participants/teams/:team", "host": ["{{base_url}}"], "path": ["participants", "teams", ":team"], "variable": [{ "key": "team", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}" } }
+            },
+            {
+              "name": "Mark Team as Completed",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/participants/teams/:team/mark-as-completed", "host": ["{{base_url}}"], "path": ["participants", "teams", ":team", "mark-as-completed"], "variable": [{ "key": "team", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Update Team Members",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/participants/teams/:team/members", "host": ["{{base_url}}"], "path": ["participants", "teams", ":team", "members"], "variable": [{ "key": "team", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"serial_numbers\": []\n}" } }
+            },
+            {
+              "name": "Delete Team Members",
+              "request": { "method": "DELETE", "url": { "raw": "{{base_url}}/participants/teams/:team/members", "host": ["{{base_url}}"], "path": ["participants", "teams", ":team", "members"], "variable": [{ "key": "team", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"serial_numbers\": []\n}" } }
+            },
+            {
+              "name": "Get My Team",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/my-team", "host": ["{{base_url}}"], "path": ["participants", "my-team"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Projects",
+          "item": [
+            {
+              "name": "Check If Submitted",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/projects/is-submitted", "host": ["{{base_url}}"], "path": ["participants", "projects", "is-submitted"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Reset Project Draft",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/projects/reset-draft", "host": ["{{base_url}}"], "path": ["participants", "projects", "reset-draft"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"project_id\": \"\"\n}" } }
+            },
+            {
+              "name": "List Projects",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/projects", "host": ["{{base_url}}"], "path": ["participants", "projects"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Create Project",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/projects", "host": ["{{base_url}}"], "path": ["participants", "projects"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"team_id\": \"\",\n  \"form_id\": \"\",\n  \"form_submissions\": [],\n  \"type\": \"\"\n}" } }
+            },
+            {
+              "name": "Get Project",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/projects/:project", "host": ["{{base_url}}"], "path": ["participants", "projects", ":project"], "variable": [{ "key": "project", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Other",
+          "item": [
+            {
+              "name": "List Guidelines",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/guidelines", "host": ["{{base_url}}"], "path": ["participants", "guidelines"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Guideline",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/guidelines/:guideline", "host": ["{{base_url}}"], "path": ["participants", "guidelines", ":guideline"], "variable": [{ "key": "guideline", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Winners",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/winners", "host": ["{{base_url}}"], "path": ["participants", "winners"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Leaderboard",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/leaderboard", "host": ["{{base_url}}"], "path": ["participants", "leaderboard"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Competition Tabs",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/competition-tabs", "host": ["{{base_url}}"], "path": ["participants", "competition-tabs"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Check Satisfaction Submitted",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/satisfactions/is-submitted", "host": ["{{base_url}}"], "path": ["participants", "satisfactions", "is-submitted"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Satisfactions",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/participants/satisfactions", "host": ["{{base_url}}"], "path": ["participants", "satisfactions"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Submit Satisfaction",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/participants/satisfactions", "host": ["{{base_url}}"], "path": ["participants", "satisfactions"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}" } }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Judges",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/auth/register", "host": ["{{base_url}}"], "path": ["judges", "auth", "register"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"first_name\": \"\",\n  \"last_name\": \"\",\n  \"email\": \"\",\n  \"password\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Login",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/auth/login", "host": ["{{base_url}}"], "path": ["judges", "auth", "login"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\",\n  \"password\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Activate Account",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/activate-account", "host": ["{{base_url}}"], "path": ["judges", "activate-account"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"activation_code\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Resend Activation",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/resend-activation", "host": ["{{base_url}}"], "path": ["judges", "resend-activation"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Forget Password",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/forget-password", "host": ["{{base_url}}"], "path": ["judges", "forget-password"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Reset Password",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/reset-password", "host": ["{{base_url}}"], "path": ["judges", "reset-password"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"code\": \"\",\n  \"password\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Check Password Reset Code",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/check-password-reset-code", "host": ["{{base_url}}"], "path": ["judges", "check-password-reset-code"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"code\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Resend OTP",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/resend-otp", "host": ["{{base_url}}"], "path": ["judges", "resend-otp"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Logout",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/auth/logout", "host": ["{{base_url}}"], "path": ["judges", "auth", "logout"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Profile & Projects",
+          "item": [
+            {
+              "name": "Get Profile",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/judges/profile", "host": ["{{base_url}}"], "path": ["judges", "profile"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Update Profile",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/judges/profile", "host": ["{{base_url}}"], "path": ["judges", "profile"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}" } }
+            },
+            {
+              "name": "List Projects",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/judges/projects?type=&competition_id=&stage_id=", "host": ["{{base_url}}"], "path": ["judges", "projects"], "query": [{ "key": "type", "value": "" }, { "key": "competition_id", "value": "" }, { "key": "stage_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Project",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/judges/projects/:projectId", "host": ["{{base_url}}"], "path": ["judges", "projects", ":projectId"], "variable": [{ "key": "projectId", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Evaluations",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/judges/evaluations?project_id=", "host": ["{{base_url}}"], "path": ["judges", "evaluations"], "query": [{ "key": "project_id", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Submit Evaluation",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/evaluations", "host": ["{{base_url}}"], "path": ["judges", "evaluations"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"project_id\": \"\",\n  \"form_id\": \"\",\n  \"stage_id\": \"\",\n  \"answers\": []\n}" } }
+            }
+          ]
+        },
+        {
+          "name": "Notifications & Disclaimer",
+          "item": [
+            {
+              "name": "Get Notifications",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/judges/notifications", "host": ["{{base_url}}"], "path": ["judges", "notifications"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Mark Notification as Read",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/notifications/:notification/mark-as-read", "host": ["{{base_url}}"], "path": ["judges", "notifications", ":notification", "mark-as-read"], "variable": [{ "key": "notification", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Mark All Notifications Read",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judges/notifications/mark-all-as-read", "host": ["{{base_url}}"], "path": ["judges", "notifications", "mark-all-as-read"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Check Disclaimer Status",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/judge/disclaimer-status", "host": ["{{base_url}}"], "path": ["judge", "disclaimer-status"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Accept Disclaimer",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/judge/accept-disclaimer", "host": ["{{base_url}}"], "path": ["judge", "accept-disclaimer"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Mentors",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/auth/register", "host": ["{{base_url}}"], "path": ["mentors", "auth", "register"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\",\n  \"password\": \"\",\n  \"name\": \"\",\n  \"phone\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Login",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/auth/login", "host": ["{{base_url}}"], "path": ["mentors", "auth", "login"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\",\n  \"password\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Resend OTP",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/resend-otp", "host": ["{{base_url}}"], "path": ["mentors", "resend-otp"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Forgot Password",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/forgot-password", "host": ["{{base_url}}"], "path": ["mentors", "forgot-password"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Reset Password",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/reset-password", "host": ["{{base_url}}"], "path": ["mentors", "reset-password"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"code\": \"\",\n  \"password\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Check Password Reset Code",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/check-password-reset-code", "host": ["{{base_url}}"], "path": ["mentors", "check-password-reset-code"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"code\": \"\"\n}" }, "auth": { "type": "noauth" } }
+            },
+            {
+              "name": "Logout",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/auth/logout", "host": ["{{base_url}}"], "path": ["mentors", "auth", "logout"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Profile",
+          "item": [
+            {
+              "name": "Get Profile",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/profile", "host": ["{{base_url}}"], "path": ["mentors", "profile"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Update Profile",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/profile", "host": ["{{base_url}}"], "path": ["mentors", "profile"] }, "header": [{ "key": "Accept", "value": "application/json" }], "body": { "mode": "formdata", "formdata": [{ "key": "name", "value": "", "type": "text" }, { "key": "avatar", "type": "file", "src": "" }] } }
+            }
+          ]
+        },
+        {
+          "name": "Availability",
+          "item": [
+            {
+              "name": "Get Availability",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/availability?raw=", "host": ["{{base_url}}"], "path": ["mentors", "availability"], "query": [{ "key": "raw", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Availability for Date",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/availability/date/:date", "host": ["{{base_url}}"], "path": ["mentors", "availability", "date", ":date"], "variable": [{ "key": "date", "value": "2026-01-15" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Create Availability",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/availability", "host": ["{{base_url}}"], "path": ["mentors", "availability"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "[\n  {\n    \"day_of_week\": \"\",\n    \"date\": \"\",\n    \"is_recurring\": false,\n    \"slots\": []\n  }\n]" } }
+            },
+            {
+              "name": "Update Availability",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/mentors/availability/:availability", "host": ["{{base_url}}"], "path": ["mentors", "availability", ":availability"], "variable": [{ "key": "availability", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}" } }
+            },
+            {
+              "name": "Delete Availability",
+              "request": { "method": "DELETE", "url": { "raw": "{{base_url}}/mentors/availability/:availability", "host": ["{{base_url}}"], "path": ["mentors", "availability", ":availability"], "variable": [{ "key": "availability", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Sessions",
+          "item": [
+            {
+              "name": "List Sessions",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/sessions?status=&start_date=&end_date=", "host": ["{{base_url}}"], "path": ["mentors", "sessions"], "query": [{ "key": "status", "value": "" }, { "key": "start_date", "value": "" }, { "key": "end_date", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Session History",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/sessions/history?status=&category=&start_date=&end_date=&sort=&per_page=", "host": ["{{base_url}}"], "path": ["mentors", "sessions", "history"], "query": [{ "key": "status", "value": "" }, { "key": "category", "value": "" }, { "key": "start_date", "value": "" }, { "key": "end_date", "value": "" }, { "key": "sort", "value": "" }, { "key": "per_page", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Pending Requests",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/sessions/pending-requests", "host": ["{{base_url}}"], "path": ["mentors", "sessions", "pending-requests"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Available Slots",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/sessions/available-slots?date=&duration_minutes=", "host": ["{{base_url}}"], "path": ["mentors", "sessions", "available-slots"], "query": [{ "key": "date", "value": "" }, { "key": "duration_minutes", "value": "" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Create Session",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/sessions", "host": ["{{base_url}}"], "path": ["mentors", "sessions"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"participant_id\": \"\",\n  \"scheduled_at\": \"\",\n  \"duration_minutes\": 30\n}" } }
+            },
+            {
+              "name": "Get Session",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/sessions/:session", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Update Session",
+              "request": { "method": "PUT", "url": { "raw": "{{base_url}}/mentors/sessions/:session", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{}" } }
+            },
+            {
+              "name": "Accept Session",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/sessions/:session/accept", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session", "accept"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Decline Session",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/sessions/:session/decline", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session", "decline"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"reason\": \"\"\n}" } }
+            },
+            {
+              "name": "Propose New Time",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/sessions/:session/propose-new-time", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session", "propose-new-time"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"proposed_time\": \"\"\n}" } }
+            },
+            {
+              "name": "Cancel Session",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/sessions/:session/cancel", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session", "cancel"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"reason\": \"\"\n}" } }
+            },
+            {
+              "name": "Start Session",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/sessions/:session/start", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session", "start"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "End Session",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/sessions/:session/end", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session", "end"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Submit Session Feedback",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/sessions/:session/feedback", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session", "feedback"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"rating\": 5,\n  \"comments\": \"\",\n  \"strengths\": \"\",\n  \"improvements\": \"\"\n}" } }
+            },
+            {
+              "name": "Mark No Show",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/sessions/:session/mark-no-show", "host": ["{{base_url}}"], "path": ["mentors", "sessions", ":session", "mark-no-show"], "variable": [{ "key": "session", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Teams",
+          "item": [
+            {
+              "name": "List Teams",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/teams", "host": ["{{base_url}}"], "path": ["mentors", "teams"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Teams Summary",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/teams/summary", "host": ["{{base_url}}"], "path": ["mentors", "teams", "summary"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Participants",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/teams/participants", "host": ["{{base_url}}"], "path": ["mentors", "teams", "participants"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "List Projects",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/teams/projects", "host": ["{{base_url}}"], "path": ["mentors", "teams", "projects"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Project",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/teams/projects/:project", "host": ["{{base_url}}"], "path": ["mentors", "teams", "projects", ":project"], "variable": [{ "key": "project", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Get Team",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/teams/:team", "host": ["{{base_url}}"], "path": ["mentors", "teams", ":team"], "variable": [{ "key": "team", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            }
+          ]
+        },
+        {
+          "name": "Video Tools",
+          "item": [
+            {
+              "name": "Get Integrations",
+              "request": { "method": "GET", "url": { "raw": "{{base_url}}/mentors/video-tools/integrations", "host": ["{{base_url}}"], "path": ["mentors", "video-tools", "integrations"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+            },
+            {
+              "name": "Authorize Tool",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/video-tools/authorize", "host": ["{{base_url}}"], "path": ["mentors", "video-tools", "authorize"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"tool_type\": \"zoom\",\n  \"redirect_uri\": \"\"\n}" } }
+            },
+            {
+              "name": "Set Default Tool",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/video-tools/set-default", "host": ["{{base_url}}"], "path": ["mentors", "video-tools", "set-default"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"tool_id\": \"\"\n}" } }
+            },
+            {
+              "name": "Disconnect Tool",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/video-tools/disconnect", "host": ["{{base_url}}"], "path": ["mentors", "video-tools", "disconnect"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"tool_id\": \"\"\n}" } }
+            },
+            {
+              "name": "Refresh Token",
+              "request": { "method": "POST", "url": { "raw": "{{base_url}}/mentors/video-tools/refresh-token", "host": ["{{base_url}}"], "path": ["mentors", "video-tools", "refresh-token"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"tool_id\": \"\"\n}" } }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Contact Us",
+      "item": [
+        {
+          "name": "Check If Submitted",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/contact-us/is-submitted", "host": ["{{base_url}}"], "path": ["contact-us", "is-submitted"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+        },
+        {
+          "name": "List Contacts",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/contact-us", "host": ["{{base_url}}"], "path": ["contact-us"] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+        },
+        {
+          "name": "Submit Contact",
+          "request": { "method": "POST", "url": { "raw": "{{base_url}}/contact-us", "host": ["{{base_url}}"], "path": ["contact-us"] }, "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"subject\": \"\",\n  \"message\": \"\",\n  \"attachments\": []\n}" } }
+        },
+        {
+          "name": "Get Contact",
+          "request": { "method": "GET", "url": { "raw": "{{base_url}}/contact-us/:id", "host": ["{{base_url}}"], "path": ["contact-us", ":id"], "variable": [{ "key": "id", "value": "1" }] }, "header": [{ "key": "Accept", "value": "application/json" }] }
+        }
+      ]
+    }
+  ]
+}
