@@ -52,6 +52,13 @@ class ApprovedCompetitionTab
             'projects.is-submitted' => 'projects',
 
             'winners.index' => 'winners',
+
+            'tasks.index' => 'tasks',
+            'tasks.show' => 'tasks',
+            'tasks.status' => 'tasks',
+            'tasks.submit' => 'tasks',
+            'tasks.comments' => 'tasks',
+            'tasks.comments.store' => 'tasks',
         ];
 
         $routeName = $request->route()->getName();

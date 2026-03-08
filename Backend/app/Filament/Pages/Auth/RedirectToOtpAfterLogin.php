@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Filament\Pages\Auth;
+
 use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 
 class RedirectToOtpAfterLogin implements LoginResponseContract

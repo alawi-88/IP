@@ -44,18 +44,12 @@ class ListCompetitions extends ListRecords
         return $table
             ->columns(Competition::columns())
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(fn($record) => !$record->isCurrent() && !$record->isArchived()),
-            ])
-            ->actions([
                 Tables\Actions\Action::make('manage')
                     ->label('Manage')
                     ->color('primary')
                     ->icon('heroicon-o-cog-6-tooth')
                     ->url(fn ($record) => CompetitionResource::getUrl('manage', ['record' => $record]))
-                    ->visible(fn ($record) => !$record->isArchived()),
+                    ->authorize(fn ($record) => CompetitionResource::canView($record)),
 
                 Tables\Actions\Action::make('Set as current program')
                     ->label('Set as current')
@@ -89,7 +83,7 @@ class ListCompetitions extends ListRecords
                                     ->body('Your archive request has been submitted for approval. You will be notified once approved.')
                                     ->success()
                                     ->send();
-                                
+
                                 $this->redirect(route('filament.admin.resources.my-requests.index'));
                             } else {
                                 $record->archive();
@@ -127,11 +121,6 @@ class ListCompetitions extends ListRecords
                     })
                     ->visible(fn($record) => $record->isArchived() && CompetitionResource::canRestore($record) && !$record->isCurrent()),
 
-                Tables\Actions\ViewAction::make()
-                    ->authorize(fn ($record) => CompetitionResource::canView($record)),
-                Tables\Actions\EditAction::make()
-                    ->authorize(fn ($record) => CompetitionResource::canEdit($record))
-                    ->visible(fn ($record) => !$record->isArchived() && !$record->isCurrent()),
                 Tables\Actions\Action::make('delete')
                     ->label('Delete')
                     ->icon('heroicon-o-trash')
@@ -141,7 +130,6 @@ class ListCompetitions extends ListRecords
                     ->modalHeading('Delete Program / حذف البرنامج')
                     ->modalDescription('Are you sure you want to delete this program? This action will be submitted for approval. / هل أنت متأكد من حذف هذا البرنامج؟ سيتم تقديم هذا الإجراء للموافقة.')
                     ->action(function (Competition $record) {
-                        // Use ProgramApprovalService for deleting competitions
                         $approvalService = new \App\Services\ProgramApprovalService();
                         $result = $approvalService->processAction('delete', ['competition_id' => $record->id, 'title' => $record->title], $record->id, 'Competition deletion request');
 
@@ -152,10 +140,9 @@ class ListCompetitions extends ListRecords
                                     ->body('Your deletion request has been submitted for approval. / تم تقديم طلب الحذف للموافقة.')
                                     ->success()
                                     ->send();
-                                
+
                                 $this->redirect(route('filament.admin.resources.my-requests.index'));
                             } else {
-                                // Execute immediately if no workflow
                                 $record->delete();
                                 \Filament\Notifications\Notification::make()
                                     ->title('Program Deleted / تم حذف البرنامج')

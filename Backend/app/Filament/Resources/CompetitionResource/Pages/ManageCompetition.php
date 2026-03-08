@@ -17,6 +17,7 @@ use App\Models\Track;
 use App\Models\SubTrack;
 use App\Models\UserCompetition;
 use App\Services\ProgramApprovalService;
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -74,6 +75,138 @@ class ManageCompetition extends Page implements HasForms
     {
         $title = $this->record->getTranslation('title', 'en');
         return "Manage: {$title}";
+    }
+
+    protected function getHeaderActions(): array
+    {
+        $actions = [];
+
+        // Restore action for archived records
+        $actions[] = Actions\Action::make('restore')
+            ->label('Restore / استعادة')
+            ->icon('heroicon-o-arrow-uturn-left')
+            ->color('success')
+            ->requiresConfirmation()
+            ->modalHeading('Restore Program / استعادة البرنامج')
+            ->modalDescription('Are you sure you want to restore this program? / هل أنت متأكد من استعادة هذا البرنامج؟')
+            ->authorize(fn () => CompetitionResource::canRestore($this->record))
+            ->visible(fn () => $this->record->isArchived())
+            ->action(function () {
+                $this->record->restore();
+                Notification::make()
+                    ->title('Program Restored / تم استعادة البرنامج')
+                    ->body('The program has been restored successfully. / تم استعادة البرنامج بنجاح.')
+                    ->success()
+                    ->send();
+
+                $this->redirect(route('filament.admin.resources.competitions.index'));
+            });
+
+        // Delete action
+        $actions[] = Actions\Action::make('delete')
+            ->label('Delete / حذف')
+            ->icon('heroicon-o-trash')
+            ->color('danger')
+            ->requiresConfirmation()
+            ->authorize(fn () => CompetitionResource::canDelete($this->record))
+            ->modalHeading('Delete Program / حذف البرنامج')
+            ->modalDescription('Are you sure you want to delete this program? This action will be submitted for approval. / هل أنت متأكد من حذف هذا البرنامج؟ سيتم تقديم هذا الإجراء للموافقة.')
+            ->action(function () {
+                $approvalService = new ProgramApprovalService();
+
+                $result = $approvalService->processAction(
+                    'delete',
+                    [
+                        'competition_id' => $this->record->id,
+                        'title' => $this->record->title,
+                        'old_values' => $this->record->toArray(),
+                    ],
+                    $this->record->id,
+                    'Program deletion request / طلب حذف البرنامج'
+                );
+
+                if ($result['success']) {
+                    if ($result['requires_approval']) {
+                        Notification::make()
+                            ->title('Deletion Request Submitted / تم تقديم طلب الحذف')
+                            ->body('Your competition deletion request has been submitted for approval.')
+                            ->success()
+                            ->send();
+
+                        $this->redirect(route('filament.admin.resources.my-requests.index'));
+                    } else {
+                        $this->record->delete();
+                        Notification::make()
+                            ->title('Competition Deleted / تم حذف المسابقة')
+                            ->body('The competition has been deleted successfully.')
+                            ->success()
+                            ->send();
+
+                        $this->redirect(route('filament.admin.resources.competitions.index'));
+                    }
+                } else {
+                    Notification::make()
+                        ->title('Error / خطأ')
+                        ->body($result['message'])
+                        ->danger()
+                        ->send();
+                }
+            });
+
+        // Archive action (only for non-archived records)
+        $actions[] = Actions\Action::make('archive')
+            ->label('Archive / أرشفة')
+            ->icon('heroicon-o-archive-box')
+            ->color('warning')
+            ->requiresConfirmation()
+            ->modalHeading('Archive Program / أرشفة البرنامج')
+            ->modalDescription('Are you sure you want to archive this program? / هل أنت متأكد من أرشفة هذا البرنامج؟')
+            ->authorize(fn () => CompetitionResource::canArchive($this->record))
+            ->visible(fn () => !$this->record->isArchived())
+            ->action(function () {
+                $approvalService = new ProgramApprovalService();
+
+                $result = $approvalService->processAction(
+                    'archive',
+                    [
+                        'is_archived' => true,
+                        'competition_id' => $this->record->id,
+                        'title' => $this->record->title,
+                        'old_values' => ['is_archived' => $this->record->is_archived ?? false],
+                    ],
+                    $this->record->id,
+                    'Program archive request / طلب أرشفة البرنامج'
+                );
+
+                if ($result['success']) {
+                    if ($result['requires_approval']) {
+                        Notification::make()
+                            ->title('Archive Request Submitted / تم تقديم طلب الأرشفة')
+                            ->body('Your competition archive request has been submitted for approval.')
+                            ->success()
+                            ->send();
+
+                        $this->redirect(route('filament.admin.resources.my-requests.index'));
+                    } else {
+                        $this->record->update(['is_archived' => true]);
+                        Notification::make()
+                            ->title('Competition Archived / تم أرشفة المسابقة')
+                            ->body('The competition has been archived successfully.')
+                            ->success()
+                            ->send();
+
+                        $this->redirect(route('filament.admin.resources.competitions.index'));
+                    }
+                } else {
+                    Notification::make()
+                        ->title('Error / خطأ')
+                        ->body($result['message'])
+                        ->danger()
+                        ->send();
+                }
+            });
+
+        return $actions;
     }
 
     // ─── Overview Tab ────────────────────────────────────────────

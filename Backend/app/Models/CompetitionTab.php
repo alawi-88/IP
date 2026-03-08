@@ -14,6 +14,8 @@ class CompetitionTab extends Model
     protected $fillable = [
         'competition_id',
         'tab',
+        'label_en',
+        'label_ar',
         'is_visible',
     ];
 
@@ -43,6 +45,16 @@ class CompetitionTab extends Model
                 })
                 ->extraAttributes(['class' => 'capitalize'])
                 ->sortable(),
+
+            Tables\Columns\TextInputColumn::make('label_en')
+                ->label('Label (EN)')
+                ->placeholder('Default')
+                ->rules(['nullable', 'string', 'max:50']),
+
+            Tables\Columns\TextInputColumn::make('label_ar')
+                ->label('Label (AR)')
+                ->placeholder('افتراضي')
+                ->rules(['nullable', 'string', 'max:50']),
 
             Tables\Columns\ToggleColumn::make('is_visible'),
         ];

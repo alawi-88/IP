@@ -10,216 +10,249 @@ use App\Models\BrandingSetting;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
-use App\Services\GoogleFontsService;
-use Filament\Forms\Components\RichEditor;
-use Illuminate\Support\Str;
 
-class BrandingSettings extends Page
+class BrandingSettings extends Page implements Forms\Contracts\HasForms
 {
-    protected static ?string $navigationIcon = 'heroicon-o-cog';
-    protected static string $view = 'filament.pages.branding-settings';
+    use Forms\Concerns\InteractsWithForms;
+
+    protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
+    protected static ?string $navigationLabel = 'Branding Settings';
     protected static ?string $title = 'Branding Settings';
-    protected static ?string $navigationGroup = 'Brandings';
-    protected static ?int $navigationSort = 91;
+    protected static ?string $slug = 'branding-settings';
+    protected static ?int $navigationSort = 100;
+    protected static ?string $navigationGroup = 'Settings';
+
+    protected static string $view = 'filament.pages.branding-settings';
 
     public ?array $data = [];
 
     public function mount(): void
     {
-        $this->form->fill(
-            BrandingSetting::first()?->toArray() ?? []
-        );
+        $branding = BrandingSetting::first();
+        if ($branding) {
+            $this->form->fill([
+                'logo' => $branding->logo ? [$branding->logo] : [],
+                'white_logo' => $branding->white_logo ? [$branding->white_logo] : [],
+                'favicon' => $branding->favicon ? [$branding->favicon] : [],
+                'primary_color' => $branding->primary_color ?? '#25935F',
+                'secondary_color' => $branding->secondary_color ?? '#1a6b44',
+                'font' => $branding->font ?? 'IBM Plex Sans',
+                'email_bg_color' => $branding->email_bg_color ?? '#FFFFFF',
+                'email_text_color' => $branding->email_text_color ?? '#111827',
+                'email_link_color' => $branding->email_link_color ?? '#1E40AF',
+                'email_border_color' => $branding->email_border_color ?? '#E5E7EB',
+                'email_footer' => $branding->email_footer ?? '',
+                'email_logo' => $branding->email_logo ? [$branding->email_logo] : [],
+                'email_footer_footer' => $branding->email_footer_footer ? [$branding->email_footer_footer] : [],
+            ]);
+        } else {
+            $this->form->fill([
+                'primary_color' => '#25935F',
+                'secondary_color' => '#1a6b44',
+                'font' => 'IBM Plex Sans',
+                'email_bg_color' => '#FFFFFF',
+                'email_text_color' => '#111827',
+                'email_link_color' => '#1E40AF',
+                'email_border_color' => '#E5E7EB',
+            ]);
+        }
     }
 
     public function form(Form $form): Form
-{
+    {
+        return $form
+            ->schema([
+                Forms\Components\Tabs::make('Branding')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Brand Identity')
+                            ->icon('heroicon-o-photo')
+                            ->schema([
+                                Forms\Components\Section::make('Logos')
+                                    ->description('Upload your brand logos in SVG or PNG format')
+                                    ->schema([
+                                        Forms\Components\FileUpload::make('logo')
+                                            ->label('Primary Logo')
+                                            ->directory('branding')
+                                            ->image()
+                                            ->imagePreviewHeight('100')
+                                            ->maxFiles(1)
+                                            ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/jpeg'])
+                                            ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
+                                        Forms\Components\FileUpload::make('white_logo')
+                                            ->label('White Logo (for dark backgrounds)')
+                                            ->directory('branding')
+                                            ->image()
+                                            ->imagePreviewHeight('100')
+                                            ->maxFiles(1)
+                                            ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/jpeg'])
+                                            ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
+                                        Forms\Components\FileUpload::make('favicon')
+                                            ->label('Favicon')
+                                            ->directory('branding')
+                                            ->image()
+                                            ->imagePreviewHeight('50')
+                                            ->maxFiles(1)
+                                            ->acceptedFileTypes(['image/svg+xml', 'image/png', 'image/x-icon', 'image/vnd.microsoft.icon'])
+                                            ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
+                                    ])->columns(3),
+                            ]),
 
-    return $form
-    ->schema([
-        //logo
-            Forms\Components\FileUpload::make('logo')
-                ->label('Logo')
-                ->directory('branding')
-                ->image()
-                ->imagePreviewHeight('100')
-                ->maxFiles(1)
-                ->required()
-                ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
+                        Forms\Components\Tabs\Tab::make('Colors & Typography')
+                            ->icon('heroicon-o-swatch')
+                            ->schema([
+                                Forms\Components\Section::make('Brand Colors')
+                                    ->description('These colors will be applied across the entire platform')
+                                    ->schema([
+                                        Forms\Components\ColorPicker::make('primary_color')
+                                            ->label('Primary Color')
+                                            ->helperText('Main brand color used for buttons, links, and accents')
+                                            ->required(),
+                                        Forms\Components\ColorPicker::make('secondary_color')
+                                            ->label('Secondary Color')
+                                            ->helperText('Used for hover states and secondary elements')
+                                            ->required(),
+                                    ])->columns(2),
 
-        //white logo
-            Forms\Components\FileUpload::make('white_logo')
-            ->label('White Logo')
-            ->directory('branding')
-            ->image()
-            ->imagePreviewHeight('100')
-            ->maxFiles(1)
-            ->required()
-            ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
+                                Forms\Components\Section::make('Typography')
+                                    ->description('Select the font family for the platform')
+                                    ->schema([
+                                        Forms\Components\Select::make('font')
+                                            ->label('Font Family')
+                                            ->options([
+                                                'IBM Plex Sans' => 'IBM Plex Sans (DGA Standard)',
+                                                'Inter' => 'Inter',
+                                                'Cairo' => 'Cairo (Arabic optimized)',
+                                                'Tajawal' => 'Tajawal (Arabic optimized)',
+                                                'Noto Sans Arabic' => 'Noto Sans Arabic',
+                                                'Roboto' => 'Roboto',
+                                                'Open Sans' => 'Open Sans',
+                                                'Poppins' => 'Poppins',
+                                                'Nunito' => 'Nunito',
+                                            ])
+                                            ->required()
+                                            ->helperText('Font used throughout the platform'),
+                                    ]),
+                            ]),
 
+                        Forms\Components\Tabs\Tab::make('Email Settings')
+                            ->icon('heroicon-o-envelope')
+                            ->schema([
+                                Forms\Components\Section::make('Email Branding')
+                                    ->description('Customize the appearance of emails sent from the platform')
+                                    ->schema([
+                                        Forms\Components\FileUpload::make('email_logo')
+                                            ->label('Email Logo')
+                                            ->directory('branding')
+                                            ->image()
+                                            ->imagePreviewHeight('80')
+                                            ->maxFiles(1)
+                                            ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
+                                        Forms\Components\FileUpload::make('email_footer_footer')
+                                            ->label('Email Footer Image')
+                                            ->directory('branding')
+                                            ->image()
+                                            ->imagePreviewHeight('80')
+                                            ->maxFiles(1)
+                                            ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
+                                    ])->columns(2),
 
-        //favicon
-            Forms\Components\FileUpload::make('favicon')
-            ->label('Favicon')
-            ->directory('branding')
-            ->image()
-            ->imagePreviewHeight('50')
-            ->maxFiles(1)
-            ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
+                                Forms\Components\Section::make('Email Colors')
+                                    ->schema([
+                                        Forms\Components\ColorPicker::make('email_bg_color')
+                                            ->label('Background Color'),
+                                        Forms\Components\ColorPicker::make('email_text_color')
+                                            ->label('Text Color'),
+                                        Forms\Components\ColorPicker::make('email_link_color')
+                                            ->label('Link Color'),
+                                        Forms\Components\ColorPicker::make('email_border_color')
+                                            ->label('Border Color'),
+                                    ])->columns(4),
 
-        //primary color
-            Forms\Components\ColorPicker::make('primary_color')
-                ->label('Primary Color')
-                ->required()
-                ->rules(['regex:/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/'])
-                ->validationMessages([
-                    'required' => 'Primary color is required.',
-                    'regex' => 'Primary color must be a valid hex color code (e.g., #FF0000 or #F00).',
-                ])
-                ->default('#6E62E5'),
-
-        //secondary color
-            Forms\Components\ColorPicker::make('secondary_color')
-                ->label('Secondary Color')
-                ->required()
-                ->rules(['regex:/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/'])
-                ->validationMessages([
-                    'required' => 'Secondary color is required.',
-                    'regex' => 'Secondary color must be a valid hex color code (e.g., #FF0000 or #F00).',
-                ])
-                ->default('#4B5563'),
-
-        //font
-            Forms\Components\Select::make('font')
-                ->label('Font')
-                ->options(function () {
-                    $fonts = GoogleFontsService::getFonts();
-                    // Add Madani Arabic and Mestika fonts to the available options
-                    $fonts = array_merge([
-                        Str::snake('Madani Arabic', '_') => 'Madani Arabic',
-                        Str::snake('Mestika', '_') => 'Mestika'
-                    ], $fonts);
-                    return $fonts;
-                })
-                ->searchable()
-                ->preload(false),
-
-        //email bg color
-            Forms\Components\ColorPicker::make('email_bg_color')
-                ->label('Email BG Color')
-                ->required()
-                ->rules(['regex:/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/']),
-
-        //email text color
-            Forms\Components\ColorPicker::make('email_text_color')
-                ->label('Email Text Color')
-                ->required()
-                ->rules(['regex:/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/']),
-
-        //email link color
-            Forms\Components\ColorPicker::make('email_link_color')
-                ->label('Header Background Color')
-                ->required()
-                ->rules(['regex:/^#([A-Fa-f0-9]{3}|[A-Fa-f0-9]{6})$/']),
-
-            
-        //email font size
-            Forms\Components\TextInput::make('email_border_color')
-                ->label('Email Font Size')
-                ->numeric()
-                ->required()
-                ->numeric()
-                ->suffix('px')
-                ->default('20'),
-
-        
-
-        //email logo
-            Forms\Components\FileUpload::make('email_logo')
-                ->label('Email Header Logo')
-                ->directory('branding')
-                ->image()
-                ->imagePreviewHeight('100')
-                ->maxFiles(1)
-                ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
-
-        //email footer footer
-            Forms\Components\FileUpload::make('email_footer_footer')
-                ->label('Email Footer Logo')
-                ->directory('branding')
-                ->image()
-                ->imagePreviewHeight('100')
-                ->maxFiles(1)
-                ->getUploadedFileNameForStorageUsing(fn ($file) => (string) str($file->hashName())),
-        //email footer
-        Forms\Components\TextInput::make('email_footer')
-        ->label('Copyright Footer')
-        ->required()
-        ->helperText('The footer of the email will be displayed at the bottom of the email.')
-        ->columnSpanFull(),
-    ])
-        ->statePath('data');
-}
+                                Forms\Components\Section::make('Email Footer')
+                                    ->schema([
+                                        Forms\Components\Textarea::make('email_footer')
+                                            ->label('Footer Text')
+                                            ->rows(3)
+                                            ->helperText('Copyright notice and other footer text for emails'),
+                                    ]),
+                            ]),
+                    ])
+                    ->columnSpanFull()
+                    ->persistTabInQueryString(),
+            ])
+            ->statePath('data');
+    }
 
     protected function getFormActions(): array
     {
-        $canEdit = auth()->user()?->can('update BrandingSettings');
-
-        return $canEdit
-            ? [
-                Action::make('save')
-                    ->label(__('Save'))
-                    ->submit('save'),
-            ]
-            : [];
+        return [
+            Action::make('save')
+                ->label('Save Branding Settings')
+                ->submit('save')
+                ->icon('heroicon-o-check'),
+        ];
     }
 
-public function save(): void
-{
-    $setting = BrandingSetting::first() ?? new BrandingSetting();
-    $setting->fill($this->form->getState());
-    $setting->save();
+    public function save(): void
+    {
+        $data = $this->form->getState();
 
-    Notification::make()
-        ->title('Settings saved successfully!')
-        ->success()
-        ->send();
+        // Handle file uploads - extract first file from array
+        $fileFields = ['logo', 'white_logo', 'favicon', 'email_logo', 'email_footer_footer'];
+        foreach ($fileFields as $field) {
+            if (isset($data[$field]) && is_array($data[$field])) {
+                $data[$field] = !empty($data[$field]) ? reset($data[$field]) : null;
+            }
+        }
 
-    $this->redirect(static::getUrl());
-}
+        $branding = BrandingSetting::first();
+        if ($branding) {
+            $branding->update($data);
+        } else {
+            BrandingSetting::create($data);
+        }
 
-public function get()
-{
-    $app = str(config('app.name'))->lower();
-    $app = trim(str_replace( 'system', '', $app));
-
-    $branding = BrandingSetting::first();
-    return [
-        'logo' => $branding->logo ? Storage::url($branding->logo) : url('media/' . $app . '-light-logo.png'),
-        'white_logo' => $branding->white_logo ? Storage::url($branding->white_logo) : url('media/' . $app . '-dark-logo.png'),
-        'favicon' => $branding->favicon ? Storage::url($branding->favicon) : url('media/' . $app . '-favicon.ico'),
-        'primary_color' => $branding->primary_color,
-        'secondary_color' => $branding->secondary_color,
-        'font' => $branding->font,
-        'email_bg_color' => $branding->email_bg_color,
-        'email_text_color' => $branding->email_text_color,
-        'email_link_color' => $branding->email_link_color,
-        'email_font_size' => $branding->email_border_color . 'px',
-        'email_footer' => $branding->email_footer,
-        'email_logo' => $branding->email_logo ? Storage::url($branding->email_logo) : '',
-        'email_footer_footer' => $branding->email_footer_footer ? Storage::url($branding->email_footer_footer) : '',
-    ];
-}
-
+        Notification::make()
+            ->title('Branding settings saved successfully!')
+            ->success()
+            ->send();
+    }
 
     public static function canAccess(): bool
     {
-        return auth()->user()?->can('view BrandingSettings') ?? false;
+        // Allow all authenticated admin users to access branding settings
+        return true;
     }
 
-    public static function canEdit(Model $record): bool
+    public static function getApiData(): array
     {
-        return auth()->user()?->can('update BrandingSettings');
+        $branding = BrandingSetting::first();
+        if (!$branding) {
+            return [
+                'primary_color' => '#25935F',
+                'secondary_color' => '#1a6b44',
+                'font' => 'IBM Plex Sans',
+                'logo' => null,
+                'white_logo' => null,
+                'favicon' => null,
+            ];
+        }
+
+        return [
+            'primary_color' => $branding->primary_color ?? '#25935F',
+            'secondary_color' => $branding->secondary_color ?? '#1a6b44',
+            'font' => $branding->font ?? 'IBM Plex Sans',
+            'logo' => $branding->logo ? Storage::url($branding->logo) : null,
+            'white_logo' => $branding->white_logo ? Storage::url($branding->white_logo) : null,
+            'favicon' => $branding->favicon ? Storage::url($branding->favicon) : null,
+            'email_bg_color' => $branding->email_bg_color ?? '#FFFFFF',
+            'email_text_color' => $branding->email_text_color ?? '#111827',
+            'email_link_color' => $branding->email_link_color ?? '#1E40AF',
+            'email_border_color' => $branding->email_border_color ?? '#E5E7EB',
+            'email_footer' => $branding->email_footer ?? '',
+            'email_logo' => $branding->email_logo ? Storage::url($branding->email_logo) : null,
+            'email_footer_footer' => $branding->email_footer_footer ? Storage::url($branding->email_footer_footer) : null,
+        ];
     }
-
-
 }
+

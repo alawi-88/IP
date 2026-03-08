@@ -58,6 +58,15 @@ export default async function RootLayout({
       ])
     ),
   };
+  function adjustColor(hex: string, percent: number): string {
+    const num = parseInt(hex.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = Math.min(255, Math.max(0, (num >> 16) + amt));
+    const G = Math.min(255, Math.max(0, ((num >> 8) & 0x00ff) + amt));
+    const B = Math.min(255, Math.max(0, (num & 0x0000ff) + amt));
+    return `#${(0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)}`;
+  }
+
   function addThemeVars(theme: Theme) {
     if (!theme) return;
     const themeVars = Object.entries(theme).reduce((acc, [key, value]) => {
@@ -69,6 +78,27 @@ export default async function RootLayout({
       return acc;
     }, {} as Record<string, string | number>);
 
+    // Also set DGA design system variables server-side for initial render
+    const primary = theme.primary_color;
+    const secondary = theme.secondary_color;
+    if (primary) {
+      themeVars["--dga-primary-500"] = primary;
+      themeVars["--dga-primary-400"] = adjustColor(primary, 20);
+      themeVars["--dga-primary-300"] = adjustColor(primary, 40);
+      themeVars["--dga-primary-200"] = adjustColor(primary, 60);
+      themeVars["--dga-primary-100"] = adjustColor(primary, 80);
+      themeVars["--dga-primary-50"] = adjustColor(primary, 90);
+      themeVars["--dga-primary-700"] = adjustColor(primary, -20);
+      themeVars["--dga-primary-800"] = adjustColor(primary, -40);
+      themeVars["--dga-primary-900"] = adjustColor(primary, -60);
+      // Set RGB triplet for rgba() usage in CSS
+      const num = parseInt(primary.replace("#", ""), 16);
+      themeVars["--dga-primary-rgb"] = `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
+    }
+    if (secondary) {
+      themeVars["--dga-primary-600"] = secondary;
+    }
+
     return themeVars;
   }
 
@@ -79,15 +109,16 @@ export default async function RootLayout({
       style={addThemeVars(theme)}
     >
       <head>
-        {/* <title>{theme?.metaData?.title || t("title")}</title> */}
+                        {/* <title>{theme?.metaData?.title || t("title")}</title> */}
         {theme.favicon && <link rel="icon" href={theme.favicon} />}
-        <link
-          href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(
-            String(dynamicTheme?.font)
-          )}:wght@100;300;400;500;700;900&display=swap`}
-          rel="stylesheet"
-        />
-      </head>
+        {theme.font && theme.font !== "undefined" && (
+          <link
+            href={`https://fonts.googleapis.com/css2?family=${encodeURIComponent(
+              theme.font
+            )}:wght@100;300;400;500;700;900&display=swap`}
+            rel="stylesheet"
+          />
+        )}      </head>
       <body className={`antialiased`}>
         {" "}
         <NextIntlClientProvider messages={messages}>

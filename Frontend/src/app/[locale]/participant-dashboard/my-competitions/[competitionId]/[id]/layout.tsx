@@ -12,15 +12,19 @@ import { useEffect } from "react";
 
 interface Tab {
   tab: string;
+  label_en?: string;
+  label_ar?: string;
   is_visible: boolean;
 }
 
 const availableTabs = [
+  "journey",
   "events",
   "mentors",
   "my-team",
   "teams",
   "projects",
+  "tasks",
   "guidelines",
   "winners",
   "leaderboard"
@@ -180,21 +184,23 @@ export default function MyCompetitionLayout({
 
       <div className="flex justify-between items-center gap-4 flex-wrap">
         {activeTabs != null && activeTabs.length > 0 ? (
-          <ConfigProvider direction={locale === "ar" ? "rtl" : "ltr"}>
-            <Segmented
-              value={currentSegment}
-              onChange={(value) => {
-                router.push(
-                  `/participant-dashboard/my-competitions/${competitionId}/${id}/${value}`
-                );
-              }}
-              className="!bg-card !rounded-xl !p-2 !w-fit"
-              options={activeTabs.map((tab) => ({
-                value: tab.tab,
-                label: t(tab.tab),
-              }))}
-            />
-          </ConfigProvider>
+          <div className="overflow-x-auto max-w-full scrollbar-thin">
+            <ConfigProvider direction={locale === "ar" ? "rtl" : "ltr"}>
+              <Segmented
+                value={currentSegment}
+                onChange={(value) => {
+                  router.push(
+                    `/participant-dashboard/my-competitions/${competitionId}/${id}/${value}`
+                  );
+                }}
+                className="!bg-card !rounded-xl !p-2 !w-max"
+                options={activeTabs.map((tab) => ({
+                  value: tab.tab,
+                  label: (locale === "ar" && tab.label_ar) ? tab.label_ar : (tab.label_en || t(tab.tab)),
+                }))}
+              />
+            </ConfigProvider>
+          </div>
         ) : (
           <div className="text-gray-500">{t("no-tabs-available")}</div>
         )}

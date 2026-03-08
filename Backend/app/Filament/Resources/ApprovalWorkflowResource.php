@@ -78,34 +78,122 @@ class ApprovalWorkflowResource extends Resource
                         Forms\Components\Select::make('action')
                             ->label('Action / الإجراء')
                             ->options([
-                                // Competition Actions
-                                'Competition.create' => 'Create Competition / إنشاء مسابقة',
-                                'Competition.update' => 'Update Competition / تحديث مسابقة',
-                                'Competition.delete' => 'Delete Competition / حذف مسابقة',
-                                'Competition.archive' => 'Archive Competition / أرشفة مسابقة',
+                                // Competition/Program Actions
+                                'Competition.create' => 'Create Program / إنشاء برنامج',
+                                'Competition.update' => 'Update Program / تحديث برنامج',
+                                'Competition.delete' => 'Delete Program / حذف برنامج',
+                                'Competition.archive' => 'Archive Program / أرشفة برنامج',
+                                'Competition.restore' => 'Restore Program / استعادة برنامج',
 
                                 // Competition Application Actions
-                                'CompetitionApplication.update' => 'Update Competition Application / تحديث طلب مسابقة',
-                                'CompetitionApplication.delete' => 'Delete Competition Application / حذف طلب مسابقة',
-                                'CompetitionApplication.archive' => 'Archive Competition Application / أرشفة طلب مسابقة',
+                                'CompetitionApplication.create' => 'Create Application / إنشاء طلب',
+                                'CompetitionApplication.update' => 'Update Application / تحديث طلب',
+                                'CompetitionApplication.delete' => 'Delete Application / حذف طلب',
+                                'CompetitionApplication.archive' => 'Archive Application / أرشفة طلب',
+                                'CompetitionApplication.restore' => 'Restore Application / استعادة طلب',
 
                                 // Form Actions
                                 'Form.create' => 'Create Form / إنشاء نموذج',
-                                'Form.update' => 'Update Form / تحديث النموذج',
-                                'Form.delete' => 'Delete Form / حذف النموذج',
-                                'Form.archive' => 'Archive Form / أرشفة النموذج',
+                                'Form.update' => 'Update Form / تحديث نموذج',
+                                'Form.delete' => 'Delete Form / حذف نموذج',
+                                'Form.archive' => 'Archive Form / أرشفة نموذج',
+                                'Form.restore' => 'Restore Form / استعادة نموذج',
 
                                 // Project Actions
+                                'Project.create' => 'Create Project / إنشاء مشروع',
                                 'Project.update' => 'Update Project / تحديث مشروع',
                                 'Project.delete' => 'Delete Project / حذف مشروع',
                                 'Project.archive' => 'Archive Project / أرشفة مشروع',
                                 'Project.restore' => 'Restore Project / استعادة مشروع',
+
+                                // Team Actions
+                                'Team.create' => 'Create Team / إنشاء فريق',
+                                'Team.update' => 'Update Team / تحديث فريق',
+                                'Team.delete' => 'Delete Team / حذف فريق',
+                                'Team.archive' => 'Archive Team / أرشفة فريق',
+                                'Team.restore' => 'Restore Team / استعادة فريق',
+
+                                // Event Actions
+                                'Event.create' => 'Create Event / إنشاء فعالية',
+                                'Event.update' => 'Update Event / تحديث فعالية',
+                                'Event.delete' => 'Delete Event / حذف فعالية',
+                                'Event.archive' => 'Archive Event / أرشفة فعالية',
+
+                                // Guideline Actions
+                                'Guideline.create' => 'Create Guideline / إنشاء إرشاد',
+                                'Guideline.update' => 'Update Guideline / تحديث إرشاد',
+                                'Guideline.delete' => 'Delete Guideline / حذف إرشاد',
 
                                 // Winner Actions
                                 'Winner.create' => 'Create Winner / إنشاء فائز',
                                 'Winner.update' => 'Update Winner / تحديث فائز',
                                 'Winner.delete' => 'Delete Winner / حذف فائز',
                                 'Winner.toggle_visibility' => 'Toggle Winner Visibility / إظهار/إخفاء فائز',
+
+                                // Judge Actions
+                                'Judge.create' => 'Create Judge / إنشاء محكم',
+                                'Judge.update' => 'Update Judge / تحديث محكم',
+                                'Judge.delete' => 'Delete Judge / حذف محكم',
+                                'Judge.archive' => 'Archive Judge / أرشفة محكم',
+
+                                // Mentor Actions
+                                'Mentor.create' => 'Create Mentor / إنشاء مرشد',
+                                'Mentor.update' => 'Update Mentor / تحديث مرشد',
+                                'Mentor.delete' => 'Delete Mentor / حذف مرشد',
+                                'Mentor.archive' => 'Archive Mentor / أرشفة مرشد',
+
+                                // Participant Actions
+                                'Participant.update' => 'Update Participant / تحديث مشارك',
+                                'Participant.delete' => 'Delete Participant / حذف مشارك',
+                                'Participant.archive' => 'Archive Participant / أرشفة مشارك',
+
+                                // User/Admin Actions
+                                'User.create' => 'Create Admin / إنشاء مدير',
+                                'User.update' => 'Update Admin / تحديث مدير',
+                                'User.delete' => 'Delete Admin / حذف مدير',
+                                'User.archive' => 'Archive Admin / أرشفة مدير',
+
+                                // Task Actions
+                                'TaskTemplate.create' => 'Create Task Template / إنشاء قالب مهمة',
+                                'TaskTemplate.update' => 'Update Task Template / تحديث قالب مهمة',
+                                'TaskTemplate.delete' => 'Delete Task Template / حذف قالب مهمة',
+                                'TaskAssignment.create' => 'Assign Task / تعيين مهمة',
+                                'TaskAssignment.update' => 'Update Task Assignment / تحديث تعيين مهمة',
+                                'TaskAssignment.delete' => 'Delete Task Assignment / حذف تعيين مهمة',
+                                'TaskSubmission.approve' => 'Approve Task Submission / اعتماد تسليم مهمة',
+                                'TaskSubmission.reject' => 'Reject Task Submission / رفض تسليم مهمة',
+
+                                // Stage Actions
+                                'Stage.create' => 'Create Stage / إنشاء مرحلة',
+                                'Stage.update' => 'Update Stage / تحديث مرحلة',
+                                'Stage.delete' => 'Delete Stage / حذف مرحلة',
+
+                                // Track Actions
+                                'Track.create' => 'Create Track / إنشاء مسار',
+                                'Track.update' => 'Update Track / تحديث مسار',
+                                'Track.delete' => 'Delete Track / حذف مسار',
+
+                                // Branding Actions
+                                'BrandingSetting.update' => 'Update Platform Branding / تحديث هوية المنصة',
+                                'BrandingCompetition.update' => 'Update Program Branding / تحديث هوية البرنامج',
+
+                                // Evaluation Actions
+                                'ProjectEvaluation.create' => 'Create Evaluation / إنشاء تقييم',
+                                'ProjectEvaluation.update' => 'Update Evaluation / تحديث تقييم',
+                                'ProjectEvaluation.delete' => 'Delete Evaluation / حذف تقييم',
+
+                                // Notification Actions
+                                'NotificationMessage.create' => 'Create Notification / إنشاء إشعار',
+                                'NotificationMessage.update' => 'Update Notification / تحديث إشعار',
+                                'NotificationMessage.delete' => 'Delete Notification / حذف إشعار',
+
+                                // Service & Page Actions
+                                'Service.create' => 'Create Service / إنشاء خدمة',
+                                'Service.update' => 'Update Service / تحديث خدمة',
+                                'Service.delete' => 'Delete Service / حذف خدمة',
+                                'Page.create' => 'Create Page / إنشاء صفحة',
+                                'Page.update' => 'Update Page / تحديث صفحة',
+                                'Page.delete' => 'Delete Page / حذف صفحة',
                             ])
                             ->searchable()
                             ->required()
@@ -421,30 +509,12 @@ class ApprovalWorkflowResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('action')
                     ->label('Action / الإجراء')
-                    ->options([
-                        'Competition.create' => 'Create Competition',
-                        'Competition.update' => 'Update Competition',
-                        'Competition.delete' => 'Delete Competition',
-                        'Competition.archive' => 'Archive Competition',
-                        'CompetitionApplication.update' => 'Update Competition Application',
-                        'CompetitionApplication.delete' => 'Delete Competition Application',
-                        'CompetitionApplication.archive' => 'Archive Competition Application',
-                        'Form.create' => 'Create Form',
-                        'Form.update' => 'Update Form',
-                        'Form.delete' => 'Delete Form',
-                        'Form.archive' => 'Archive Form',
-                        'Project.update' => 'Update Project',
-                        'Project.delete' => 'Delete Project',
-                        'Project.archive' => 'Archive Project',
-                        'Project.restore' => 'Restore Project',
-                        'User.create' => 'Create User',
-                        'User.update' => 'Update User',
-                        'User.delete' => 'Delete User',
-                        'Winner.create' => 'Create Winner',
-                        'Winner.update' => 'Update Winner',
-                        'Winner.delete' => 'Delete Winner',
-                        'Winner.toggle_visibility' => 'Toggle Winner Visibility',
-                    ]),
+                    ->options(fn () => \App\Models\ApprovalWorkflow::query()
+                        ->distinct()
+                        ->pluck('action', 'action')
+                        ->toArray()
+                    )
+                    ->searchable(),
 
                 Tables\Filters\SelectFilter::make('roles')
                     ->label('Roles / الأدوار')

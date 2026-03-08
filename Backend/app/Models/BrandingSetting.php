@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+
 class BrandingSetting extends Model
 {
+    use HasFactory;
+
+    protected $table = 'branding_settings';
+
     protected $fillable = [
         'logo',
         'white_logo',
@@ -21,47 +27,33 @@ class BrandingSetting extends Model
         'email_logo',
         'email_footer_footer',
     ];
-    public static function current()
+
+    /**
+     * Get the branding data with full URLs for images
+     */
+    /**
+     * Get the current branding settings (alias for first())
+     */
+    public static function current(): ?self
     {
-        $branding = self::first();
-
-    // تحقق أولًا من وجود سجل
-    if (!$branding) {
-        // ترجع كائن افتراضي بدون كسر التطبيق
-        return (object) [
-           'logo' => null,
-            'white_logo' => null,
-            'favicon' => null,
-            'primary_color' => '#000000',
-            'secondary_color' => '#FFFFFF',
-            'font' => 'default',
-            'email_bg_color' => '#FFFFFF',
-            'email_text_color' => '#000000',
-            'email_link_color' => '#007BFF',
-            'email_border_color' => '#DDDDDD',
-            'email_footer' => null,
-            'email_logo' => null,
-            'email_footer_footer' => null,
-        ];
+        return static::first();
     }
 
-    if ($branding->logo) {
-        $branding->logo = Storage::url($branding->logo);
-    }
-    if ($branding->white_logo) {
-        $branding->white_logo = Storage::url($branding->white_logo);
-    }
-    if ($branding->favicon) {
-        $branding->favicon = Storage::url($branding->favicon);
-    }
-    if ($branding->email_logo) {
-        $branding->email_logo = Storage::url($branding->email_logo);
-    }
-    if ($branding->email_footer_footer) {
-        $branding->email_footer_footer = Storage::url($branding->email_footer_footer);
-    }
+    public static function getWithUrls(): ?self
+    {
+        $branding = static::first();
+        if (!$branding) {
+            return null;
+        }
+
+        $imageFields = ['logo', 'white_logo', 'favicon', 'email_logo', 'email_footer_footer'];
+        foreach ($imageFields as $field) {
+            if ($branding->$field) {
+                $branding->$field = Storage::url($branding->$field);
+            }
+        }
+
         return $branding;
     }
-    
-    
 }
+
