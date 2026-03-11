@@ -51,17 +51,17 @@ class GenerateVentureSectionJob implements ShouldQueue
 
         try {
             // Build prompt
-            $prompt = $promptBuilder->buildPrompt($venture, $this->section->section_key);
+            $promptData = $promptBuilder->buildPrompt($venture, $this->section->slug);
 
             // Call AI provider to generate content
-            $result = $manager->generate($prompt);
+            $result = $manager->generate($promptData);
 
             // Parse result
             $content = $result['content'] ?? null;
             $contentAr = $result['content_ar'] ?? null;
             $aiProviderId = $result['ai_provider_id'] ?? null;
-            $promptTokens = $result['prompt_tokens'] ?? null;
-            $completionTokens = $result['completion_tokens'] ?? null;
+            $tokensUsed = ($result['prompt_tokens'] ?? 0) + ($result['completion_tokens'] ?? 0);
+            $estimatedCost = $result['estimated_cost'] ?? null;
 
             // Update section with generated content
             $this->section->update([
@@ -69,8 +69,8 @@ class GenerateVentureSectionJob implements ShouldQueue
                 'content' => $content,
                 'content_ar' => $contentAr,
                 'ai_provider_id' => $aiProviderId,
-                'prompt_tokens' => $promptTokens,
-                'completion_tokens' => $completionTokens,
+                'tokens_used' => $tokensUsed,
+                'estimated_cost' => $estimatedCost,
                 'generated_at' => now(),
             ]);
 
@@ -79,9 +79,7 @@ class GenerateVentureSectionJob implements ShouldQueue
                 'venture_section_id' => $this->section->id,
                 'content' => $content,
                 'content_ar' => $contentAr,
-                'ai_provider_id' => $aiProviderId,
-                'prompt_tokens' => $promptTokens,
-                'completion_tokens' => $completionTokens,
+                'change_note' => 'AI generated',
             ]);
 
             // Check if venture generation is complete

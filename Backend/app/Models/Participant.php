@@ -199,6 +199,14 @@ class Participant extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get ventures created by this participant.
+     */
+    public function ventures(): HasMany
+    {
+        return $this->hasMany(Venture::class, 'created_by');
+    }
+
+    /**
      * Get mentors assigned to this participant (for individual/non-team participants)
      */
     public function mentors(): BelongsToMany

@@ -31,7 +31,7 @@ class VentureController extends Controller
         }
 
         $ventures = $query
-            ->withCount(['tabs', 'tabs.sections'])
+            ->withCount('tabs')
             ->paginate($request->input('per_page', 15));
 
         return response()->json([
@@ -58,7 +58,7 @@ class VentureController extends Controller
             'business_model' => 'nullable|string',
         ]);
 
-        $validated['participant_id'] = auth()->id();
+        $validated['created_by'] = auth()->id();
         $validated['competition_id'] = $this->currentCompetitionId();
 
         $venture = Venture::create($validated);
@@ -76,16 +76,18 @@ class VentureController extends Controller
      */
     public function show(Venture $venture): JsonResponse
     {
-        $this->authorize('view', $venture);
+        // Verify the venture belongs to the authenticated participant
+        if ($venture->created_by !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         $venture->load([
             'tabs' => function ($query) {
-                $query->orderBy('order');
+                $query->orderBy('sort_order');
             },
             'tabs.sections' => function ($query) {
-                $query->orderBy('order');
+                $query->orderBy('sort_order');
             },
-            'competitors',
         ]);
 
         return response()->json([
@@ -98,7 +100,10 @@ class VentureController extends Controller
      */
     public function progress(Venture $venture): JsonResponse
     {
-        $this->authorize('view', $venture);
+        // Verify the venture belongs to the authenticated participant
+        if ($venture->created_by !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         $sections = $venture->tabs()
             ->with('sections')
@@ -114,9 +119,9 @@ class VentureController extends Controller
 
         $sectionStatus = $sections->map(fn($section) => [
             'id' => $section->id,
-            'key' => $section->section_key,
+            'key' => $section->slug,
             'status' => $section->status,
-            'display_name' => $section->displayConfig?->display_name ?? ucwords(str_replace('_', ' ', $section->section_key)),
+            'display_name' => $section->displayConfig?->label_en ?? ucwords(str_replace('_', ' ', $section->slug)),
         ]);
 
         return response()->json([
@@ -137,7 +142,9 @@ class VentureController extends Controller
      */
     public function retryFailed(Venture $venture): JsonResponse
     {
-        $this->authorize('update', $venture);
+        if ($venture->created_by !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         $this->generationService->retryFailed($venture);
 
@@ -153,7 +160,9 @@ class VentureController extends Controller
      */
     public function regenerateSection(Venture $venture, VentureSection $section): JsonResponse
     {
-        $this->authorize('update', $venture);
+        if ($venture->created_by !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         if ($section->tab->venture_id !== $venture->id) {
             return response()->json(['error' => 'Section does not belong to this venture'], 422);
@@ -171,7 +180,9 @@ class VentureController extends Controller
      */
     public function updateSection(Venture $venture, VentureSection $section, Request $request): JsonResponse
     {
-        $this->authorize('update', $venture);
+        if ($venture->created_by !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         if ($section->tab->venture_id !== $venture->id) {
             return response()->json(['error' => 'Section does not belong to this venture'], 422);
@@ -200,7 +211,9 @@ class VentureController extends Controller
      */
     public function toggleArchive(Venture $venture): JsonResponse
     {
-        $this->authorize('update', $venture);
+        if ($venture->created_by !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
 
         $venture->update([
             'is_archived' => !$venture->is_archived,

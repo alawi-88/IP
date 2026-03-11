@@ -51,7 +51,7 @@ class Venture extends Model
      */
     public function participant(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(Participant::class, 'created_by');
     }
 
     /**

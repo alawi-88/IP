@@ -5,7 +5,6 @@ namespace App\Services\Ai;
 use App\Contracts\VentureAiProviderInterface;
 use App\Models\AiProvider;
 use RuntimeException;
-use Sleep;
 
 class AiProviderManager
 {
@@ -45,12 +44,12 @@ class AiProviderManager
     /**
      * Generate content using the provider with failover support.
      *
-     * @param string $prompt
+     * @param string|array $prompt Prompt string or array with system_prompt, user_prompt, etc.
      * @param array $options
      * @return array
      * @throws RuntimeException
      */
-    public function generate(string $prompt, array $options = []): array
+    public function generate(string|array $prompt, array $options = []): array
     {
         $lastException = null;
 
@@ -102,13 +101,13 @@ class AiProviderManager
      */
     public function resolveProvider(AiProvider $provider): VentureAiProviderInterface
     {
-        $providerType = strtolower($provider->provider);
+        $providerType = strtolower($provider->provider_type);
 
         return match ($providerType) {
-            'claude' => new ClaudeVentureAiProvider($provider),
+            'anthropic', 'claude' => new ClaudeVentureAiProvider($provider),
             'openai' => new OpenAiVentureAiProvider($provider),
-            'gemini' => new GeminiVentureAiProvider($provider),
-            default => throw new RuntimeException("Unknown AI provider type: {$provider->provider}"),
+            'google', 'gemini' => new GeminiVentureAiProvider($provider),
+            default => throw new RuntimeException("Unknown AI provider type: {$provider->provider_type}"),
         };
     }
 

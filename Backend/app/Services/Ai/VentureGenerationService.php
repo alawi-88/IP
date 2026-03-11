@@ -19,26 +19,27 @@ class VentureGenerationService
         $venture->update(['status' => 'generating']);
 
         // Load active, ordered section configs
-        $configs = VentureSectionConfig::active()
-            ->ordered()
+        $configs = VentureSectionConfig::where('is_visible', true)
+            ->orderBy('sort_order')
             ->get();
 
-        // Group configs by tab_key
-        $configsByTab = $configs->groupBy('tab_key');
+        // Group configs by tab_slug
+        $configsByTab = $configs->groupBy('tab_slug');
 
         // Track tab order for delay calculation
         $tabOrder = 0;
 
-        foreach ($configsByTab as $tabKey => $tabConfigs) {
+        foreach ($configsByTab as $tabSlug => $tabConfigs) {
             // Create or find VentureTab
             $tab = VentureTab::firstOrCreate(
                 [
                     'venture_id' => $venture->id,
-                    'tab_key' => $tabKey,
+                    'slug' => $tabSlug,
                 ],
                 [
-                    'display_name' => $tabConfigs->first()->tab_display_name ?? ucwords(str_replace('_', ' ', $tabKey)),
-                    'order' => $tabOrder,
+                    'label_en' => $tabConfigs->first()->label_en ?? ucwords(str_replace('_', ' ', $tabSlug)),
+                    'sort_order' => $tabOrder,
+                    'is_visible' => true,
                 ]
             );
 
@@ -50,9 +51,14 @@ class VentureGenerationService
             foreach ($tabConfigs as $config) {
                 // Create VentureSection with pending status
                 $section = VentureSection::create([
+                    'venture_id' => $venture->id,
                     'venture_tab_id' => $tab->id,
-                    'section_key' => $config->section_key,
+                    'slug' => $config->section_slug,
+                    'label_en' => $config->label_en,
                     'status' => 'pending',
+                    'sort_order' => $sectionOrder,
+                    'is_visible' => true,
+                    'component_type' => $config->component_type,
                     'generation_attempts' => 0,
                 ]);
 
@@ -139,7 +145,7 @@ class VentureGenerationService
 
             // Calculate viability score from dashboard_viability_score section if available
             $viabilitySection = $sections->first(
-                fn($section) => $section->section_key === 'dashboard_viability_score'
+                fn($section) => $section->slug === 'dashboard_viability_score'
             );
 
             if ($viabilitySection && $viabilitySection->content) {
