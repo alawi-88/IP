@@ -25,13 +25,17 @@ class ListVenturePromptTemplates extends ListRecords
         return $table
             ->query(VenturePromptTemplate::query())
             ->columns([
-                Tables\Columns\TextColumn::make('section_key')
+                Tables\Columns\TextColumn::make('section_slug')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('label')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('version'),
+                Tables\Columns\TextColumn::make('max_tokens')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable(),

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\VenturePromptTemplateResource\Pages;
 
 use App\Filament\Resources\VenturePromptTemplateResource;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -16,20 +15,30 @@ class CreateVenturePromptTemplate extends CreateRecord
     protected function getFormSchema(): array
     {
         return [
-            TextInput::make('section_key')
+            TextInput::make('section_slug')
                 ->required()
                 ->maxLength(255),
-            Textarea::make('prompt_template')
+            TextInput::make('label')
                 ->required()
-                ->rows(10),
-            KeyValue::make('variables')
-                ->keyLabel('Variable Name')
-                ->valueLabel('Variable Description'),
+                ->maxLength(255),
+            Textarea::make('system_prompt')
+                ->required()
+                ->rows(6),
+            Textarea::make('user_prompt')
+                ->required()
+                ->rows(6),
+            Textarea::make('json_schema')
+                ->rows(4)
+                ->helperText('JSON schema for structured output'),
             Toggle::make('is_active')
                 ->default(true),
-            TextInput::make('version')
+            TextInput::make('max_tokens')
                 ->numeric()
-                ->default(1),
+                ->default(4096),
+            TextInput::make('temperature')
+                ->numeric()
+                ->step(0.01)
+                ->default(0.70),
         ];
     }
 }

@@ -10,13 +10,16 @@ class VentureKnowledgeSource extends Model
         'title',
         'type',
         'content',
-        'metadata',
+        'url',
+        'file_path',
+        'priority',
         'is_active',
+        'applicable_sections',
     ];
 
     protected $casts = [
-        'metadata' => 'array',
         'is_active' => 'boolean',
+        'applicable_sections' => 'array',
     ];
 
     /**
@@ -33,5 +36,13 @@ class VentureKnowledgeSource extends Model
     public function scopeByType($query, $type)
     {
         return $query->where('type', $type);
+    }
+
+    /**
+     * Scope: Order by priority.
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('priority', 'asc');
     }
 }

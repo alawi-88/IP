@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\VentureKnowledgeSourceResource\Pages;
 
-use Filament\Forms\Components\KeyValue;
+use App\Filament\Resources\VentureKnowledgeSourceResource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -11,7 +11,7 @@ use Filament\Resources\Pages\CreateRecord;
 
 class CreateVentureKnowledgeSource extends CreateRecord
 {
-    protected static string $resource = 'App\Filament\Resources\VentureKnowledgeSourceResource';
+    protected static string $resource = VentureKnowledgeSourceResource::class;
 
     protected function getFormSchema(): array
     {
@@ -28,11 +28,15 @@ class CreateVentureKnowledgeSource extends CreateRecord
                     'methodology' => 'Methodology',
                 ]),
             Textarea::make('content')
-                ->required()
                 ->rows(8),
-            KeyValue::make('metadata')
-                ->keyLabel('Key')
-                ->valueLabel('Value'),
+            TextInput::make('url')
+                ->url()
+                ->maxLength(2048),
+            TextInput::make('file_path')
+                ->maxLength(512),
+            TextInput::make('priority')
+                ->numeric()
+                ->default(0),
             Toggle::make('is_active')
                 ->default(true),
         ];
