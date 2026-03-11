@@ -17,11 +17,13 @@ return new class extends Migration
 
         Schema::create('form_assessment_criterion_form_field', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('form_assessment_criterion_id')
-                ->constrained('form_assessment_criteria')
+            $table->unsignedBigInteger('form_assessment_criterion_id');
+            $table->foreign('form_assessment_criterion_id', 'fac_ff_criterion_id_fk')
+                ->references('id')->on('form_assessment_criteria')
                 ->onDelete('cascade');
-            $table->foreignId('form_field_id')
-                ->constrained('form_fields')
+            $table->unsignedBigInteger('form_field_id');
+            $table->foreign('form_field_id', 'fac_ff_field_id_fk')
+                ->references('id')->on('form_fields')
                 ->onDelete('cascade');
             $table->timestamps();
 
