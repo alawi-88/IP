@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,20 +12,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-                if (Schema::hasTable('competition_applications')) {
-            Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            // Drop foreign keys first
+            $__fks = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'competition_applications' AND CONSTRAINT_TYPE = 'FOREIGN KEY'");
+            $__fkNames = array_map(fn($fk) => $fk->CONSTRAINT_NAME, $__fks);
 
-try {                 if (Schema::hasColumn('competition_applications', 'ai_scored')) { $table->dropColumn('ai_scored'); }
-                if (Schema::hasColumn('competition_applications', 'ai_scores')) { $table->dropColumn('ai_scores'); }
-                if (Schema::hasColumn('competition_applications', 'ai_confidence')) { $table->dropColumn('ai_confidence'); }
-                if (Schema::hasColumn('competition_applications', 'ai_reasoning')) { $table->dropColumn('ai_reasoning'); }
-                if (Schema::hasColumn('competition_applications', 'ai_score_overridden')) { $table->dropColumn('ai_score_overridden'); }
-                if (Schema::hasColumn('competition_applications', 'ai_scored_by')) { $table->dropColumn('ai_scored_by'); }
-                if (Schema::hasColumn('competition_applications', 'ai_scored_at')) { $table->dropColumn('ai_scored_at'); }
-                if (Schema::hasColumn('competition_applications', 'ai_overridden_by')) { $table->dropColumn('ai_overridden_by'); }
-                if (Schema::hasColumn('competition_applications', 'ai_overridden_at')) { $table->dropColumn('ai_overridden_at'); }
-                if (Schema::hasColumn('competition_applications', 'ai_metadata')) { $table->dropColumn('ai_metadata'); } } catch (\Exception $e) {}
-        });
+            if (in_array('competition_applications_ai_scored_by_foreign', $__fkNames)) {
+                Schema::table('competition_applications', fn(Blueprint $t) => $t->dropForeign(['ai_scored_by']));
+            }
+            if (in_array('competition_applications_ai_overridden_by_foreign', $__fkNames)) {
+                Schema::table('competition_applications', fn(Blueprint $t) => $t->dropForeign(['ai_overridden_by']));
+            }
+
+            // Drop columns one by one in separate closures
+            $columns = ['ai_scored', 'ai_scores', 'ai_confidence', 'ai_reasoning', 'ai_score_overridden', 'ai_scored_by', 'ai_scored_at', 'ai_overridden_by', 'ai_overridden_at', 'ai_metadata'];
+            foreach ($columns as $col) {
+                if (Schema::hasColumn('competition_applications', $col)) {
+                    Schema::table('competition_applications', function (Blueprint $table) use ($col) {
+                        $table->dropColumn($col);
+                    });
+                }
+            }
         }
     }
 
@@ -35,21 +43,17 @@ try {                 if (Schema::hasColumn('competition_applications', 'ai_scor
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->boolean('ai_scored')->default(false)->comment('Whether this application was scored by AI');
-            $table->json('ai_scores')->nullable()->comment('AI-generated scores before manual override');
-            $table->decimal('ai_confidence', 3, 2)->nullable()->comment('AI confidence score (0-1)');
-            $table->text('ai_reasoning')->nullable()->comment('AI explanation for scores');
-            $table->boolean('ai_score_overridden')->default(false)->comment('Whether admin overrode AI scores');
-            $table->foreignId('ai_scored_by')->nullable()->constrained('users')->onDelete('set null')->comment('User who triggered AI scoring');
-            $table->timestamp('ai_scored_at')->nullable()->comment('When AI scoring was performed');
-            $table->foreignId('ai_overridden_by')->nullable()->constrained('users')->onDelete('set null')->comment('User who overrode AI scores');
-            $table->timestamp('ai_overridden_at')->nullable()->comment('When AI scores were overridden');
-            $table->json('ai_metadata')->nullable()->comment('Additional AI scoring metadata');
-            
-            $table->index('ai_scored');
-            $table->index('ai_score_overridden');
-        });
+                $table->boolean('ai_scored')->default(false);
+                $table->json('ai_scores')->nullable();
+                $table->decimal('ai_confidence', 3, 2)->nullable();
+                $table->text('ai_reasoning')->nullable();
+                $table->boolean('ai_score_overridden')->default(false);
+                $table->foreignId('ai_scored_by')->nullable()->constrained('users')->onDelete('set null');
+                $table->timestamp('ai_scored_at')->nullable();
+                $table->foreignId('ai_overridden_by')->nullable()->constrained('users')->onDelete('set null');
+                $table->timestamp('ai_overridden_at')->nullable();
+                $table->json('ai_metadata')->nullable();
+            });
         }
     }
 };
-
