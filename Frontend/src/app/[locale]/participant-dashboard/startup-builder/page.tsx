@@ -63,9 +63,9 @@ export default function StartupBuilderPage() {
                 <div className="bg-gradient-to-r from-[#25935F] to-[#1a7a4e] px-5 py-6">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-white text-base font-bold line-clamp-2 leading-tight">
+                      <p className="text-white !text-sm font-bold line-clamp-2 !leading-snug m-0">
                         {venture.title}
-                      </h3>
+                      </p>
                       <Tag
                         color={statusColors[venture.status] || "default"}
                         className="mt-2 !text-xs"
