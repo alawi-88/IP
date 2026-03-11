@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('landing_pages')) {
             Schema::table('landing_pages', function (Blueprint $table) {
             $table->boolean('government_verification_banner_enabled')->default(false);
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

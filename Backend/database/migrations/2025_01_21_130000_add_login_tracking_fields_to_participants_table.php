@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
             $table->string('login_by')->default('credentials');
             $table->json('nafath_data')->nullable();
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

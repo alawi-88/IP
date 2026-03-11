@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
             $table->boolean('scoring_enabled')->default(false)->comment('Enable scoring for registration form submissions');
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

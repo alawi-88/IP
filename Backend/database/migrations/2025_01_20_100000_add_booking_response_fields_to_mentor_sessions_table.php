@@ -8,12 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('mentor_sessions')) {
             Schema::table('mentor_sessions', function (Blueprint $table) {
             $table->text('declined_reason')->nullable();
             $table->datetime('proposed_time')->nullable();
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     public function down(): void

@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         Schema::table('mentor_participant', function (Blueprint $table) {
             // Add column only if it doesn't already exist to avoid "Duplicate column" errors
             if (! Schema::hasColumn('mentor_participant', 'competition_id')) {
@@ -23,6 +24,7 @@ return new class extends Migration
             // ملاحظة: تركنا الـ unique/index القديم كما هو لتجنّب كسر أي foreign key
             // ويمكن تعديل الـ constraints لاحقًا بعد مراجعة بنية الجدول في قاعدة البيانات.
         });
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

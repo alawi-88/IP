@@ -12,12 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('competition_tabs')) {
             Schema::table('competition_tabs', function (Blueprint $table) {
             $table->string('label_en')->nullable();
             $table->string('label_ar')->nullable();
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

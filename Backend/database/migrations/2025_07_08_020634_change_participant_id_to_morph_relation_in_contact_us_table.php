@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('contact_us')) {
             Schema::table('contact_us', function (Blueprint $table) {
             $table->dropForeign('contact_us_participant_id_foreign');
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->index(['model_type', 'model_id'], 'contact_us_morph_idx');
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

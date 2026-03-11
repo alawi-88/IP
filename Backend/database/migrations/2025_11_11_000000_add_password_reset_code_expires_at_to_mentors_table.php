@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
             if (!Schema::hasColumn('mentors', 'password_reset_code_expires_at')) {
@@ -18,6 +19,7 @@ return new class extends Migration
             }
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

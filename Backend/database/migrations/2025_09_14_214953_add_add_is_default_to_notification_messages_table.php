@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('notification_messages')) {
             Schema::table('notification_messages', function (Blueprint $table) {
             $table->boolean('is_default')->default(false);
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

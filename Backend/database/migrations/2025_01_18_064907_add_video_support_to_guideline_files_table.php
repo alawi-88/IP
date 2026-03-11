@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (!Schema::hasTable('guideline_files')) {
             return;
         }
@@ -39,6 +40,7 @@ return new class extends Migration
             }
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     public function down(): void

@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
             $table->string('email_logo')->nullable();
             $table->string('email_footer_footer')->nullable();
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

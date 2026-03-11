@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
 
         if (!Schema::hasColumn('tracks', 'slug')) {
             if (Schema::hasTable('tracks')) {
@@ -27,6 +28,7 @@ return new class extends Migration
         });
         }
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

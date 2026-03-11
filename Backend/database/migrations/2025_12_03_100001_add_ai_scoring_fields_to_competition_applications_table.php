@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
             $table->boolean('ai_scored')->default(false)->comment('Whether this application was scored by AI');
@@ -28,6 +29,7 @@ return new class extends Migration
             $table->index('ai_score_overridden');
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

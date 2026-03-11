@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('form_evaluation_scores')) {
             Schema::table('form_evaluation_scores', function (Blueprint $table) {
             $table->boolean('exclude_from_calculation')->default(false);
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

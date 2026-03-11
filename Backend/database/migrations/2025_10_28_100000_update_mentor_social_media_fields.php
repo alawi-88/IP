@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
             // Drop the old 'link' column
@@ -34,6 +35,7 @@ return new class extends Migration
             }
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

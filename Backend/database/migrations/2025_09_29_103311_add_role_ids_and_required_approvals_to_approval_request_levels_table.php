@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('approval_request_levels')) {
             Schema::table('approval_request_levels', function (Blueprint $table) {
             $table->json('role_ids')->nullable();
             $table->integer('required_approvals')->default(1);
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

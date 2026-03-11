@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         // Migrate existing AI enhancement data to the new table
         $existingConfigs = DB::table('form_ai_scoring_configs')
             ->whereNotNull('ai_enhancement_enabled')
@@ -39,6 +40,7 @@ return new class extends Migration
                 if (Schema::hasColumn('form_ai_scoring_configs', 'ai_enhancement_fields')) { $table->dropColumn('ai_enhancement_fields'); } } catch (\Exception $e) {}
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
             $table->json('assessment_scores')->nullable()->comment('JSON object storing scores for each assessment criterion');
             $table->unsignedInteger('total_score')->nullable()->comment('Total calculated score from all criteria');
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

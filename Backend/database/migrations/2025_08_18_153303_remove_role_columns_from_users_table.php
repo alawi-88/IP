@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
                             if (Schema::hasColumn('users', 'role')) { $table->dropColumn('role'); }
                 if (Schema::hasColumn('users', 'role_type')) { $table->dropColumn('role_type'); }
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

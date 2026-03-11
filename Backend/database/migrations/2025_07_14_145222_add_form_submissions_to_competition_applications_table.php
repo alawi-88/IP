@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
             $table->foreignId('form_id')->constrained('forms')->onDelete('cascade');
             $table->json('form_submissions')->nullable();
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

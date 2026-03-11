@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('nafath_settings')) {
             Schema::table('nafath_settings', function (Blueprint $table) {
             $table->string('login_method')->default('both')->comment('nafath, credentials, or both');
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

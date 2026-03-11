@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
             $table->unsignedBigInteger('track_id')->nullable(); // Adjust placement as needed
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->foreign('sub_track_id')->references('id')->on('sub_tracks')->nullOnDelete();
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

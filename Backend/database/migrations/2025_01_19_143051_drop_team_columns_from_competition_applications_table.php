@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
             if (Schema::hasColumn('competition_applications', 'team_name')) { $table->dropColumn('team_name'); }
@@ -23,6 +24,7 @@ if (Schema::hasColumn('competition_applications', 'idea_challenge_id')) { $table
             if (Schema::hasColumn('competition_applications', 'team_member_previous_participation')) { $table->dropColumn('team_member_previous_participation'); }
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('personal_access_tokens')) {
             Schema::table('personal_access_tokens', function (Blueprint $table) {
             // Add index for better performance on token lookups
@@ -31,6 +32,7 @@ return new class extends Migration
             $table->string('revoked_reason')->nullable();
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

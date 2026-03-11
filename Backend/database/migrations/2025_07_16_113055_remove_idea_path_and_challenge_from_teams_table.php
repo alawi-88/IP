@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('teams')) {
             // Drop foreign keys using raw SQL with IF EXISTS pattern
             $foreignKeys = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'teams' AND CONSTRAINT_TYPE = 'FOREIGN KEY'");
@@ -40,6 +41,7 @@ return new class extends Migration
                 }
             });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

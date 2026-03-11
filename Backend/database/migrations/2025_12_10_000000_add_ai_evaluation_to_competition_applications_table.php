@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
             $table->json('ai_evaluation_response')->nullable();
             $table->timestamp('ai_evaluated_at')->nullable();
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

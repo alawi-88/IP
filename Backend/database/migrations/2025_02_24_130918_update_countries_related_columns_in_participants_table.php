@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
             $table->foreignId('nationality_id')
@@ -27,6 +28,7 @@ return new class extends Migration
                 ->constrained('cities');
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

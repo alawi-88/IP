@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('form_fields')) {
             Schema::table('form_fields', function (Blueprint $table) {
             $table->json('hint')->nullable();
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

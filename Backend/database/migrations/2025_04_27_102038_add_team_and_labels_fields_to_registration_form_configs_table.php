@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
                 $table->unsignedTinyInteger('min_team_members')->default(2);
@@ -27,6 +28,7 @@ return new class extends Migration
                 $table->json('help_team_serial')->nullable();
             });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**

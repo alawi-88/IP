@@ -12,6 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
             // Evaluation framework fields
@@ -53,6 +54,7 @@ return new class extends Migration
                 ->comment('Minimum score required for auto-qualification');
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     public function down(): void

@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
 
@@ -26,6 +27,7 @@ try {                 if (Schema::hasColumn('competition_applications', 'ai_scor
                 if (Schema::hasColumn('competition_applications', 'ai_metadata')) { $table->dropColumn('ai_metadata'); } } catch (\Exception $e) {}
         });
         }
+    Schema::enableForeignKeyConstraints();
     }
 
     /**
