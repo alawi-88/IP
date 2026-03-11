@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('email_templates')) {
             Schema::table('email_templates', function (Blueprint $table) {
-            $table->boolean('is_default')->default(false);
+            if (!Schema::hasColumn('email_templates', 'is_default')) { $table->boolean('is_default')->default(false); }
         });
         }
     }

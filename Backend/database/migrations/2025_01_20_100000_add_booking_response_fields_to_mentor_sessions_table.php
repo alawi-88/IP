@@ -10,7 +10,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('mentor_sessions')) {
             Schema::table('mentor_sessions', function (Blueprint $table) {
-            $table->text('declined_reason')->nullable();
+            if (!Schema::hasColumn('mentor_sessions', 'declined_reason')) { $table->text('declined_reason')->nullable(); }
             $table->datetime('proposed_time')->nullable();
         });
         }

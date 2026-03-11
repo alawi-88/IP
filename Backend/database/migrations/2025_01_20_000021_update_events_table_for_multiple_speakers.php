@@ -14,7 +14,7 @@ return new class extends Migration
                 if (Schema::hasTable('events')) {
             Schema::table('events', function (Blueprint $table) {
             // Add speakers column to store JSON data
-            $table->json('speakers')->nullable();
+            if (!Schema::hasColumn('events', 'speakers')) { $table->json('speakers')->nullable(); }
             
             // Remove old speaker columns
             try {                 if (Schema::hasColumn('events', 'speaker_photo')) { $table->dropColumn('speaker_photo'); }

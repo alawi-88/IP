@@ -13,8 +13,8 @@ return new class extends Migration
     {
                 if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->json('assessment_scores')->nullable()->comment('JSON object storing scores for each assessment criterion');
-            $table->unsignedInteger('total_score')->nullable()->comment('Total calculated score from all criteria');
+            if (!Schema::hasColumn('competition_applications', 'assessment_scores')) { $table->json('assessment_scores')->nullable()->comment('JSON object storing scores for each assessment criterion'); }
+            if (!Schema::hasColumn('competition_applications', 'total_score')) { $table->unsignedInteger('total_score')->nullable()->comment('Total calculated score from all criteria'); }
         });
         }
     }

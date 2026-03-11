@@ -25,13 +25,28 @@ return new class extends Migration
         }
 
             Schema::table('teams', function (Blueprint $table) {
-            $table->unsignedBigInteger('track_id')->nullable(); // Adjust placement as needed
-            $table->unsignedBigInteger('sub_track_id')->nullable();
-
-            // Optional: Add foreign key constraints
-            $table->foreign('track_id')->references('id')->on('tracks')->nullOnDelete();
-            $table->foreign('sub_track_id')->references('id')->on('sub_tracks')->nullOnDelete();
+            if (!Schema::hasColumn('teams', 'track_id')) {
+                $table->unsignedBigInteger('track_id')->nullable();
+            }
+            if (!Schema::hasColumn('teams', 'sub_track_id')) {
+                $table->unsignedBigInteger('sub_track_id')->nullable();
+            }
         });
+        // Add foreign keys separately (tracks table may not exist in fresh migration order)
+        if (Schema::hasTable('tracks') && Schema::hasColumn('teams', 'track_id')) {
+            $fks = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'teams' AND CONSTRAINT_TYPE = 'FOREIGN KEY'");
+            $fkNames = array_map(fn($fk) => $fk->CONSTRAINT_NAME, $fks);
+            if (!in_array('teams_track_id_foreign', $fkNames)) {
+                Schema::table('teams', fn(Blueprint $t) => $t->foreign('track_id')->references('id')->on('tracks')->nullOnDelete());
+            }
+        }
+        if (Schema::hasTable('sub_tracks') && Schema::hasColumn('teams', 'sub_track_id')) {
+            $fks2 = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'teams' AND CONSTRAINT_TYPE = 'FOREIGN KEY'");
+            $fkNames2 = array_map(fn($fk) => $fk->CONSTRAINT_NAME, $fks2);
+            if (!in_array('teams_sub_track_id_foreign', $fkNames2)) {
+                Schema::table('teams', fn(Blueprint $t) => $t->foreign('sub_track_id')->references('id')->on('sub_tracks')->nullOnDelete());
+            }
+        }
         }
     }
 

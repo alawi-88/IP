@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-$table->unsignedBigInteger('team_id')->nullable()->change();
+if (!Schema::hasColumn('projects', 'team_id')) { $table->unsignedBigInteger('team_id')->nullable()->change(); }
         });
         }
     }

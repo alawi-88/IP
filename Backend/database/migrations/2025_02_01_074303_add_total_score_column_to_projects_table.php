@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-            $table->float('total_score')->default(0);
+            if (!Schema::hasColumn('projects', 'total_score')) { $table->float('total_score')->default(0); }
         });
         }
     }

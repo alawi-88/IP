@@ -22,7 +22,7 @@ return new class extends Migration
         }
 
             Schema::table('teams', function (Blueprint $table) {
-            $table->foreignId('application_id')
+            if (!Schema::hasColumn('teams', 'application_id')) { $table->foreignId('application_id') }
                 
                 ->constrained('competition_applications')
                 ->onDelete('cascade');

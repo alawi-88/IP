@@ -22,8 +22,8 @@ return new class extends Migration
         }
 
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->foreignId('form_id')->constrained('forms')->onDelete('cascade');
-            $table->json('form_submissions')->nullable();
+            if (!Schema::hasColumn('competition_applications', 'form_id')) { $table->foreignId('form_id')->constrained('forms')->onDelete('cascade'); }
+            if (!Schema::hasColumn('competition_applications', 'form_submissions')) { $table->json('form_submissions')->nullable(); }
         });
         }
     }

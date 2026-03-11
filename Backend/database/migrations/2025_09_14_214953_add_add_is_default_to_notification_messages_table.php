@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('notification_messages')) {
             Schema::table('notification_messages', function (Blueprint $table) {
-            $table->boolean('is_default')->default(false);
+            if (!Schema::hasColumn('notification_messages', 'is_default')) { $table->boolean('is_default')->default(false); }
         });
         }
     }

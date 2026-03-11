@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->string('status')->default('pending');
+            if (!Schema::hasColumn('competition_applications', 'status')) { $table->string('status')->default('pending'); }
         });
         }
     }

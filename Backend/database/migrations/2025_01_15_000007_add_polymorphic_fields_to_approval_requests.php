@@ -19,9 +19,9 @@ return new class extends Migration
         }
 
             Schema::table('approval_requests', function (Blueprint $table) {
-            $table->string('target_type')->nullable();
-            $table->unsignedBigInteger('target_id')->nullable();
-            $table->timestamp('executed_at')->nullable();
+            if (!Schema::hasColumn('approval_requests', 'target_type')) { $table->string('target_type')->nullable(); }
+            if (!Schema::hasColumn('approval_requests', 'target_id')) { $table->unsignedBigInteger('target_id')->nullable(); }
+            if (!Schema::hasColumn('approval_requests', 'executed_at')) { $table->timestamp('executed_at')->nullable(); }
             
             $table->index(['target_type', 'target_id']);
             $table->index(['executed_at']);

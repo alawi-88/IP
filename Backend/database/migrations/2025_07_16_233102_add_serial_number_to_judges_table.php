@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('judges')) {
             Schema::table('judges', function (Blueprint $table) {
-            $table->string('serial_number')->nullable();
+            if (!Schema::hasColumn('judges', 'serial_number')) { $table->string('serial_number')->nullable(); }
         });
         }
     }

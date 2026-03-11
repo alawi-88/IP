@@ -14,7 +14,7 @@ return new class extends Migration
                 if (Schema::hasTable('stages')) {
             Schema::table('stages', function (Blueprint $table) {
             // Add JSON column to store multiple form IDs
-            $table->json('form_ids')->nullable()->comment('Array of form IDs associated with this stage');
+            if (!Schema::hasColumn('stages', 'form_ids')) { $table->json('form_ids')->nullable()->comment('Array of form IDs associated with this stage'); }
         });
         }
     }

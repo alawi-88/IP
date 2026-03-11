@@ -25,8 +25,8 @@ return new class extends Migration
         }
 
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->foreignId('track_id')->nullable()->constrained('paths')->cascadeOnDelete();
-            $table->foreignId('idea_challenge_id')->nullable()->constrained('challenges')->cascadeOnDelete();
+            if (!Schema::hasColumn('competition_applications', 'track_id')) { $table->foreignId('track_id')->nullable()->constrained('paths')->cascadeOnDelete(); }
+            if (!Schema::hasColumn('competition_applications', 'idea_challenge_id')) { $table->foreignId('idea_challenge_id')->nullable()->constrained('challenges')->cascadeOnDelete(); }
         });
         }
     }

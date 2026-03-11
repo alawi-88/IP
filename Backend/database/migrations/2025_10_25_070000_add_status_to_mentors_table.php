@@ -13,11 +13,11 @@ return new class extends Migration
     {
                 if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->timestamp('approved_at')->nullable();
-            $table->timestamp('rejected_at')->nullable();
-            $table->foreignId('approved_by')->nullable()->constrained('users');
-            $table->text('rejection_reason')->nullable();
+            if (!Schema::hasColumn('mentors', 'status')) { $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending'); }
+            if (!Schema::hasColumn('mentors', 'approved_at')) { $table->timestamp('approved_at')->nullable(); }
+            if (!Schema::hasColumn('mentors', 'rejected_at')) { $table->timestamp('rejected_at')->nullable(); }
+            if (!Schema::hasColumn('mentors', 'approved_by')) { $table->foreignId('approved_by')->nullable()->constrained('users'); }
+            if (!Schema::hasColumn('mentors', 'rejection_reason')) { $table->text('rejection_reason')->nullable(); }
         });
         }
     }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('project_evaluations')) {
             Schema::table('project_evaluations', function (Blueprint $table) {
-            $table->text('comment')->nullable();
+            if (!Schema::hasColumn('project_evaluations', 'comment')) { $table->text('comment')->nullable(); }
         });
         }
     }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('project_form_configs')) {
             Schema::table('project_form_configs', function (Blueprint $table) {
-            $table->unsignedBigInteger('form_id');
+            if (!Schema::hasColumn('project_form_configs', 'form_id')) { $table->unsignedBigInteger('form_id'); }
             $table->foreign('form_id')->references('id')->on('forms')->onDelete('cascade');
         });
         }

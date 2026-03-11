@@ -21,8 +21,8 @@ return new class extends Migration
 
         if (Schema::hasTable('winners')) {
             Schema::table('winners', function (Blueprint $table) {
-            $table->json('name')->change();
-            $table->json('subtitle')->nullable()->change();
+            if (!Schema::hasColumn('winners', 'name')) { $table->json('name')->change(); }
+            if (!Schema::hasColumn('winners', 'subtitle')) { $table->json('subtitle')->nullable()->change(); }
         });
         }
     }

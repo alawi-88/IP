@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
-            $table->boolean('is_completed')->default(false);
+            if (!Schema::hasColumn('teams', 'is_completed')) { $table->boolean('is_completed')->default(false); }
         });
         }
     }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('project_evaluations')) {
             Schema::table('project_evaluations', function (Blueprint $table) {
-            $table->integer('weight')->nullable();
+            if (!Schema::hasColumn('project_evaluations', 'weight')) { $table->integer('weight')->nullable(); }
         });
         }
     }

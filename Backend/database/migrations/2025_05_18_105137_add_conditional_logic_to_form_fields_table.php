@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('form_fields')) {
             Schema::table('form_fields', function (Blueprint $table) {
-            $table->boolean('conditional_logic')->default(false);
+            if (!Schema::hasColumn('form_fields', 'conditional_logic')) { $table->boolean('conditional_logic')->default(false); }
 
         });
         }

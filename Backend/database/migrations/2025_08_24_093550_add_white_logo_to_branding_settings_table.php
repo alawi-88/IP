@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
-            $table->string('white_logo')->nullable();
+            if (!Schema::hasColumn('branding_settings', 'white_logo')) { $table->string('white_logo')->nullable(); }
         });
         }
     }

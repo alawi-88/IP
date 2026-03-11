@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('stages')) {
             Schema::table('stages', function (Blueprint $table) {
-            $table->foreignId('form_id')->nullable()->constrained()->nullOnDelete();
+            if (!Schema::hasColumn('stages', 'form_id')) { $table->foreignId('form_id')->nullable()->constrained()->nullOnDelete(); }
         });
         }
     }

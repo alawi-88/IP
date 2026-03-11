@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->enum('type', ['submission', 'draft'])->default('submission');
+            if (!Schema::hasColumn('competition_applications', 'type')) { $table->enum('type', ['submission', 'draft'])->default('submission'); }
         });
         }
     }

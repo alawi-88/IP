@@ -13,8 +13,8 @@ return new class extends Migration
     {
                 if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-            $table->json('ai_evaluation_response')->nullable();
-            $table->timestamp('ai_evaluated_at')->nullable();
+            if (!Schema::hasColumn('projects', 'ai_evaluation_response')) { $table->json('ai_evaluation_response')->nullable(); }
+            if (!Schema::hasColumn('projects', 'ai_evaluated_at')) { $table->timestamp('ai_evaluated_at')->nullable(); }
         });
         }
     }

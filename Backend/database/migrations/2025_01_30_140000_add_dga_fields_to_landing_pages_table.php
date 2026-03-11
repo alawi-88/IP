@@ -13,8 +13,8 @@ return new class extends Migration
     {
                 if (Schema::hasTable('landing_pages')) {
             Schema::table('landing_pages', function (Blueprint $table) {
-            $table->string('dga_registration_number')->nullable();
-            $table->string('dga_certificate_url')->nullable();
+            if (!Schema::hasColumn('landing_pages', 'dga_registration_number')) { $table->string('dga_registration_number')->nullable(); }
+            if (!Schema::hasColumn('landing_pages', 'dga_certificate_url')) { $table->string('dga_certificate_url')->nullable(); }
         });
         }
     }

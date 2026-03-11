@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('judges')) {
             Schema::table('judges', function (Blueprint $table) {
-            $table->timestamp('email_verified_at')->nullable();
+            if (!Schema::hasColumn('judges', 'email_verified_at')) { $table->timestamp('email_verified_at')->nullable(); }
         });
         }
     }

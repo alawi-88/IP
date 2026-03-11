@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('form_fields')) {
             Schema::table('form_fields', function (Blueprint $table) {
-            $table->string('slug')->nullable();
+            if (!Schema::hasColumn('form_fields', 'slug')) { $table->string('slug')->nullable(); }
         });
         }
     }

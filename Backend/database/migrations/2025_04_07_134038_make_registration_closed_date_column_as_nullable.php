@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('competitions')) {
             Schema::table('competitions', function (Blueprint $table) {
-            $table->date('registration_closed_date')->nullable()->change();
+            if (!Schema::hasColumn('competitions', 'registration_closed_date')) { $table->date('registration_closed_date')->nullable()->change(); }
         });
         }
     }

@@ -13,11 +13,11 @@ return new class extends Migration
     {
                 if (Schema::hasTable('contact_us')) {
             Schema::table('contact_us', function (Blueprint $table) {
-            $table->enum('status', ['pending', 'resolved'])->default('pending');
-            $table->unsignedBigInteger('replied_by')->nullable();
+            if (!Schema::hasColumn('contact_us', 'status')) { $table->enum('status', ['pending', 'resolved'])->default('pending'); }
+            if (!Schema::hasColumn('contact_us', 'replied_by')) { $table->unsignedBigInteger('replied_by')->nullable(); }
             $table->foreign('replied_by')->references('id')->on('users')->onDelete('set null');
-            $table->longText('reply')->nullable();
-            $table->timestamp('replied_at')->nullable();
+            if (!Schema::hasColumn('contact_us', 'reply')) { $table->longText('reply')->nullable(); }
+            if (!Schema::hasColumn('contact_us', 'replied_at')) { $table->timestamp('replied_at')->nullable(); }
 
         });
         }

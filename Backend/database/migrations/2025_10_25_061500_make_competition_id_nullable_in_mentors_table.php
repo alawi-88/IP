@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-            $table->foreignId('competition_id')->nullable()->change();
+            if (!Schema::hasColumn('mentors', 'competition_id')) { $table->foreignId('competition_id')->nullable()->change(); }
         });
         }
     }

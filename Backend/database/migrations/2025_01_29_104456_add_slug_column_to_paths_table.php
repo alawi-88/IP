@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('paths')) {
             Schema::table('paths', function (Blueprint $table) {
-            $table->string('slug')->unique()->nullable();
+            if (!Schema::hasColumn('paths', 'slug')) { $table->string('slug')->unique()->nullable(); }
         });
         }
     }

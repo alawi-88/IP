@@ -13,8 +13,8 @@ return new class extends Migration
     {
                 if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            $table->string('login_by')->default('credentials');
-            $table->json('nafath_data')->nullable();
+            if (!Schema::hasColumn('participants', 'login_by')) { $table->string('login_by')->default('credentials'); }
+            if (!Schema::hasColumn('participants', 'nafath_data')) { $table->json('nafath_data')->nullable(); }
         });
         }
     }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('services')) {
             Schema::table('services', function (Blueprint $table) {
-            $table->integer('order')->default(0);
+            if (!Schema::hasColumn('services', 'order')) { $table->integer('order')->default(0); }
         });
         }
     }

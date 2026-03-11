@@ -14,7 +14,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('judges')) {
             Schema::table('judges', function (Blueprint $table) {
-            $table->enum('registration_method', [
+            if (!Schema::hasColumn('judges', 'registration_method')) { $table->enum('registration_method', [ }
                 Judge::REGISTRATION_METHOD_SELF,
                 Judge::REGISTRATION_METHOD_ADMIN,
             ])->default(Judge::REGISTRATION_METHOD_ADMIN);

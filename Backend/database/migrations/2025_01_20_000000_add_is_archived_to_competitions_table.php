@@ -13,8 +13,8 @@ return new class extends Migration
     {
                 if (Schema::hasTable('competitions')) {
             Schema::table('competitions', function (Blueprint $table) {
-            $table->boolean('is_archived')->default(false);
-            $table->timestamp('archived_at')->nullable();
+            if (!Schema::hasColumn('competitions', 'is_archived')) { $table->boolean('is_archived')->default(false); }
+            if (!Schema::hasColumn('competitions', 'archived_at')) { $table->timestamp('archived_at')->nullable(); }
         });
         }
     }

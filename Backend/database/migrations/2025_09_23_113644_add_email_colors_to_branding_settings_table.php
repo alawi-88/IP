@@ -13,11 +13,11 @@ return new class extends Migration
     {
                 if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
-            $table->string('email_bg_color')->nullable();
-            $table->string('email_text_color')->nullable();
-            $table->string('email_link_color')->nullable();
-            $table->string('email_border_color')->nullable();
-            $table->string('email_footer')->nullable();
+            if (!Schema::hasColumn('branding_settings', 'email_bg_color')) { $table->string('email_bg_color')->nullable(); }
+            if (!Schema::hasColumn('branding_settings', 'email_text_color')) { $table->string('email_text_color')->nullable(); }
+            if (!Schema::hasColumn('branding_settings', 'email_link_color')) { $table->string('email_link_color')->nullable(); }
+            if (!Schema::hasColumn('branding_settings', 'email_border_color')) { $table->string('email_border_color')->nullable(); }
+            if (!Schema::hasColumn('branding_settings', 'email_footer')) { $table->string('email_footer')->nullable(); }
         });
         }
     }

@@ -14,8 +14,8 @@ return new class extends Migration
     {
                 if (Schema::hasTable('competition_tabs')) {
             Schema::table('competition_tabs', function (Blueprint $table) {
-            $table->string('label_en')->nullable();
-            $table->string('label_ar')->nullable();
+            if (!Schema::hasColumn('competition_tabs', 'label_en')) { $table->string('label_en')->nullable(); }
+            if (!Schema::hasColumn('competition_tabs', 'label_ar')) { $table->string('label_ar')->nullable(); }
         });
         }
     }

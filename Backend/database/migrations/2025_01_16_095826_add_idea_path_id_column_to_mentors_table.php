@@ -22,7 +22,7 @@ return new class extends Migration
         }
 
             Schema::table('mentors', function (Blueprint $table) {
-            $table->foreignId('track_id')->constrained('paths')->cascadeOnDelete();
+            if (!Schema::hasColumn('mentors', 'track_id')) { $table->foreignId('track_id')->constrained('paths')->cascadeOnDelete(); }
         });
         }
     }

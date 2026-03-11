@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('nafath_settings')) {
             Schema::table('nafath_settings', function (Blueprint $table) {
-            $table->string('login_method')->default('both')->comment('nafath, credentials, or both');
+            if (!Schema::hasColumn('nafath_settings', 'login_method')) { $table->string('login_method')->default('both')->comment('nafath, credentials, or both'); }
         });
         }
     }

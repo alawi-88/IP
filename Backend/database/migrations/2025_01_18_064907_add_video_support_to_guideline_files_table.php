@@ -29,7 +29,7 @@ return new class extends Migration
                 if ($afterColumn) {
                     $table->string('file_type')->default('video');
                 } else {
-                    $table->string('file_type')->default('video');
+                    if (!Schema::hasColumn('guideline_files', 'file_type')) { $table->string('file_type')->default('video'); }
                 }
             }
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-            $table->boolean('is_visible')->default(true);
+            if (!Schema::hasColumn('mentors', 'is_visible')) { $table->boolean('is_visible')->default(true); }
 
         });
         }

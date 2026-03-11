@@ -13,10 +13,10 @@ return new class extends Migration
     {
                 if (Schema::hasTable('form_ai_scoring_configs')) {
             Schema::table('form_ai_scoring_configs', function (Blueprint $table) {
-            $table->boolean('ai_enhancement_enabled')->default(false)->comment('Enable AI enhancement for form submissions');
-            $table->text('ai_enhancement_context')->nullable()->comment('Form-level context for AI enhancement');
-            $table->text('ai_enhancement_instructions')->nullable()->comment('Instructions for AI enhancement');
-            $table->json('ai_enhancement_fields')->nullable()->comment('Array of field slugs that should be enhanced');
+            if (!Schema::hasColumn('form_ai_scoring_configs', 'ai_enhancement_enabled')) { $table->boolean('ai_enhancement_enabled')->default(false)->comment('Enable AI enhancement for form submissions'); }
+            if (!Schema::hasColumn('form_ai_scoring_configs', 'ai_enhancement_context')) { $table->text('ai_enhancement_context')->nullable()->comment('Form-level context for AI enhancement'); }
+            if (!Schema::hasColumn('form_ai_scoring_configs', 'ai_enhancement_instructions')) { $table->text('ai_enhancement_instructions')->nullable()->comment('Instructions for AI enhancement'); }
+            if (!Schema::hasColumn('form_ai_scoring_configs', 'ai_enhancement_fields')) { $table->json('ai_enhancement_fields')->nullable()->comment('Array of field slugs that should be enhanced'); }
         });
         }
     }

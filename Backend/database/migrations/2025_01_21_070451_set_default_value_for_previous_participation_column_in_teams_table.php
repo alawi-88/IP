@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
-            $table->boolean('previous_participation')->default(false)->change();
+            if (!Schema::hasColumn('teams', 'previous_participation')) { $table->boolean('previous_participation')->default(false)->change(); }
         });
         }
     }

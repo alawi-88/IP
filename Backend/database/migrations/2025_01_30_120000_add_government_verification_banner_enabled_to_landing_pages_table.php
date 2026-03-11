@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('landing_pages')) {
             Schema::table('landing_pages', function (Blueprint $table) {
-            $table->boolean('government_verification_banner_enabled')->default(false);
+            if (!Schema::hasColumn('landing_pages', 'government_verification_banner_enabled')) { $table->boolean('government_verification_banner_enabled')->default(false); }
         });
         }
     }

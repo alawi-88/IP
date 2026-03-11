@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('events')) {
             Schema::table('events', function (Blueprint $table) {
-            $table->string('event_link')->nullable()->change();
+            if (!Schema::hasColumn('events', 'event_link')) { $table->string('event_link')->nullable()->change(); }
         });
         }
     }

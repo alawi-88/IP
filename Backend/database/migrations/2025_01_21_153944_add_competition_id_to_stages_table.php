@@ -22,7 +22,7 @@ return new class extends Migration
         }
 
             Schema::table('stages', function (Blueprint $table) {
-            $table->foreignId('competition_id')->constrained()->onDelete('cascade');
+            if (!Schema::hasColumn('stages', 'competition_id')) { $table->foreignId('competition_id')->constrained()->onDelete('cascade'); }
         });
         }
     }

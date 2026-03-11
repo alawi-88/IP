@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-            $table->string('link')->nullable()->change();
+            if (!Schema::hasColumn('mentors', 'link')) { $table->string('link')->nullable()->change(); }
         });
         }
     }

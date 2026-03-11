@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->boolean('registered_as_team')->default(false);
+            if (!Schema::hasColumn('competition_applications', 'registered_as_team')) { $table->boolean('registered_as_team')->default(false); }
         });
         }
     }

@@ -17,7 +17,7 @@ return new class extends Migration
 
             if (Schema::hasColumn('contact_us', 'participant_id')) { $table->renameColumn('participant_id', 'model_id'); }
 
-            $table->string('model_type');
+            if (!Schema::hasColumn('contact_us', 'model_type')) { $table->string('model_type'); }
 
             $table->index(['model_type', 'model_id'], 'contact_us_morph_idx');
         });

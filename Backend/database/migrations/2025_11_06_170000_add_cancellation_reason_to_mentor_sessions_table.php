@@ -10,7 +10,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('mentor_sessions')) {
             Schema::table('mentor_sessions', function (Blueprint $table) {
-            $table->text('cancellation_reason')->nullable();
+            if (!Schema::hasColumn('mentor_sessions', 'cancellation_reason')) { $table->text('cancellation_reason')->nullable(); }
         });
         }
     }

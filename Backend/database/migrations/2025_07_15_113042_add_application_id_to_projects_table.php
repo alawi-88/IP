@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-            $table->foreignId('application_id')
+            if (!Schema::hasColumn('projects', 'application_id')) { $table->foreignId('application_id') }
                 ->nullable()
                 ->constrained('competition_applications')
                 ->onDelete('set null');

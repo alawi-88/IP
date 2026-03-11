@@ -16,7 +16,7 @@ return new class extends Migration
 
         if (Schema::hasTable('project_comments')) {
             Schema::table('project_comments', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->nullable()->change();
+            if (!Schema::hasColumn('project_comments', 'user_id')) { $table->unsignedBigInteger('user_id')->nullable()->change(); }
             $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
         });
         }

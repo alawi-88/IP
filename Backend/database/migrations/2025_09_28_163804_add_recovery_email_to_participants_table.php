@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            $table->string('recovery_email')->nullable()->unique();
+            if (!Schema::hasColumn('participants', 'recovery_email')) { $table->string('recovery_email')->nullable()->unique(); }
         });
         }
     }

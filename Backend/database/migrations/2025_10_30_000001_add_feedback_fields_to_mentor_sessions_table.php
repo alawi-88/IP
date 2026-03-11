@@ -10,9 +10,9 @@ return new class extends Migration
     {
                 if (Schema::hasTable('mentor_sessions')) {
             Schema::table('mentor_sessions', function (Blueprint $table) {
-            $table->text('feedback_comments')->nullable();
-            $table->text('feedback_strengths')->nullable();
-            $table->text('feedback_improvements')->nullable();
+            if (!Schema::hasColumn('mentor_sessions', 'feedback_comments')) { $table->text('feedback_comments')->nullable(); }
+            if (!Schema::hasColumn('mentor_sessions', 'feedback_strengths')) { $table->text('feedback_strengths')->nullable(); }
+            if (!Schema::hasColumn('mentor_sessions', 'feedback_improvements')) { $table->text('feedback_improvements')->nullable(); }
         });
         }
     }

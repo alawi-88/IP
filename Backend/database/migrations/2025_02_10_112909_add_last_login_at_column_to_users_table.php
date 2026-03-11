@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('last_login_at')->nullable();
+            if (!Schema::hasColumn('users', 'last_login_at')) { $table->timestamp('last_login_at')->nullable(); }
         });
         }
     }

@@ -13,8 +13,8 @@ return new class extends Migration
     {
                 if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
-            $table->string('email_logo')->nullable();
-            $table->string('email_footer_footer')->nullable();
+            if (!Schema::hasColumn('branding_settings', 'email_logo')) { $table->string('email_logo')->nullable(); }
+            if (!Schema::hasColumn('branding_settings', 'email_footer_footer')) { $table->string('email_footer_footer')->nullable(); }
         });
         }
     }

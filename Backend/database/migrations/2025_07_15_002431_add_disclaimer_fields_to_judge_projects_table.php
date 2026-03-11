@@ -13,8 +13,8 @@ return new class extends Migration
     {
                 if (Schema::hasTable('judge_projects')) {
             Schema::table('judge_projects', function (Blueprint $table) {
-            $table->boolean('disclaimer_accepted')->default(false);
-            $table->timestamp('disclaimer_accepted_at')->nullable();
+            if (!Schema::hasColumn('judge_projects', 'disclaimer_accepted')) { $table->boolean('disclaimer_accepted')->default(false); }
+            if (!Schema::hasColumn('judge_projects', 'disclaimer_accepted_at')) { $table->timestamp('disclaimer_accepted_at')->nullable(); }
         });
         }
     }
