@@ -28,7 +28,7 @@ class ListAiProviders extends ListRecords
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\BadgeColumn::make('provider')
+                Tables\Columns\BadgeColumn::make('provider_type')
                     ->colors([
                         'blue' => 'claude',
                         'green' => 'openai',
@@ -44,7 +44,7 @@ class ListAiProviders extends ListRecords
                 Tables\Columns\TextColumn::make('max_tokens'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('provider')
+                Tables\Filters\SelectFilter::make('provider_type')
                     ->options([
                         'claude' => 'Claude',
                         'openai' => 'OpenAI',

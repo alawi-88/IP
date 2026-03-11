@@ -18,7 +18,7 @@ class TabsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('tab_key')
+                Forms\Components\TextInput::make('slug')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -29,7 +29,7 @@ class TabsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('label_en')
             ->columns([
-                Tables\Columns\TextColumn::make('tab_key')
+                Tables\Columns\TextColumn::make('slug')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('label_en')
