@@ -5,9 +5,15 @@ interface Props {
 }
 
 export default function PersonaCardsRenderer({ content }: Props) {
+  // Handle various data shapes:
+  // - Array of personas
+  // - { personas: [...] }
+  // - Single persona object with name/role
   const personas = Array.isArray(content)
     ? content
-    : content.personas || content.items || content.cards || [content];
+    : content.personas || content.items || content.cards
+      ? (content.personas || content.items || content.cards)
+      : (content.name || content.role) ? [content] : [content];
 
   return (
     <div className="space-y-6">
@@ -41,6 +47,12 @@ export default function PersonaCardsRenderer({ content }: Props) {
                 <div>
                   <h5 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Background</h5>
                   <p className="text-sm text-gray-600">{persona.background}</p>
+                </div>
+              )}
+              {persona.location && (
+                <div>
+                  <h5 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Location</h5>
+                  <p className="text-sm text-gray-600">{persona.location}</p>
                 </div>
               )}
               {persona.quote && (
@@ -97,6 +109,58 @@ export default function PersonaCardsRenderer({ content }: Props) {
                   </ul>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Motivations & Frustrations */}
+          {(persona.motivations || persona.frustrations) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 border-t border-gray-100">
+              {persona.motivations && (
+                <div className="p-5 border-b md:border-b-0 md:border-r border-gray-100">
+                  <h5 className="text-xs font-bold uppercase tracking-wider text-blue-500 mb-2 flex items-center gap-1.5">
+                    💡 Motivations
+                  </h5>
+                  <ul className="space-y-1.5">
+                    {(Array.isArray(persona.motivations) ? persona.motivations : []).map((m: string, j: number) => (
+                      <li key={j} className="text-sm text-gray-600 flex items-start gap-2">
+                        <span className="text-gray-400 mt-1">•</span>
+                        <span>{m}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {persona.frustrations && (
+                <div className="p-5">
+                  <h5 className="text-xs font-bold uppercase tracking-wider text-orange-500 mb-2 flex items-center gap-1.5">
+                    😤 Frustrations
+                  </h5>
+                  <ul className="space-y-1.5">
+                    {(Array.isArray(persona.frustrations) ? persona.frustrations : []).map((f: string, j: number) => (
+                      <li key={j} className="text-sm text-gray-600 flex items-start gap-2">
+                        <span className="text-gray-400 mt-1">•</span>
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Preferred Channels */}
+          {persona.preferred_channels && Array.isArray(persona.preferred_channels) && (
+            <div className="border-t border-gray-100 p-5">
+              <h5 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">
+                Preferred Channels
+              </h5>
+              <div className="flex flex-wrap gap-2">
+                {persona.preferred_channels.map((ch: string, j: number) => (
+                  <span key={j} className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                    {ch}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
