@@ -12,11 +12,12 @@ return new class extends Migration {
     {
         if (Schema::hasTable('form_fields')) {
             Schema::table('form_fields', function (Blueprint $table) {
-            if (!Schema::hasColumn('form_fields', 'section_id')) { $table->foreignId('section_id') }
+            if (!Schema::hasColumn('form_fields', 'section_id')) {
+                $table->foreignId('section_id') 
                 ->nullable()
-                
                 ->constrained('form_sections')
                 ->onDelete('cascade');
+            }
         });
         }
     }

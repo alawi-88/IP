@@ -28,18 +28,21 @@ return new class extends Migration
         }
 
             Schema::table('participants', function (Blueprint $table) {
-            if (!Schema::hasColumn('participants', 'nationality_id')) { $table->foreignId('nationality_id') }
+            if (!Schema::hasColumn('participants', 'nationality_id')) {
+                $table->foreignId('nationality_id') 
                 ->nullable()
-                
                 ->constrained('nationalities');
-            if (!Schema::hasColumn('participants', 'country_id')) { $table->foreignId('country_id') }
+            }
+            if (!Schema::hasColumn('participants', 'country_id')) {
+                $table->foreignId('country_id') 
                 ->nullable()
-                
                 ->constrained('countries');
-            if (!Schema::hasColumn('participants', 'residence_city_id')) { $table->foreignId('residence_city_id') }
+            }
+            if (!Schema::hasColumn('participants', 'residence_city_id')) {
+                $table->foreignId('residence_city_id') 
                 ->nullable()
-                
                 ->constrained('cities');
+            }
         });
         }
     }

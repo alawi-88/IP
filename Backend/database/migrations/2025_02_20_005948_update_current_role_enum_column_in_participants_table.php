@@ -20,7 +20,8 @@ return new class extends Migration
 
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            if (!Schema::hasColumn('participants', 'current_role')) { $table->enum('current_role', [ }
+            if (!Schema::hasColumn('participants', 'current_role')) {
+                $table->enum('current_role', [ 
                 'high_school_student',
                 'university_student',
                 'recently_graduated', // Updated value
@@ -29,7 +30,8 @@ return new class extends Migration
                 'non_profit_sector_employee',
                 'freelancer',
                 'unemployed'
-            ])->change();
+                ])->change();
+            }
         });
         }
     }

@@ -22,11 +22,13 @@ return new class extends Migration
         }
 
             Schema::table('mentors', function (Blueprint $table) {
-            if (!Schema::hasColumn('mentors', 'track_id')) { $table->foreignId('track_id') }
+            if (!Schema::hasColumn('mentors', 'track_id')) {
+                $table->foreignId('track_id') 
                 ->nullable()
                 ->constrained('tracks')
                 ->nullOnDelete()
                 ;
+            }
         });
         }
     }

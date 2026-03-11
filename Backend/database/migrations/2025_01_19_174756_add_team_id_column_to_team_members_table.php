@@ -22,9 +22,10 @@ return new class extends Migration
         }
 
             Schema::table('team_members', function (Blueprint $table) {
-            if (!Schema::hasColumn('team_members', 'team_id')) { $table->foreignId('team_id') }
-                
+            if (!Schema::hasColumn('team_members', 'team_id')) {
+                $table->foreignId('team_id') 
                 ->constrained()->cascadeOnDelete();
+            }
         });
         }
     }
