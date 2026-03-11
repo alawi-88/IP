@@ -26,21 +26,26 @@ export default function StatCardsRenderer({ content }: Props) {
     "from-cyan-500 to-cyan-600",
   ];
 
+  const icons = ["📊", "💰", "📈", "👥", "🎯", "⚡"];
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {cards.map((card: any, i: number) => (
         <div
           key={i}
-          className={`bg-gradient-to-br ${gradients[i % gradients.length]} rounded-xl p-4 text-white`}
+          className={`bg-gradient-to-br ${gradients[i % gradients.length]} rounded-xl p-5 text-white shadow-sm`}
         >
-          <p className="text-xs text-white/70 uppercase tracking-wider font-medium mb-1">
-            {card.title || card.label || card.name}
-          </p>
-          <p className="text-2xl font-bold">
+          <div className="flex items-start justify-between mb-2">
+            <p className="text-xs text-white/70 uppercase tracking-wider font-semibold">
+              {card.title || card.label || card.name}
+            </p>
+            <span className="text-lg opacity-60">{icons[i % icons.length]}</span>
+          </div>
+          <p className="text-2xl font-bold mb-1">
             {card.value || card.amount || card.metric}
           </p>
           {(card.description || card.subtitle || card.trend) && (
-            <p className="text-xs text-white/60 mt-1">
+            <p className="text-xs text-white/60">
               {card.description || card.subtitle || card.trend}
             </p>
           )}
