@@ -10,6 +10,7 @@ class AiProvider extends Model
     protected $fillable = [
         'name',
         'provider',
+        'provider_type',
         'api_key',
         'model_name',
         'is_active',

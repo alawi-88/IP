@@ -9,22 +9,21 @@ use Illuminate\Database\Eloquent\Model;
 class VentureSectionConfig extends Model
 {
     protected $fillable = [
-        'section_key',
-        'tab_key',
+        'section_slug',
+        'tab_slug',
         'label_en',
         'label_ar',
         'icon',
         'color',
         'component_type',
-        'display_order',
-        'default_prompt',
-        'is_active',
-        'config',
+        'sort_order',
+        'is_visible',
+        'metadata',
     ];
 
     protected $casts = [
-        'config' => 'array',
-        'is_active' => 'boolean',
+        'metadata' => 'array',
+        'is_visible' => 'boolean',
     ];
 
     /**
@@ -32,23 +31,23 @@ class VentureSectionConfig extends Model
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query->where('is_visible', true);
     }
 
     /**
-     * Scope: Filter by tab key.
+     * Scope: Filter by tab slug.
      */
-    public function scopeForTab($query, $tabKey)
+    public function scopeForTab($query, $tabSlug)
     {
-        return $query->where('tab_key', $tabKey);
+        return $query->where('tab_slug', $tabSlug);
     }
 
     /**
-     * Scope: Order by display order.
+     * Scope: Order by sort order.
      */
     public function scopeOrdered($query)
     {
-        return $query->orderBy('display_order', 'asc');
+        return $query->orderBy('sort_order', 'asc');
     }
 
     /**
@@ -58,21 +57,21 @@ class VentureSectionConfig extends Model
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('section_key')
+                Forms\Components\TextInput::make('section_slug')
                     ->required()
-                    ->unique('venture_section_configs', 'section_key', ignoreRecord: true)
+                    ->unique('venture_section_configs', 'section_slug', ignoreRecord: true)
                     ->maxLength(255)
                     ->columnSpan(['sm' => 2, 'lg' => 1]),
 
-                Forms\Components\Select::make('tab_key')
+                Forms\Components\Select::make('tab_slug')
                     ->required()
                     ->options([
                         'dashboard' => 'Dashboard',
                         'strategic_frameworks' => 'Strategic Frameworks',
-                        'path_to_mvp' => 'Path to MVP',
-                        'usp' => 'USP',
-                        'customer_persona' => 'Customer Persona',
-                        'finances' => 'Finances',
+                        'market_analysis' => 'Market Analysis',
+                        'financial_projections' => 'Financial Projections',
+                        'mvp_roadmap' => 'MVP Roadmap',
+                        'risk_assessment' => 'Risk Assessment',
                         'go_to_market' => 'Go to Market',
                         'competitive_analysis' => 'Competitive Analysis',
                     ])
@@ -111,20 +110,16 @@ class VentureSectionConfig extends Model
                     ])
                     ->columnSpan(['sm' => 2, 'lg' => 1]),
 
-                Forms\Components\TextInput::make('display_order')
+                Forms\Components\TextInput::make('sort_order')
                     ->integer()
                     ->default(0)
                     ->columnSpan(['sm' => 2, 'lg' => 1]),
 
-                Forms\Components\Textarea::make('default_prompt')
-                    ->columnSpan(['sm' => 2, 'lg' => 2])
-                    ->rows(5),
-
-                Forms\Components\Toggle::make('is_active')
+                Forms\Components\Toggle::make('is_visible')
                     ->default(true)
                     ->columnSpan(['sm' => 2, 'lg' => 1]),
 
-                Forms\Components\KeyValue::make('config')
+                Forms\Components\KeyValue::make('metadata')
                     ->columnSpan(['sm' => 2, 'lg' => 2])
                     ->helperText('Additional configuration as key-value pairs'),
             ]);
@@ -136,11 +131,11 @@ class VentureSectionConfig extends Model
     public static function columns(): array
     {
         return [
-            Tables\Columns\TextColumn::make('section_key')
+            Tables\Columns\TextColumn::make('section_slug')
                 ->sortable()
                 ->searchable(),
 
-            Tables\Columns\TextColumn::make('tab_key')
+            Tables\Columns\TextColumn::make('tab_slug')
                 ->sortable()
                 ->badge(),
 
@@ -156,13 +151,13 @@ class VentureSectionConfig extends Model
                 ->sortable()
                 ->badge(),
 
-            Tables\Columns\TextColumn::make('display_order')
+            Tables\Columns\TextColumn::make('sort_order')
                 ->sortable()
                 ->numeric(),
 
             Tables\Columns\ColorColumn::make('color'),
 
-            Tables\Columns\IconColumn::make('is_active')
+            Tables\Columns\IconColumn::make('is_visible')
                 ->boolean()
                 ->sortable(),
 

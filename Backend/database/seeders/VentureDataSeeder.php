@@ -17,15 +17,15 @@ class VentureDataSeeder extends Seeder
     private function seedAIProviders(): void
     {
         AiProvider::updateOrCreate(
-            ['provider' => 'claude'],
+            ['provider_type' => 'claude'],
             ['name' => 'Claude (Anthropic)', 'model_name' => 'claude-sonnet-4', 'api_key' => 'sk-ant-placeholder-key', 'priority' => 1, 'is_active' => true, 'max_tokens' => 4096, 'temperature' => 0.70]
         );
         AiProvider::updateOrCreate(
-            ['provider' => 'openai'],
+            ['provider_type' => 'openai'],
             ['name' => 'GPT-4o (OpenAI)', 'model_name' => 'gpt-4o', 'api_key' => 'sk-proj-placeholder-key', 'priority' => 2, 'is_active' => true, 'max_tokens' => 4096, 'temperature' => 0.70]
         );
         AiProvider::updateOrCreate(
-            ['provider' => 'gemini'],
+            ['provider_type' => 'gemini'],
             ['name' => 'Gemini Pro (Google)', 'model_name' => 'gemini-2.5-pro', 'api_key' => 'AIzaSy-placeholder-key', 'priority' => 3, 'is_active' => true, 'max_tokens' => 4096, 'temperature' => 0.70]
         );
     }
@@ -35,17 +35,16 @@ class VentureDataSeeder extends Seeder
         $configs = $this->getSectionConfigs();
         foreach ($configs as $config) {
             VentureSectionConfig::updateOrCreate(
-                ['section_key' => $config['key']],
+                ['section_slug' => $config['key']],
                 [
-                    'tab_key' => $config['tab_key'],
+                    'tab_slug' => $config['tab_key'],
                     'label_en' => $config['label'],
                     'label_ar' => $config['label_ar'],
                     'icon' => $config['icon'] ?? 'document-text',
                     'color' => $config['color'] ?? 'blue',
                     'component_type' => $config['component_type'] ?? 'text_content',
-                    'display_order' => $config['order'],
-                    'is_active' => true,
-                    'default_prompt' => null,
+                    'sort_order' => $config['order'],
+                    'is_visible' => true,
                 ]
             );
         }
