@@ -13,8 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-            try { $table->dropForeign(['team_id']); } catch (\Exception $e) {}
-            $table->unsignedBigInteger('team_id')->nullable()->change();
+$table->unsignedBigInteger('team_id')->nullable()->change();
         });
         }
     }

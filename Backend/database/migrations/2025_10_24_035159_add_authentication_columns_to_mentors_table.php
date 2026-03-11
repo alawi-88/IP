@@ -80,13 +80,13 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-            try { $table->dropColumn('profession'); } catch (\Exception $e) {}
-            try { $table->dropColumn('email'); } catch (\Exception $e) {}
-            try { $table->dropColumn('phone'); } catch (\Exception $e) {}
-            try { $table->dropColumn('password'); } catch (\Exception $e) {}
-            try { $table->dropColumn('password_reset_code'); } catch (\Exception $e) {}
-            try { $table->dropColumn('otp_code'); } catch (\Exception $e) {}
-            try { $table->dropColumn('last_login_at'); } catch (\Exception $e) {}
+            $table->dropColumn('profession');
+            $table->dropColumn('email');
+            $table->dropColumn('phone');
+            $table->dropColumn('password');
+            $table->dropColumn('password_reset_code');
+            $table->dropColumn('otp_code');
+            $table->dropColumn('last_login_at');
         });
         }
     }

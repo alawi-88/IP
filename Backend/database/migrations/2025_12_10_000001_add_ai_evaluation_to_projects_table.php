@@ -26,7 +26,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-            try { $table->dropColumn(['ai_evaluation_response', 'ai_evaluated_at']); } catch (\Exception $e) {}
+            $table->dropColumn(['ai_evaluation_response', 'ai_evaluated_at']);
         });
         }
     }

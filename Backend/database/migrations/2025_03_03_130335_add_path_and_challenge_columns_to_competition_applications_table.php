@@ -26,10 +26,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            try { $table->dropForeign(['track_id']); } catch (\Exception $e) {}
-            try { $table->dropColumn('track_id'); } catch (\Exception $e) {}
-            try { $table->dropForeign(['idea_challenge_id']); } catch (\Exception $e) {}
-            try { $table->dropColumn('idea_challenge_id'); } catch (\Exception $e) {}
+$table->dropColumn('track_id');
+$table->dropColumn('idea_challenge_id');
         });
         }
     }

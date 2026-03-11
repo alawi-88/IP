@@ -13,8 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('contact_us')) {
             Schema::table('contact_us', function (Blueprint $table) {
-            try { $table->dropForeign(['competition_id']); } catch (\Exception $e) {}
-            try { $table->dropColumn('competition_id'); } catch (\Exception $e) {}
+$table->dropColumn('competition_id');
         });
         }
     }

@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
-            try { $table->dropColumn('is_active'); } catch (\Exception $e) {}
+            $table->dropColumn('is_active');
         });
         }
     }

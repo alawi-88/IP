@@ -32,9 +32,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentor_participant')) {
             Schema::table('mentor_participant', function (Blueprint $table) {
-            try { $table->dropForeign(['competition_id']); } catch (\Exception $e) {}
-            try { $table->dropUnique('mentor_participant_unique_v2'); } catch (\Exception $e) {}
-            try { $table->dropColumn('competition_id'); } catch (\Exception $e) {}
+$table->dropUnique('mentor_participant_unique_v2');
+            $table->dropColumn('competition_id');
             
             // Restore old unique constraint
             $table->unique(['mentor_id', 'participant_id']);

@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('form_fields')) {
             Schema::table('form_fields', function (Blueprint $table) {
-            try { $table->dropColumn('mandatory_options'); } catch (\Exception $e) {}
+            $table->dropColumn('mandatory_options');
         });
         }
     }

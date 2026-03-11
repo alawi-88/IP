@@ -24,9 +24,9 @@ return new class extends Migration
     {
         if (Schema::hasTable('approval_requests')) {
             Schema::table('approval_requests', function (Blueprint $table) {
-            try { $table->dropIndex(['target_type', 'target_id']); } catch (\Exception $e) {}
-            try { $table->dropIndex(['executed_at']); } catch (\Exception $e) {}
-            try { $table->dropColumn(['target_type', 'target_id', 'executed_at']); } catch (\Exception $e) {}
+            $table->dropIndex(['target_type', 'target_id']);
+            $table->dropIndex(['executed_at']);
+            $table->dropColumn(['target_type', 'target_id', 'executed_at']);
         });
         }
     }

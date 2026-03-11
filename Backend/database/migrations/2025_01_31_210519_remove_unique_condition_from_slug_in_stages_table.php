@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('stages')) {
             Schema::table('stages', function (Blueprint $table) {
-            try { $table->dropUnique(['slug']); } catch (\Exception $e) {}
+            $table->dropUnique(['slug']);
         });
         }
     }

@@ -26,7 +26,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('approval_request_levels')) {
             Schema::table('approval_request_levels', function (Blueprint $table) {
-            try { $table->dropColumn(['role_ids', 'required_approvals']); } catch (\Exception $e) {}
+            $table->dropColumn(['role_ids', 'required_approvals']);
         });
         }
     }

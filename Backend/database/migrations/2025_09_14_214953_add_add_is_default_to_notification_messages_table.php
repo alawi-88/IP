@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('notification_messages')) {
             Schema::table('notification_messages', function (Blueprint $table) {
-            try { $table->dropColumn('is_default'); } catch (\Exception $e) {}
+            $table->dropColumn('is_default');
         });
         }
     }

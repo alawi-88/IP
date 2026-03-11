@@ -21,7 +21,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentor_sessions')) {
             Schema::table('mentor_sessions', function (Blueprint $table) {
-            try { $table->dropColumn(['feedback_comments', 'feedback_strengths', 'feedback_improvements']); } catch (\Exception $e) {}
+            $table->dropColumn(['feedback_comments', 'feedback_strengths', 'feedback_improvements']);
         });
         }
     }

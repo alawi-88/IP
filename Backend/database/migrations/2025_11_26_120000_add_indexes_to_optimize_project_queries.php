@@ -47,14 +47,14 @@ return new class extends Migration
     {
         if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-            try { $table->dropIndex('idx_projects_form_archived_created'); } catch (\Exception $e) {}
-            try { $table->dropIndex('idx_projects_application_archived'); } catch (\Exception $e) {}
+            $table->dropIndex('idx_projects_form_archived_created');
+            $table->dropIndex('idx_projects_application_archived');
         });
         }
 
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            try { $table->dropIndex('idx_applications_id_participant'); } catch (\Exception $e) {}
+            $table->dropIndex('idx_applications_id_participant');
         });
         }
     }

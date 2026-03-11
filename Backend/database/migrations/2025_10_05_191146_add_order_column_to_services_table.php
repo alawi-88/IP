@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('services')) {
             Schema::table('services', function (Blueprint $table) {
-            try { $table->dropColumn('order'); } catch (\Exception $e) {}
+            $table->dropColumn('order');
         });
         }
     }

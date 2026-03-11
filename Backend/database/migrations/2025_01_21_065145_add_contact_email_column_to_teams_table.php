@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
-            try { $table->dropColumn('contact_email'); } catch (\Exception $e) {}
+            $table->dropColumn('contact_email');
         });
         }
     }

@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('judges')) {
             Schema::table('judges', function (Blueprint $table) {
-            try { $table->dropColumn('email_verified_at'); } catch (\Exception $e) {}
+            $table->dropColumn('email_verified_at');
         });
         }
     }

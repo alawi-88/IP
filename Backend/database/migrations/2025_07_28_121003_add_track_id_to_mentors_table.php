@@ -29,8 +29,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-            try { $table->dropForeign(['track_id']); } catch (\Exception $e) {}
-            try { $table->dropColumn('track_id'); } catch (\Exception $e) {}
+$table->dropColumn('track_id');
         });
         }
     }

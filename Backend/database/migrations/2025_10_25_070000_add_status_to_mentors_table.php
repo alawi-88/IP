@@ -29,8 +29,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-            try { $table->dropForeign(['approved_by']); } catch (\Exception $e) {}
-            try { $table->dropColumn(['status', 'approved_at', 'rejected_at', 'approved_by', 'rejection_reason']); } catch (\Exception $e) {}
+$table->dropColumn(['status', 'approved_at', 'rejected_at', 'approved_by', 'rejection_reason']);
         });
         }
     }

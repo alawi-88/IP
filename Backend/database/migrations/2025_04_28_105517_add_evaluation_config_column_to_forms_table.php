@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('forms')) {
             Schema::table('forms', function (Blueprint $table) {
-            try { $table->dropColumn('evaluation_config'); } catch (\Exception $e) {}
+            $table->dropColumn('evaluation_config');
         });
         }
     }

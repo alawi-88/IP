@@ -30,11 +30,10 @@ return new class extends Migration
     {
         if (Schema::hasTable('contact_us')) {
             Schema::table('contact_us', function (Blueprint $table) {
-            try { $table->dropForeign(['replied_by']); } catch (\Exception $e) {}
-            try { $table->dropColumn('replied_by'); } catch (\Exception $e) {}
-            try { $table->dropColumn('status'); } catch (\Exception $e) {}
-            try { $table->dropColumn('reply'); } catch (\Exception $e) {}
-            try { $table->dropColumn('replied_at'); } catch (\Exception $e) {}
+$table->dropColumn('replied_by');
+            $table->dropColumn('status');
+            $table->dropColumn('reply');
+            $table->dropColumn('replied_at');
         });
         }
     }

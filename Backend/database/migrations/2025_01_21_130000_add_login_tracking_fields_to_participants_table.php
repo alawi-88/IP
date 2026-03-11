@@ -26,7 +26,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            try { $table->dropColumn(['login_by', 'nafath_data']); } catch (\Exception $e) {}
+            $table->dropColumn(['login_by', 'nafath_data']);
         });
         }
     }

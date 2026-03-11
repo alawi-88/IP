@@ -28,7 +28,7 @@ return new class extends Migration
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
             if (Schema::hasColumn('participants', 'otp_login_code_expires_at')) {
-                try { $table->dropColumn('otp_login_code_expires_at'); } catch (\Exception $e) {}
+                $table->dropColumn('otp_login_code_expires_at');
             }
         });
         }

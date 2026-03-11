@@ -26,7 +26,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('guidelines')) {
             Schema::table('guidelines', function (Blueprint $table) {
-            try { $table->dropColumn('is_visible'); } catch (\Exception $e) {}
+            $table->dropColumn('is_visible');
         });
         }
     }

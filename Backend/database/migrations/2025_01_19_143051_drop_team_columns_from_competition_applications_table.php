@@ -13,18 +13,14 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            try { $table->dropColumn('team_name'); } catch (\Exception $e) {}
-            try { $table->dropColumn('team_logo'); } catch (\Exception $e) {}
-            try { $table->dropColumn('team_strength'); } catch (\Exception $e) {}
+            $table->dropColumn('team_name');
+            $table->dropColumn('team_logo');
+            $table->dropColumn('team_strength');
+$table->dropColumn('track_id');
+$table->dropColumn('idea_challenge_id');
 
-            try { $table->dropForeign(['track_id']); } catch (\Exception $e) {}
-            try { $table->dropColumn('track_id'); } catch (\Exception $e) {}
-
-            try { $table->dropForeign(['idea_challenge_id']); } catch (\Exception $e) {}
-            try { $table->dropColumn('idea_challenge_id'); } catch (\Exception $e) {}
-
-            try { $table->dropColumn('idea_description'); } catch (\Exception $e) {}
-            try { $table->dropColumn('team_member_previous_participation'); } catch (\Exception $e) {}
+            $table->dropColumn('idea_description');
+            $table->dropColumn('team_member_previous_participation');
         });
         }
     }

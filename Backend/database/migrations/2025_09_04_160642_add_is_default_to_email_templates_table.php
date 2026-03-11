@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('email_templates')) {
             Schema::table('email_templates', function (Blueprint $table) {
-            try { $table->dropColumn('is_default'); } catch (\Exception $e) {}
+            $table->dropColumn('is_default');
         });
         }
     }

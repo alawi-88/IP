@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            try { $table->dropColumn('activation_code'); } catch (\Exception $e) {}
+            $table->dropColumn('activation_code');
         });
         }
     }

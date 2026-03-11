@@ -26,8 +26,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
-            try { $table->dropColumn('email_logo'); } catch (\Exception $e) {}
-            try { $table->dropColumn('email_footer_footer'); } catch (\Exception $e) {}
+            $table->dropColumn('email_logo');
+            $table->dropColumn('email_footer_footer');
         });
         }
     }

@@ -35,7 +35,7 @@ return new class extends Migration
         if (Schema::hasTable('events')) {
             Schema::table('events', function (Blueprint $table) {
             // Remove speakers column
-            try { $table->dropColumn('speakers'); } catch (\Exception $e) {}
+            $table->dropColumn('speakers');
             
             // Add back old speaker columns
             $table->string('speaker_photo')->nullable();

@@ -29,7 +29,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('judges')) {
             Schema::table('judges', function (Blueprint $table) {
-            try { $table->dropColumn('registration_method'); } catch (\Exception $e) {}
+            $table->dropColumn('registration_method');
         });
         }
     }
