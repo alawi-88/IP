@@ -31,8 +31,8 @@ return new class extends Migration
             $table->unique(['form_assessment_criterion_id', 'form_field_id'], 'unique_criterion_field_mapping');
 
             // Indexes for performance
-            $table->index('form_assessment_criterion_id');
-            $table->index('form_field_id');
+            $table->index('form_assessment_criterion_id', 'fac_ff_criterion_idx');
+            $table->index('form_field_id', 'fac_ff_field_idx');
         });
     }
 
