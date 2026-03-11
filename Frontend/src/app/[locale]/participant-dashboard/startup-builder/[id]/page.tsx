@@ -402,7 +402,10 @@ export default function VentureDetailPage() {
               }`}
             >
               {/* Section Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
+              <div
+                className="flex items-center justify-between px-6 py-4 border-b border-gray-50"
+                style={section.display_config?.color ? { borderLeftWidth: '4px', borderLeftColor: section.display_config.color } : undefined}
+              >
                 <div className="flex items-center gap-3">
                   <span className="text-xl">
                     {getSectionIcon(section.component_type, section.slug)}
@@ -505,6 +508,7 @@ export default function VentureDetailPage() {
                     componentType={section.component_type}
                     content={section.content}
                     slug={section.slug}
+                    color={section.display_config?.color}
                   />
                 ) : (
                   <div className="text-gray-400 text-sm text-center py-4">

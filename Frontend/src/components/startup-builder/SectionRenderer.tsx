@@ -27,12 +27,14 @@ interface SectionRendererProps {
   componentType: string;
   content: any;
   slug: string;
+  color?: string;
 }
 
 export default function SectionRenderer({
   componentType,
   content,
   slug,
+  color,
 }: SectionRendererProps) {
   // Unwrap nested content (seeder wraps data under component-type keys)
   const { unwrapped, detectedType } = unwrapContent(content, componentType);

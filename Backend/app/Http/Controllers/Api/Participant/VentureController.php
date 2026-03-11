@@ -189,16 +189,26 @@ class VentureController extends Controller
         }
 
         $validated = $request->validate([
-            'content' => 'required|json',
+            'content' => 'required',
         ]);
 
+        // Handle both JSON string and array/object input
+        $content = $validated['content'];
+        if (is_string($content)) {
+            $decoded = json_decode($content, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return response()->json(['message' => 'Invalid JSON content'], 422);
+            }
+            $content = $decoded;
+        }
+
         $section->update([
-            'content' => $validated['content'],
+            'content' => $content,
         ]);
 
         // Create version record
         $section->versions()->create([
-            'content' => $validated['content'],
+            'content' => $content,
         ]);
 
         return response()->json([

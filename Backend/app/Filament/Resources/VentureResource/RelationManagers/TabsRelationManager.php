@@ -68,26 +68,71 @@ class TabsRelationManager extends RelationManager
                 Tables\Actions\Action::make('editSections')
                     ->label('Edit Sections')
                     ->icon('heroicon-o-pencil-square')
-                    ->modalHeading(fn ($record) => 'Edit Sections in ' . $record->label_en)
+                    ->modalHeading(fn ($record) => 'Edit Sections in ' . ($record->label_en ?? $record->slug))
+                    ->modalWidth('5xl')
                     ->form(function ($record) {
                         $sections = $record->sections()->orderBy('sort_order')->get();
                         $fields = [];
 
+                        if ($sections->isEmpty()) {
+                            $fields[] = Forms\Components\Placeholder::make('no_sections')
+                                ->content('No sections found in this tab.');
+                            return $fields;
+                        }
+
                         foreach ($sections as $section) {
                             $label = $section->label_en ?: ucwords(str_replace(['_', '-'], ' ', $section->slug));
-                            $fields[] = Forms\Components\Section::make($label)
+                            $statusBadge = match($section->status) {
+                                'completed' => ' ✅',
+                                'failed' => ' ❌',
+                                'generating' => ' ⏳',
+                                default => '',
+                            };
+
+                            $fields[] = Forms\Components\Section::make($label . $statusBadge)
+                                ->description('Slug: ' . $section->slug . ' | Type: ' . ($section->component_type ?? 'N/A'))
                                 ->schema([
-                                    Forms\Components\Toggle::make("sections.{$section->id}.is_visible")
-                                        ->label('Visible')
-                                        ->default($section->is_visible),
+                                    Forms\Components\Grid::make(3)
+                                        ->schema([
+                                            Forms\Components\Toggle::make("sections.{$section->id}.is_visible")
+                                                ->label('Visible')
+                                                ->default((bool) $section->is_visible)
+                                                ->columnSpan(1),
+                                            Forms\Components\TextInput::make("sections.{$section->id}.label_en")
+                                                ->label('Label (EN)')
+                                                ->default($section->label_en ?? '')
+                                                ->columnSpan(1),
+                                            Forms\Components\Select::make("sections.{$section->id}.component_type")
+                                                ->label('Component Type')
+                                                ->default($section->component_type ?? 'text_content')
+                                                ->options([
+                                                    'text_content' => 'Text Content',
+                                                    'stat_cards' => 'Stat Cards',
+                                                    'swot_grid' => 'SWOT Grid',
+                                                    'comparison_table' => 'Comparison Table',
+                                                    'risk_matrix' => 'Risk Matrix',
+                                                    'timeline' => 'Timeline',
+                                                    'journey_timeline' => 'Journey Timeline',
+                                                    'persona_cards' => 'Persona Cards',
+                                                    'viability_score' => 'Viability Score',
+                                                    'key_value' => 'Key Value',
+                                                    'progress_bars' => 'Progress Bars',
+                                                    'funnel_chart' => 'Funnel Chart',
+                                                    'pricing_cards' => 'Pricing Cards',
+                                                    'cost_table' => 'Cost Table',
+                                                    'line_chart' => 'Line Chart',
+                                                    'canvas_grid' => 'Canvas Grid',
+                                                ])
+                                                ->columnSpan(1),
+                                        ]),
                                     Forms\Components\Textarea::make("sections.{$section->id}.content")
                                         ->label('Content (JSON)')
-                                        ->default(json_encode($section->content, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE))
-                                        ->rows(8)
+                                        ->default(is_array($section->content) ? json_encode($section->content, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : ($section->content ?? '{}'))
+                                        ->rows(10)
                                         ->columnSpanFull(),
                                 ])
-                                ->collapsed()
-                                ->collapsible();
+                                ->collapsible()
+                                ->collapsed(count($sections) > 3);
                         }
 
                         return $fields;
@@ -103,7 +148,15 @@ class TabsRelationManager extends RelationManager
                             $updates = [];
 
                             if (isset($sectionData['is_visible'])) {
-                                $updates['is_visible'] = $sectionData['is_visible'];
+                                $updates['is_visible'] = (bool) $sectionData['is_visible'];
+                            }
+
+                            if (isset($sectionData['label_en']) && !empty($sectionData['label_en'])) {
+                                $updates['label_en'] = $sectionData['label_en'];
+                            }
+
+                            if (isset($sectionData['component_type']) && !empty($sectionData['component_type'])) {
+                                $updates['component_type'] = $sectionData['component_type'];
                             }
 
                             if (isset($sectionData['content']) && !empty($sectionData['content'])) {

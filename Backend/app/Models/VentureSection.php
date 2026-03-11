@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class VentureSection extends Model
 {
+    protected $appends = ['display_config'];
+
     protected $fillable = [
         'venture_id',
         'venture_tab_id',
