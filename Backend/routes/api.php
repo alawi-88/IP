@@ -174,6 +174,9 @@ Route::prefix('participants')->group(function () {
         Route::get('competition-tabs', CompetitionTabController::class);
 
         Route::post('auth/logout', [ParticipantAuthController::class, 'logout']);
+
+        // Venture Routes (Startup Builder Module)
+        require __DIR__ . '/venture_routes.php';
     });
 });
 

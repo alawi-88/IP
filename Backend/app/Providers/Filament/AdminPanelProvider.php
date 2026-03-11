@@ -164,6 +164,7 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Users & Roles'),
                 NavigationGroup::make('Notifications & Approvals'),
                 NavigationGroup::make('Approvals & Communication'),
+                NavigationGroup::make('Startup Builder'),
                 NavigationGroup::make('System'),
                 NavigationGroup::make('AI & Automation'),
             ])
