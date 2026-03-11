@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('approval_request_notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('approval_request_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('approval_request_id');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('type'); // approved, rejected, returned, level_approved, level_rejected
             $table->string('title');
