@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Startup Builder - Participant UAT</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f7fa;color:#1a1a2e}
+.app{max-width:1200px;margin:0 auto;padding:20px}
+.header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:24px 32px;border-radius:16px;margin-bottom:24px}
+.header h1{font-size:24px;margin-bottom:8px}
+.header .meta{display:flex;gap:20px;font-size:14px;color:#a0aec0}
+.header .meta .badge{background:#48bb78;color:#fff;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;background:#fff;padding:12px;border-radius:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab-btn{padding:10px 20px;border:none;background:#f0f0f0;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;transition:all .2s}
+.tab-btn.active{background:#1a1a2e;color:#fff}
+.tab-btn:hover:not(.active){background:#e2e8f0}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.section-card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.section-card h3{font-size:18px;margin-bottom:16px;color:#1a1a2e;border-bottom:2px solid #f0f0f0;padding-bottom:8px}
+.section-card .comp-badge{display:inline-block;background:#edf2f7;color:#718096;font-size:11px;padding:2px 8px;border-radius:4px;margin-bottom:12px}
+
+/* Viability Score */
+.viability{text-align:center;padding:20px}
+.viability .score-circle{width:140px;height:140px;border-radius:50%;background:conic-gradient(#48bb78 calc(var(--score)*3.6deg),#e2e8f0 0);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;position:relative}
+.viability .score-circle::after{content:'';width:110px;height:110px;background:#fff;border-radius:50%;position:absolute}
+.viability .score-num{position:relative;z-index:1;font-size:36px;font-weight:700;color:#1a1a2e}
+.viability .rating{font-size:18px;color:#48bb78;font-weight:600}
+.breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px}
+.breakdown-item{background:#f7fafc;padding:12px;border-radius:8px}
+.breakdown-item .cat{font-size:13px;color:#718096}
+.breakdown-item .val{font-size:20px;font-weight:700;color:#1a1a2e}
+.breakdown-item .bar{height:6px;background:#e2e8f0;border-radius:3px;margin-top:6px}
+.breakdown-item .bar-fill{height:100%;background:#48bb78;border-radius:3px}
+
+/* Stat Cards */
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:12px}
+.stat-card .label{font-size:13px;opacity:.8}
+.stat-card .value{font-size:28px;font-weight:700;margin:4px 0}
+.stat-card .trend{font-size:12px;opacity:.7}
+
+/* SWOT Grid */
+.swot-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.swot-cell{padding:16px;border-radius:12px}
+.swot-cell.strengths{background:#f0fff4;border:1px solid #c6f6d5}
+.swot-cell.weaknesses{background:#fff5f5;border:1px solid #fed7d7}
+.swot-cell.opportunities{background:#ebf8ff;border:1px solid #bee3f8}
+.swot-cell.threats{background:#fffaf0;border:1px solid #feebc8}
+.swot-cell h4{font-size:14px;font-weight:600;margin-bottom:8px;text-transform:uppercase}
+.swot-cell ul{list-style:none;padding:0}
+.swot-cell li{font-size:13px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.05)}
+
+/* Text Content */
+.text-content{line-height:1.7;color:#4a5568;font-size:15px}
+.text-content p{margin-bottom:12px}
+
+/* Canvas Grid */
+.canvas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.canvas-cell{background:#f7fafc;padding:14px;border-radius:8px;border-left:3px solid #667eea}
+.canvas-cell h5{font-size:12px;color:#667eea;text-transform:uppercase;margin-bottom:6px}
+.canvas-cell p{font-size:13px;color:#4a5568}
+
+/* Comparison Table */
+.comp-table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:8px;border:1px solid #e2e8f0}
+.comp-table th{background:#1a1a2e;color:#fff;padding:12px 16px;font-size:13px;text-align:left}
+.comp-table td{padding:10px 16px;font-size:13px;border-bottom:1px solid #f0f0f0}
+.comp-table tr:nth-child(even) td{background:#f7fafc}
+
+/* Cost Table */
+.cost-table{width:100%;border-collapse:collapse}
+.cost-table th{background:#f7fafc;padding:10px;text-align:left;font-size:13px;border-bottom:2px solid #e2e8f0}
+.cost-table td{padding:10px;font-size:13px;border-bottom:1px solid #f0f0f0}
+.cost-table .total-row{font-weight:700;background:#f0fff4}
+
+/* Timeline */
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:2px;background:#e2e8f0}
+.timeline-item{position:relative;margin-bottom:24px}
+.timeline-item::before{content:'';position:absolute;left:-24px;top:4px;width:12px;height:12px;background:#667eea;border-radius:50%;border:2px solid #fff}
+.timeline-item .phase{font-size:14px;font-weight:600;color:#1a1a2e}
+.timeline-item .duration{font-size:12px;color:#718096}
+.timeline-item .desc{font-size:13px;color:#4a5568;margin-top:4px}
+
+/* Risk Matrix */
+.risk-matrix{display:grid;gap:12px}
+.risk-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:8px;background:#f7fafc}
+.risk-level{width:60px;text-align:center;padding:4px 8px;border-radius:4px;font-size:11px;font-weight:600;color:#fff}
+.risk-level.high{background:#e53e3e}
+.risk-level.medium{background:#ed8936}
+.risk-level.low{background:#48bb78}
+.risk-desc{flex:1;font-size:13px}
+
+/* Progress Bars */
+.progress-bars{display:grid;gap:16px}
+.progress-item{background:#f7fafc;padding:16px;border-radius:8px}
+.progress-item .label{display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px}
+.progress-bar{height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#667eea,#764ba2)}
+
+/* Persona Cards */
+.persona-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.persona-card{background:#f7fafc;padding:20px;border-radius:12px;border-top:3px solid #667eea}
+.persona-card .name{font-size:16px;font-weight:600}
+.persona-card .role{font-size:13px;color:#718096;margin-bottom:8px}
+.persona-card .detail{font-size:13px;color:#4a5568;margin-top:6px}
+
+/* Key Value */
+.key-values{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.kv-item{background:#f7fafc;padding:14px;border-radius:8px}
+.kv-item .key{font-size:12px;color:#718096;text-transform:uppercase}
+.kv-item .val{font-size:15px;font-weight:600;color:#1a1a2e;margin-top:4px}
+
+/* Pricing Table */
+.pricing-table{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
+.pricing-tier{background:#fff;border:2px solid #e2e8f0;border-radius:12px;padding:24px;text-align:center}
+.pricing-tier.featured{border-color:#667eea;box-shadow:0 4px 12px rgba(102,126,234,.2)}
+.pricing-tier .tier-name{font-size:18px;font-weight:600}
+.pricing-tier .price{font-size:32px;font-weight:700;color:#667eea;margin:8px 0}
+.pricing-tier .features{text-align:left;font-size:13px;color:#4a5568}
+
+/* Funnel Chart */
+.funnel{display:flex;flex-direction:column;align-items:center;gap:8px}
+.funnel-level{padding:16px;text-align:center;border-radius:8px;color:#fff;font-weight:600}
+
+/* Line Chart placeholder */
+.chart-placeholder{background:#f7fafc;border:2px dashed #e2e8f0;border-radius:12px;padding:40px;text-align:center;color:#a0aec0}
+
+.venture-select{margin-bottom:16px}
+.venture-select select{padding:10px 16px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px;background:#fff}
+
+.loading{text-align:center;padding:60px;color:#718096;font-size:16px}
+.error{background:#fff5f5;color:#e53e3e;padding:16px;border-radius:8px;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="venture-select">
+    <select id="ventureSelect" onchange="loadVenture(this.value)">
+      <option value="">-- Select a Venture --</option>
+    </select>
+  </div>
+  <div id="content"><div class="loading">Loading ventures...</div></div>
+</div>
+
+<script>
+const API = 'http://localhost:8080/api/participants';
+const TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjgwODAiLCJpYXQiOjE3NzMyMDgzMzQsImV4cCI6MTc3MzgxMzEzNCwic3ViIjoxLCJ1c2VyX3R5cGUiOiJwYXJ0aWNpcGFudCIsInVzZXJfZGF0YSI6eyJpZCI6MSwiZW1haWwiOiJ0ZXN0dXNlckBpbm5vdmF0aW9uLXBsYXRmb3JtLmNvbSIsIm5hbWUiOiJUZXN0IFVzZXIifX0.Fs_3keZCVozz9K65wT3huNZajulq2gbAjHbCLUJKpBE';
+
+const headers = {'Authorization':'Bearer '+TOKEN,'Accept':'application/json'};
+
+async function init(){
+  try{
+    const res=await fetch(API+'/ventures',{headers});
+    const json=await res.json();
+    const sel=document.getElementById('ventureSelect');
+    (json.data||[]).forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v.id;o.textContent=`${v.title} (${v.viability_score}/100)`;
+      sel.appendChild(o);
+    });
+    if(json.data&&json.data.length>0){sel.value=json.data[0].id;loadVenture(json.data[0].id);}
+  }catch(e){document.getElementById('content').innerHTML='<div class="error">Failed to load: '+e.message+'</div>';}
+}
+
+async function loadVenture(id){
+  if(!id)return;
+  document.getElementById('content').innerHTML='<div class="loading">Loading venture details...</div>';
+  try{
+    const res=await fetch(API+'/ventures/'+id,{headers});
+    const json=await res.json();
+    renderVenture(json.data);
+  }catch(e){document.getElementById('content').innerHTML='<div class="error">Error: '+e.message+'</div>';}
+}
+
+function renderVenture(v){
+  let html=`
+  <div class="header">
+    <h1>${v.title}</h1>
+    <div class="meta">
+      <span class="badge">${v.status}</span>
+      <span>Viability: ${v.viability_score}/100</span>
+      <span>Industry: ${v.industry}</span>
+      <span>Sections: ${v.sections_completed}/${v.sections_total}</span>
+    </div>
+  </div>`;
+
+  // Tabs
+  const tabs=v.tabs.sort((a,b)=>a.sort_order-b.sort_order);
+  html+=`<div class="tabs">`;
+  tabs.forEach((t,i)=>{
+    html+=`<button class="tab-btn${i===0?' active':''}" onclick="switchTab('${t.slug}',this)">${t.label_en}</button>`;
+  });
+  html+=`</div>`;
+
+  // Tab content
+  tabs.forEach((t,i)=>{
+    html+=`<div class="tab-content${i===0?' active':''}" id="tab-${t.slug}">`;
+    const sections=t.sections.sort((a,b)=>a.sort_order-b.sort_order);
+    sections.forEach(s=>{
+      html+=`<div class="section-card">
+        <span class="comp-badge">${s.component_type}</span>
+        <h3>${s.label_en}</h3>
+        ${renderSection(s)}
+      </div>`;
+    });
+    html+=`</div>`;
+  });
+
+  document.getElementById('content').innerHTML=html;
+}
+
+function switchTab(slug,btn){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+slug).classList.add('active');
+  btn.classList.add('active');
+}
+
+function renderSection(s){
+  const c=s.content;if(!c)return'<p style="color:#a0aec0">No content</p>';
+  switch(s.component_type){
+    case 'viability_score': return renderViability(c);
+    case 'text_content': return renderText(c);
+    case 'stat_cards': return renderStatCards(c);
+    case 'swot_grid': return renderSwot(c);
+    case 'canvas_grid': return renderCanvas(c);
+    case 'comparison_table': return renderCompTable(c);
+    case 'cost_table': return renderCostTable(c);
+    case 'timeline': return renderTimeline(c);
+    case 'risk_matrix': return renderRiskMatrix(c);
+    case 'progress_bars': return renderProgressBars(c);
+    case 'persona_cards': return renderPersonaCards(c);
+    case 'key_value': return renderKeyValue(c);
+    case 'pricing_table': return renderPricingTable(c);
+    case 'funnel_chart': return renderFunnel(c);
+    case 'line_chart': return renderLineChart(c);
+    default: return `<pre style="font-size:12px;overflow:auto;max-height:300px">${JSON.stringify(c,null,2)}</pre>`;
+  }
+}
+
+function renderViability(c){
+  let html=`<div class="viability"><div class="score-circle" style="--score:${c.score}"><span class="score-num">${c.score}</span></div><div class="rating">${c.rating}</div>`;
+  if(c.breakdown){
+    html+=`<div class="breakdown">`;
+    c.breakdown.forEach(b=>{
+      html+=`<div class="breakdown-item"><div class="cat">${b.category}</div><div class="val">${b.score}/100</div><div class="bar"><div class="bar-fill" style="width:${b.score}%"></div></div></div>`;
+    });
+    html+=`</div>`;
+  }
+  return html+`</div>`;
+}
+
+function renderText(c){
+  const text=c.text_content?c.text_content.content:(c.content||c.text||JSON.stringify(c));
+  return `<div class="text-content"><p>${String(text).replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`;
+}
+
+function renderStatCards(c){
+  const cards=c.cards||c.metrics||c.stats||[];
+  let html=`<div class="stat-cards">`;
+  cards.forEach(card=>{
+    html+=`<div class="stat-card"><div class="label">${card.label||card.title||card.metric||''}</div><div class="value">${card.value||card.amount||''}</div><div class="trend">${card.description||card.trend||card.change||''}</div></div>`;
+  });
+  return html+`</div>`;
+}
+
+function renderSwot(c){
+  let html=`<div class="swot-grid">`;
+  ['strengths','weaknesses','opportunities','threats'].forEach(k=>{
+    const items=c[k]||[];
+    html+=`<div class="swot-cell ${k}"><h4>${k}</h4><ul>`;
+    (Array.isArray(items)?items:[items]).forEach(i=>{
+      html+=`<li>${typeof i==='string'?i:(i.text||i.description||JSON.stringify(i))}</li>`;
+    });
+    html+=`</ul></div>`;
+  });
+  return html+`</div>`;
+}
+
+function renderCanvas(c){
+  const blocks=c.blocks||c.sections||c.cells||Object.entries(c).filter(([k])=>!['type'].includes(k));
+  let html=`<div class="canvas-grid">`;
+  if(Array.isArray(blocks)){
+    blocks.forEach(b=>{
+      if(Array.isArray(b)){html+=`<div class="canvas-cell"><h5>${b[0]}</h5><p>${b[1]}</p></div>`;}
+      else{html+=`<div class="canvas-cell"><h5>${b.title||b.label||b.key||''}</h5><p>${b.content||b.value||b.description||''}</p></div>`;}
+    });
+  }else{
+    blocks.forEach(([k,v])=>{
+      html+=`<div class="canvas-cell"><h5>${k.replace(/_/g,' ')}</h5><p>${typeof v==='string'?v:(Array.isArray(v)?v.join(', '):JSON.stringify(v))}</p></div>`;
+    });
+  }
+  return html+`</div>`;
+}
+
+function renderCompTable(c){
+  const headers=c.headers||c.columns||[];
+  const rows=c.rows||c.data||[];
+  let html=`<table class="comp-table"><thead><tr>`;
+  headers.forEach(h=>html+=`<th>${typeof h==='string'?h:(h.label||h.title||'')}</th>`);
+  html+=`</tr></thead><tbody>`;
+  rows.forEach(r=>{
+    html+=`<tr>`;
+    (Array.isArray(r)?r:Object.values(r)).forEach(cell=>html+=`<td>${cell}</td>`);
+    html+=`</tr>`;
+  });
+  return html+`</tbody></table>`;
+}
+
+function renderCostTable(c){
+  const items=c.items||c.costs||c.rows||[];
+  let total=0;
+  let html=`<table class="cost-table"><thead><tr><th>Item</th><th>Category</th><th>Amount</th></tr></thead><tbody>`;
+  items.forEach(i=>{
+    const amt=i.amount||i.cost||i.value||0;
+    total+=typeof amt==='number'?amt:parseFloat(String(amt).replace(/[^0-9.]/g,''))||0;
+    html+=`<tr><td>${i.item||i.name||i.label||''}</td><td>${i.category||i.type||''}</td><td>${typeof amt==='number'?'$'+amt.toLocaleString():amt}</td></tr>`;
+  });
+  html+=`<tr class="total-row"><td colspan="2">Total</td><td>$${total.toLocaleString()}</td></tr>`;
+  return html+`</tbody></table>`;
+}
+
+function renderTimeline(c){
+  const phases=c.phases||c.items||c.milestones||[];
+  let html=`<div class="timeline">`;
+  phases.forEach(p=>{
+    html+=`<div class="timeline-item"><div class="phase">${p.phase||p.title||p.name||''}</div><div class="duration">${p.duration||p.timeline||p.date||''}</div><div class="desc">${p.description||p.details||''}</div></div>`;
+  });
+  return html+`</div>`;
+}
+
+function renderRiskMatrix(c){
+  const risks=c.risks||c.items||c.data||[];
+  let html=`<div class="risk-matrix">`;
+  risks.forEach(r=>{
+    const level=(r.level||r.severity||r.impact||'medium').toLowerCase();
+    html+=`<div class="risk-item"><span class="risk-level ${level}">${level.toUpperCase()}</span><div class="risk-desc"><strong>${r.risk||r.title||r.name||''}</strong><br><small>${r.mitigation||r.description||''}</small></div></div>`;
+  });
+  return html+`</div>`;
+}
+
+function renderProgressBars(c){
+  const items=c.metrics||c.items||c.bars||[];
+  let html=`<div class="progress-bars">`;
+  items.forEach(i=>{
+    const val=i.value||i.progress||i.percentage||0;
+    html+=`<div class="progress-item"><div class="label"><span>${i.label||i.metric||i.name||''}</span><span>${val}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${val}%"></div></div></div>`;
+  });
+  return html+`</div>`;
+}
+
+function renderPersonaCards(c){
+  const personas=c.personas||c.cards||c.items||[];
+  let html=`<div class="persona-cards">`;
+  personas.forEach(p=>{
+    html+=`<div class="persona-card"><div class="name">${p.name||p.title||''}</div><div class="role">${p.role||p.demographic||p.segment||''}</div><div class="detail">${p.description||p.goals||p.pain_points||''}</div></div>`;
+  });
+  return html+`</div>`;
+}
+
+function renderKeyValue(c){
+  const items=c.items||c.pairs||Object.entries(c).filter(([k])=>!['type'].includes(k));
+  let html=`<div class="key-values">`;
+  if(Array.isArray(items)&&items.length>0&&Array.isArray(items[0])){
+    items.forEach(([k,v])=>{html+=`<div class="kv-item"><div class="key">${k}</div><div class="val">${v}</div></div>`;});
+  }else if(Array.isArray(items)){
+    items.forEach(i=>{html+=`<div class="kv-item"><div class="key">${i.key||i.label||''}</div><div class="val">${i.value||''}</div></div>`;});
+  }
+  return html+`</div>`;
+}
+
+function renderPricingTable(c){
+  const tiers=c.tiers||c.plans||c.items||[];
+  let html=`<div class="pricing-table">`;
+  tiers.forEach((t,i)=>{
+    html+=`<div class="pricing-tier${i===1?' featured':''}"><div class="tier-name">${t.name||t.tier||''}</div><div class="price">${t.price||t.cost||''}</div><div class="features">${t.description||t.features||(Array.isArray(t.features)?t.features.join('<br>'):'')}</div></div>`;
+  });
+  return html+`</div>`;
+}
+
+function renderFunnel(c){
+  const levels=c.levels||c.items||c.data||[];
+  const colors=['#667eea','#764ba2','#e53e3e'];
+  let html=`<div class="funnel">`;
+  levels.forEach((l,i)=>{
+    const w=100-i*15;
+    html+=`<div class="funnel-level" style="width:${w}%;background:${colors[i%3]}">${l.label||l.name||''}: ${l.value||l.amount||''}</div>`;
+  });
+  return html+`</div>`;
+}
+
+function renderLineChart(c){
+  return `<div class="chart-placeholder"><p><strong>Revenue Forecast Data</strong></p><p>Chart rendering requires Chart.js integration</p><pre style="text-align:left;font-size:11px;margin-top:12px">${JSON.stringify(c,null,2).substring(0,500)}</pre></div>`;
+}
+
+init();
+</script>
+</body>
+</html>
