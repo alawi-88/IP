@@ -14,6 +14,7 @@ import { MdHelpOutline, MdHistory } from "react-icons/md";
 import { GoHome } from "react-icons/go";
 import { TbCalendarTime } from "react-icons/tb";
 import { LuListChecks } from "react-icons/lu";
+import { HiOutlineLightBulb } from "react-icons/hi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { programsTypes } from "@/lib/constants";
 import { logoutAndRedirect } from "@/lib/utils/logout";
@@ -98,6 +99,19 @@ export default function DashboardMenu({
               >
                 <FaList className="flex-shrink-0" size={20} />
                 {t("my-competitions")}
+              </Link>
+            ),
+          },
+          {
+            key: "startup-builder",
+            onClick: closeDrawer,
+            label: (
+              <Link
+                href={`${dashboardPrefix}/startup-builder`}
+                className="flex items-center gap-x-2"
+              >
+                <HiOutlineLightBulb className="flex-shrink-0" size={20} />
+                {t("startup-builder")}
               </Link>
             ),
           },
@@ -372,6 +386,7 @@ export default function DashboardMenu({
       return currentProgramType;
     }
     if (path === `${dashboardPrefix}/programs`) return "my-competition";
+    if (path.startsWith(`${dashboardPrefix}/startup-builder`)) return "startup-builder";
     if (
       path === `${dashboardPrefix}/my-schedule/times` ||
       path === `${dashboardPrefix}/my-schedule/settings`
