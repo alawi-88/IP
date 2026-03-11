@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             if (!Schema::hasColumn('participants', 'otp_login_code_expires_at')) {
                 $table->timestamp('otp_login_code_expires_at')->nullable();
             }
         });
+        }
     }
 
     /**
@@ -23,10 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             if (Schema::hasColumn('participants', 'otp_login_code_expires_at')) {
                 $table->dropColumn('otp_login_code_expires_at');
             }
         });
+        }
     }
 };

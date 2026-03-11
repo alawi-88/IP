@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('team_form_configs', function (Blueprint $table) {
+        if (Schema::hasTable('team_form_configs')) {
+            Schema::table('team_form_configs', function (Blueprint $table) {
             $table->boolean('is_archived')->default(false);
             $table->timestamp('archived_at')->nullable();
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('team_form_configs', function (Blueprint $table) {
+        if (Schema::hasTable('team_form_configs')) {
+            Schema::table('team_form_configs', function (Blueprint $table) {
             $table->dropColumn(['is_archived', 'archived_at']);
         });
+        }
     }
 };

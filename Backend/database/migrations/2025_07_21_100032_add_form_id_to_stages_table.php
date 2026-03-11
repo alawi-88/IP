@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('stages', function (Blueprint $table) {
+        if (Schema::hasTable('stages')) {
+            Schema::table('stages', function (Blueprint $table) {
             $table->foreignId('form_id')->nullable()->constrained()->nullOnDelete();
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('stages', function (Blueprint $table) {
+        if (Schema::hasTable('stages')) {
+            Schema::table('stages', function (Blueprint $table) {
             //
         });
+        }
     }
 };

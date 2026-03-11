@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('personal_access_tokens', function (Blueprint $table) {
+        if (Schema::hasTable('personal_access_tokens')) {
+            Schema::table('personal_access_tokens', function (Blueprint $table) {
             // Add index for better performance on token lookups
             $table->index(['tokenable_type', 'tokenable_id'], 'idx_tokenable');
             $table->index('expires_at', 'idx_expires_at');
@@ -29,6 +30,7 @@ return new class extends Migration
             // Add column to track token revocation reason
             $table->string('revoked_reason')->nullable();
         });
+        }
     }
 
     /**
@@ -36,7 +38,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('personal_access_tokens', function (Blueprint $table) {
+        if (Schema::hasTable('personal_access_tokens')) {
+            Schema::table('personal_access_tokens', function (Blueprint $table) {
             $table->dropIndex('idx_tokenable');
             $table->dropIndex('idx_expires_at');
             $table->dropIndex('idx_last_used_at');
@@ -47,5 +50,6 @@ return new class extends Migration
                 'revoked_reason'
             ]);
         });
+        }
     }
 };

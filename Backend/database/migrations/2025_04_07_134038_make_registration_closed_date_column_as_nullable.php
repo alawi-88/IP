@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('competitions', function (Blueprint $table) {
+        if (Schema::hasTable('competitions')) {
+            Schema::table('competitions', function (Blueprint $table) {
             $table->date('registration_closed_date')->nullable()->change();
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('competitions', function (Blueprint $table) {
+        if (Schema::hasTable('competitions')) {
+            Schema::table('competitions', function (Blueprint $table) {
             $table->date('registration_closed_date')->nullable(false)->change();
         });
+        }
     }
 };

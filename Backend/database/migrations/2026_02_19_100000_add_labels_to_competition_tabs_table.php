@@ -12,10 +12,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('competition_tabs', function (Blueprint $table) {
+        if (Schema::hasTable('competition_tabs')) {
+            Schema::table('competition_tabs', function (Blueprint $table) {
             $table->string('label_en')->nullable();
             $table->string('label_ar')->nullable();
         });
+        }
     }
 
     /**
@@ -23,8 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('competition_tabs', function (Blueprint $table) {
+        if (Schema::hasTable('competition_tabs')) {
+            Schema::table('competition_tabs', function (Blueprint $table) {
             $table->dropColumn(['label_en', 'label_ar']);
         });
+        }
     }
 };

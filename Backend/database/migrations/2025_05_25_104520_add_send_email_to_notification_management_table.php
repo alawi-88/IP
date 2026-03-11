@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('notification_management', function (Blueprint $table) {
+        if (Schema::hasTable('notification_management')) {
+            Schema::table('notification_management', function (Blueprint $table) {
             $table->boolean('send_email')->default(false);
 
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('notification_management', function (Blueprint $table) {
+        if (Schema::hasTable('notification_management')) {
+            Schema::table('notification_management', function (Blueprint $table) {
             $table->dropColumn('send_email');
         });
+        }
     }
 };

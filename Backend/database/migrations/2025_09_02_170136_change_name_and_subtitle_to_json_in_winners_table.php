@@ -19,10 +19,12 @@ return new class extends Migration
         DB::table('winners')->whereRaw('JSON_VALID(subtitle) = 0')
             ->update(['subtitle' => DB::raw('JSON_QUOTE(subtitle)')]);
 
-        Schema::table('winners', function (Blueprint $table) {
+        if (Schema::hasTable('winners')) {
+            Schema::table('winners', function (Blueprint $table) {
             $table->json('name')->change();
             $table->json('subtitle')->nullable()->change();
         });
+        }
     }
 
     /**
@@ -30,9 +32,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('winners', function (Blueprint $table) {
+        if (Schema::hasTable('winners')) {
+            Schema::table('winners', function (Blueprint $table) {
             $table->string('name')->change();
             $table->string('subtitle')->nullable()->change();
         });
+        }
     }
 };

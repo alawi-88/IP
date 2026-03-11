@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('events', function (Blueprint $table) {
+        if (Schema::hasTable('events')) {
+            Schema::table('events', function (Blueprint $table) {
             // Add speakers column to store JSON data
             $table->json('speakers')->nullable();
             
@@ -23,6 +24,7 @@ return new class extends Migration
                 'speaker_brief'
             ]);
         });
+        }
     }
 
     /**
@@ -30,7 +32,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('events', function (Blueprint $table) {
+        if (Schema::hasTable('events')) {
+            Schema::table('events', function (Blueprint $table) {
             // Remove speakers column
             $table->dropColumn('speakers');
             
@@ -40,5 +43,6 @@ return new class extends Migration
             $table->json('speaker_experience')->nullable();
             $table->json('speaker_brief')->nullable();
         });
+        }
     }
 };

@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        if (Schema::hasTable('projects')) {
+            Schema::table('projects', function (Blueprint $table) {
             $table->dropForeign(['team_id']);
             $table->unsignedBigInteger('team_id')->nullable()->change();
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        if (Schema::hasTable('projects')) {
+            Schema::table('projects', function (Blueprint $table) {
             //
         });
+        }
     }
 };

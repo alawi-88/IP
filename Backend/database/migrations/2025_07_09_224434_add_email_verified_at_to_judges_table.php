@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('judges', function (Blueprint $table) {
+        if (Schema::hasTable('judges')) {
+            Schema::table('judges', function (Blueprint $table) {
             $table->timestamp('email_verified_at')->nullable();
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('judges', function (Blueprint $table) {
+        if (Schema::hasTable('judges')) {
+            Schema::table('judges', function (Blueprint $table) {
             $table->dropColumn('email_verified_at');
         });
+        }
     }
 };

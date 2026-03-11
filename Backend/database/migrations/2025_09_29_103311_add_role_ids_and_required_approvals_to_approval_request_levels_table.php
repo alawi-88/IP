@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('approval_request_levels', function (Blueprint $table) {
+        if (Schema::hasTable('approval_request_levels')) {
+            Schema::table('approval_request_levels', function (Blueprint $table) {
             $table->json('role_ids')->nullable();
             $table->integer('required_approvals')->default(1);
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('approval_request_levels', function (Blueprint $table) {
+        if (Schema::hasTable('approval_request_levels')) {
+            Schema::table('approval_request_levels', function (Blueprint $table) {
             $table->dropColumn(['role_ids', 'required_approvals']);
         });
+        }
     }
 };

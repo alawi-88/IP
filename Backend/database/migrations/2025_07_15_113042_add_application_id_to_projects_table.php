@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        if (Schema::hasTable('projects')) {
+            Schema::table('projects', function (Blueprint $table) {
             $table->foreignId('application_id')
                 ->nullable()
                 ->constrained('competition_applications')
                 ->onDelete('set null');
         });
+        }
     }
 
     /**
@@ -24,8 +26,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        if (Schema::hasTable('projects')) {
+            Schema::table('projects', function (Blueprint $table) {
             //
         });
+        }
     }
 };

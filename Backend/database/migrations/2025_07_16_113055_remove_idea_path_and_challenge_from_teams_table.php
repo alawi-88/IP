@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('teams', function (Blueprint $table) {
+        if (Schema::hasTable('teams')) {
+            Schema::table('teams', function (Blueprint $table) {
             $table->dropForeign(['idea_path_id']);      // if there's a foreign key
             $table->dropForeign(['idea_challenge_id']); // if there's a foreign key
 
             $table->dropColumn(['idea_path_id', 'idea_challenge_id']);
         });
+        }
     }
 
     /**
@@ -24,8 +26,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('teams', function (Blueprint $table) {
+        if (Schema::hasTable('teams')) {
+            Schema::table('teams', function (Blueprint $table) {
             //
         });
+        }
     }
 };

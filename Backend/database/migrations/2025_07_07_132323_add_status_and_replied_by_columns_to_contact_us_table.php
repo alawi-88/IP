@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('contact_us', function (Blueprint $table) {
+        if (Schema::hasTable('contact_us')) {
+            Schema::table('contact_us', function (Blueprint $table) {
             $table->enum('status', ['pending', 'resolved'])->default('pending');
             $table->unsignedBigInteger('replied_by')->nullable();
             $table->foreign('replied_by')->references('id')->on('users')->onDelete('set null');
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->timestamp('replied_at')->nullable();
 
         });
+        }
     }
 
     /**
@@ -26,12 +28,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('contact_us', function (Blueprint $table) {
+        if (Schema::hasTable('contact_us')) {
+            Schema::table('contact_us', function (Blueprint $table) {
             $table->dropForeign(['replied_by']);
             $table->dropColumn('replied_by');
             $table->dropColumn('status');
             $table->dropColumn('reply');
             $table->dropColumn('replied_at');
         });
+        }
     }
 };

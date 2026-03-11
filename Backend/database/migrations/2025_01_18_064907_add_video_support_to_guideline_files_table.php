@@ -12,7 +12,8 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('guideline_files', function (Blueprint $table) {
+        if (Schema::hasTable('guideline_files')) {
+            Schema::table('guideline_files', function (Blueprint $table) {
             // Determine which column exists at this point in the migration timeline.
             // On older/fresh installs the column may still be `url` (renamed later to `attachment`).
             $afterColumn = null;
@@ -37,6 +38,7 @@ return new class extends Migration
                 $table->json('description')->nullable();
             }
         });
+        }
     }
 
     public function down(): void
@@ -45,7 +47,8 @@ return new class extends Migration
             return;
         }
 
-        Schema::table('guideline_files', function (Blueprint $table) {
+        if (Schema::hasTable('guideline_files')) {
+            Schema::table('guideline_files', function (Blueprint $table) {
             if (Schema::hasColumn('guideline_files', 'description')) {
                 $table->dropColumn('description');
             }
@@ -53,5 +56,6 @@ return new class extends Migration
                 $table->dropColumn('file_type');
             }
         });
+        }
     }
 };

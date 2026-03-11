@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             $table->boolean('has_team')->default(false);
             $table->string('registered_as')->nullable();
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             //
         });
+        }
     }
 };

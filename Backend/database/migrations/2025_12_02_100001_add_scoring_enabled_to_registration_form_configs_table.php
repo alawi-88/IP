@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('registration_form_configs', function (Blueprint $table) {
+        if (Schema::hasTable('registration_form_configs')) {
+            Schema::table('registration_form_configs', function (Blueprint $table) {
             $table->boolean('scoring_enabled')->default(false)->comment('Enable scoring for registration form submissions');
         });
+        }
     }
 
     /**
@@ -21,9 +23,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('registration_form_configs', function (Blueprint $table) {
+        if (Schema::hasTable('registration_form_configs')) {
+            Schema::table('registration_form_configs', function (Blueprint $table) {
             $table->dropColumn('scoring_enabled');
         });
+        }
     }
 };
 

@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('landing_pages', function (Blueprint $table) {
+        if (Schema::hasTable('landing_pages')) {
+            Schema::table('landing_pages', function (Blueprint $table) {
             $table->string('dga_registration_number')->nullable();
             $table->string('dga_certificate_url')->nullable();
         });
+        }
     }
 
     /**
@@ -22,9 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('landing_pages', function (Blueprint $table) {
+        if (Schema::hasTable('landing_pages')) {
+            Schema::table('landing_pages', function (Blueprint $table) {
             $table->dropColumn(['dga_registration_number', 'dga_certificate_url']);
         });
+        }
     }
 };
 

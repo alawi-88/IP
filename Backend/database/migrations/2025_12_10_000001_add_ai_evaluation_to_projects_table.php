@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        if (Schema::hasTable('projects')) {
+            Schema::table('projects', function (Blueprint $table) {
             $table->json('ai_evaluation_response')->nullable();
             $table->timestamp('ai_evaluated_at')->nullable();
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        if (Schema::hasTable('projects')) {
+            Schema::table('projects', function (Blueprint $table) {
             $table->dropColumn(['ai_evaluation_response', 'ai_evaluated_at']);
         });
+        }
     }
 };

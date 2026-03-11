@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('project_form_configs', function (Blueprint $table) {
+        if (Schema::hasTable('project_form_configs')) {
+            Schema::table('project_form_configs', function (Blueprint $table) {
             $table->dropForeign(['competition_id']);
             $table->dropColumn('competition_id');
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('project_form_configs', function (Blueprint $table) {
+        if (Schema::hasTable('project_form_configs')) {
+            Schema::table('project_form_configs', function (Blueprint $table) {
             //
         });
+        }
     }
 };

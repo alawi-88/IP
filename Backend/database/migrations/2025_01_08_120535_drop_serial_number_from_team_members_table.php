@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('team_members', function (Blueprint $table) {
+        if (Schema::hasTable('team_members')) {
+            Schema::table('team_members', function (Blueprint $table) {
             $table->dropColumn('serial_number');
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('team_members', function (Blueprint $table) {
+        if (Schema::hasTable('team_members')) {
+            Schema::table('team_members', function (Blueprint $table) {
             $table->string('serial_number')->nullable();
         });
+        }
     }
 };

@@ -8,15 +8,19 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('judges', function (Blueprint $table) {
+        if (Schema::hasTable('judges')) {
+            Schema::table('judges', function (Blueprint $table) {
             $table->string('activation_code')->nullable();
         });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('judges', function (Blueprint $table) {
+        if (Schema::hasTable('judges')) {
+            Schema::table('judges', function (Blueprint $table) {
             $table->dropColumn('activation_code');
         });
+        }
     }
 };

@@ -8,18 +8,22 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('mentor_sessions', function (Blueprint $table) {
+        if (Schema::hasTable('mentor_sessions')) {
+            Schema::table('mentor_sessions', function (Blueprint $table) {
             $table->text('feedback_comments')->nullable();
             $table->text('feedback_strengths')->nullable();
             $table->text('feedback_improvements')->nullable();
         });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('mentor_sessions', function (Blueprint $table) {
+        if (Schema::hasTable('mentor_sessions')) {
+            Schema::table('mentor_sessions', function (Blueprint $table) {
             $table->dropColumn(['feedback_comments', 'feedback_strengths', 'feedback_improvements']);
         });
+        }
     }
 };
 

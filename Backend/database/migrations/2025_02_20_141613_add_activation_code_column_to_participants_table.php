@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->string('activation_code')->nullable();
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->dropColumn('activation_code');
         });
+        }
     }
 };

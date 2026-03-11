@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             $table->foreignId('track_id')
                 ->nullable()
                 ->constrained('tracks')
                 ->nullOnDelete()
                 ;
         });
+        }
     }
 
     /**
@@ -25,9 +27,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             $table->dropForeign(['track_id']);
             $table->dropColumn('track_id');
         });
+        }
     }
 };

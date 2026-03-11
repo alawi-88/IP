@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('form_fields', function (Blueprint $table) {
+        if (Schema::hasTable('form_fields')) {
+            Schema::table('form_fields', function (Blueprint $table) {
             $table->boolean('conditional_logic')->default(false);
 
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('form_fields', function (Blueprint $table) {
+        if (Schema::hasTable('form_fields')) {
+            Schema::table('form_fields', function (Blueprint $table) {
             $table->dropColumn('conditional_logic');
         });
+        }
     }
 };

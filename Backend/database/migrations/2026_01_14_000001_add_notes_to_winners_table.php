@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('winners', function (Blueprint $table) {
+        if (Schema::hasTable('winners')) {
+            Schema::table('winners', function (Blueprint $table) {
             if (!Schema::hasColumn('winners', 'notes')) {
                 $table->text('notes')->nullable();
             }
         });
+        }
     }
 
     /**
@@ -23,11 +25,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('winners', function (Blueprint $table) {
+        if (Schema::hasTable('winners')) {
+            Schema::table('winners', function (Blueprint $table) {
             if (Schema::hasColumn('winners', 'notes')) {
                 $table->dropColumn('notes');
             }
         });
+        }
     }
 };
 

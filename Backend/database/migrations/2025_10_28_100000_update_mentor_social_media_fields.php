@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             // Drop the old 'link' column
             if (Schema::hasColumn('mentors', 'link')) {
                 $table->dropColumn('link');
             }
         });
+        }
 
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             // Add new social media fields
             if (!Schema::hasColumn('mentors', 'linkedin')) {
                 $table->string('linkedin')->nullable();
@@ -30,6 +33,7 @@ return new class extends Migration
                 $table->string('instagram')->nullable();
             }
         });
+        }
     }
 
     /**
@@ -37,7 +41,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             // Drop the new social media fields
             if (Schema::hasColumn('mentors', 'linkedin')) {
                 $table->dropColumn('linkedin');
@@ -49,13 +54,16 @@ return new class extends Migration
                 $table->dropColumn('instagram');
             }
         });
+        }
 
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             // Add back the 'link' column
             if (!Schema::hasColumn('mentors', 'link')) {
                 $table->string('link')->nullable();
             }
         });
+        }
     }
 };
 

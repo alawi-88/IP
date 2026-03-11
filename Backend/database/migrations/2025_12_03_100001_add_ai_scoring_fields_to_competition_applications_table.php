@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             $table->boolean('ai_scored')->default(false)->comment('Whether this application was scored by AI');
             $table->json('ai_scores')->nullable()->comment('AI-generated scores before manual override');
             $table->decimal('ai_confidence', 3, 2)->nullable()->comment('AI confidence score (0-1)');
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->index('ai_scored');
             $table->index('ai_score_overridden');
         });
+        }
     }
 
     /**
@@ -33,7 +35,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             $table->dropForeign(['ai_scored_by']);
             $table->dropForeign(['ai_overridden_by']);
             $table->dropColumn([
@@ -49,6 +52,7 @@ return new class extends Migration
                 'ai_metadata',
             ]);
         });
+        }
     }
 };
 

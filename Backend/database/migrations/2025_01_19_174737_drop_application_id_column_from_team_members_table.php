@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('team_members', function (Blueprint $table) {
+        if (Schema::hasTable('team_members')) {
+            Schema::table('team_members', function (Blueprint $table) {
             $table->dropForeign(['application_id']);
             $table->dropColumn('application_id');
         });
+        }
     }
 
     /**
@@ -22,10 +24,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('team_members', function (Blueprint $table) {
+        if (Schema::hasTable('team_members')) {
+            Schema::table('team_members', function (Blueprint $table) {
             $table->foreignId('application_id')
                 
                 ->constrained()->cascadeOnDelete();
         });
+        }
     }
 };

@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('judge_projects', function (Blueprint $table) {
+        if (Schema::hasTable('judge_projects')) {
+            Schema::table('judge_projects', function (Blueprint $table) {
             $table->text('final_comment')->nullable();
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('judge_projects', function (Blueprint $table) {
+        if (Schema::hasTable('judge_projects')) {
+            Schema::table('judge_projects', function (Blueprint $table) {
             //
         });
+        }
     }
 };

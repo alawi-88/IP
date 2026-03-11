@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('notification_messages', function (Blueprint $table) {
+        if (Schema::hasTable('notification_messages')) {
+            Schema::table('notification_messages', function (Blueprint $table) {
             $table->boolean('is_default')->default(false);
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('notification_messages', function (Blueprint $table) {
+        if (Schema::hasTable('notification_messages')) {
+            Schema::table('notification_messages', function (Blueprint $table) {
             $table->dropColumn('is_default');
         });
+        }
     }
 };

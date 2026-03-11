@@ -12,12 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('judges', function (Blueprint $table) {
+        if (Schema::hasTable('judges')) {
+            Schema::table('judges', function (Blueprint $table) {
             $table->enum('registration_method', [
                 Judge::REGISTRATION_METHOD_SELF,
                 Judge::REGISTRATION_METHOD_ADMIN,
             ])->default(Judge::REGISTRATION_METHOD_ADMIN);
         });
+        }
     }
 
     /**
@@ -25,8 +27,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('judges', function (Blueprint $table) {
+        if (Schema::hasTable('judges')) {
+            Schema::table('judges', function (Blueprint $table) {
             $table->dropColumn('registration_method');
         });
+        }
     }
 };

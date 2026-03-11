@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        if (Schema::hasTable('projects')) {
+            Schema::table('projects', function (Blueprint $table) {
             $table->dropColumn([
                 'name',
                 'summary',
@@ -22,11 +23,13 @@ return new class extends Migration
                 'documents',
             ]);
         });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('projects', function (Blueprint $table) {
+        if (Schema::hasTable('projects')) {
+            Schema::table('projects', function (Blueprint $table) {
             $table->string('name');
             $table->text('summary');
             $table->text('description');
@@ -35,5 +38,6 @@ return new class extends Migration
             $table->json('references')->nullable();
             $table->json('documents')->nullable();
         });
+        }
     }
 };

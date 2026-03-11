@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->foreignId('nationality_id')
                 ->nullable()
                 
@@ -25,6 +26,7 @@ return new class extends Migration
                 
                 ->constrained('cities');
         });
+        }
     }
 
     /**
@@ -32,7 +34,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->dropForeign(['nationality_id']);
             $table->dropColumn('nationality_id');
             $table->dropForeign(['country_id']);
@@ -40,5 +43,6 @@ return new class extends Migration
             $table->dropForeign(['residence_city_id']);
             $table->dropColumn('residence_city_id');
         });
+        }
     }
 };

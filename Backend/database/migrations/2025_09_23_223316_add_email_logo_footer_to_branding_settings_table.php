@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('branding_settings', function (Blueprint $table) {
+        if (Schema::hasTable('branding_settings')) {
+            Schema::table('branding_settings', function (Blueprint $table) {
             $table->string('email_logo')->nullable();
             $table->string('email_footer_footer')->nullable();
         });
+        }
     }
 
     /**
@@ -22,9 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('branding_settings', function (Blueprint $table) {
+        if (Schema::hasTable('branding_settings')) {
+            Schema::table('branding_settings', function (Blueprint $table) {
             $table->dropColumn('email_logo');
             $table->dropColumn('email_footer_footer');
         });
+        }
     }
 };

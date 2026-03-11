@@ -12,11 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->string('current_role')->change(); // Temporarily convert ENUM to VARCHAR
         });
+        }
 
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->enum('current_role', [
                 'high_school_student',
                 'university_student',
@@ -28,15 +31,19 @@ return new class extends Migration
                 'unemployed'
             ])->change();
         });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->string('current_role')->change(); // Convert back to VARCHAR
         });
+        }
 
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->enum('current_role', [
                 'high_school_student',
                 'university_student',
@@ -48,5 +55,6 @@ return new class extends Migration
                 'unemployed'
             ])->change();
         });
+        }
     }
 };

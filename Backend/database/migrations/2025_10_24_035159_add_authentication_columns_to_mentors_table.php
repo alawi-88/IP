@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             if (!Schema::hasColumn('mentors', 'profession')) {
                 $table->json('profession');
             }
@@ -34,6 +35,7 @@ return new class extends Migration
                 $table->timestamp('last_login_at')->nullable();
             }
         });
+        }
         
         // First, update any empty emails to null to prevent unique constraint violations
         \DB::table('mentors')->where('email', '')->update(['email' => null]);
@@ -62,9 +64,11 @@ return new class extends Migration
                 }
                 
                 // Add unique constraint
-                Schema::table('mentors', function (Blueprint $table) {
+                if (Schema::hasTable('mentors')) {
+                    Schema::table('mentors', function (Blueprint $table) {
                     $table->unique('email', 'mentors_email_unique');
                 });
+                }
             }
         }
     }
@@ -74,7 +78,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             $table->dropColumn('profession');
             $table->dropColumn('email');
             $table->dropColumn('phone');
@@ -83,5 +88,6 @@ return new class extends Migration
             $table->dropColumn('otp_code');
             $table->dropColumn('last_login_at');
         });
+        }
     }
 };

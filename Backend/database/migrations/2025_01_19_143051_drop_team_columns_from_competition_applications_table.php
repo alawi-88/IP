@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             $table->dropColumn('team_name');
             $table->dropColumn('team_logo');
             $table->dropColumn('team_strength');
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->dropColumn('idea_description');
             $table->dropColumn('team_member_previous_participation');
         });
+        }
     }
 
     /**
@@ -32,7 +34,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             $table->string('team_name')->nullable();
             $table->string('team_logo')->nullable();
 
@@ -45,5 +48,6 @@ return new class extends Migration
 
             $table->text('team_member_previous_participation')->nullable();
         });
+        }
     }
 };

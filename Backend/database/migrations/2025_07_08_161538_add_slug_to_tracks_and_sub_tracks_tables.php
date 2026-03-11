@@ -13,15 +13,19 @@ return new class extends Migration
     {
 
         if (!Schema::hasColumn('tracks', 'slug')) {
-            Schema::table('tracks', function (Blueprint $table) {
+            if (Schema::hasTable('tracks')) {
+                Schema::table('tracks', function (Blueprint $table) {
                 $table->string('slug')->unique();
             });
+            }
         }
 
         if (!Schema::hasColumn('sub_tracks', 'slug')) {
-        Schema::table('sub_tracks', function (Blueprint $table) {
+        if (Schema::hasTable('sub_tracks')) {
+            Schema::table('sub_tracks', function (Blueprint $table) {
             $table->string('slug')->unique();
         });
+        }
         }
     }
 
@@ -30,12 +34,16 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('tracks', function (Blueprint $table) {
+        if (Schema::hasTable('tracks')) {
+            Schema::table('tracks', function (Blueprint $table) {
             $table->dropColumn('slug');
         });
+        }
 
-        Schema::table('sub_tracks', function (Blueprint $table) {
+        if (Schema::hasTable('sub_tracks')) {
+            Schema::table('sub_tracks', function (Blueprint $table) {
             $table->dropColumn('slug');
         });
+        }
     }
 };

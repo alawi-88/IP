@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('teams', function (Blueprint $table) {
+        if (Schema::hasTable('teams')) {
+            Schema::table('teams', function (Blueprint $table) {
             $table->unsignedBigInteger('track_id')->nullable(); // Adjust placement as needed
             $table->unsignedBigInteger('sub_track_id')->nullable();
 
@@ -19,6 +20,7 @@ return new class extends Migration
             $table->foreign('track_id')->references('id')->on('tracks')->nullOnDelete();
             $table->foreign('sub_track_id')->references('id')->on('sub_tracks')->nullOnDelete();
         });
+        }
     }
 
     /**
@@ -26,10 +28,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('teams', function (Blueprint $table) {
+        if (Schema::hasTable('teams')) {
+            Schema::table('teams', function (Blueprint $table) {
             $table->dropForeign(['track_id']);
             $table->dropForeign(['sub_track_id']);
             $table->dropColumn(['track_id', 'sub_track_id']);
         });
+        }
     }
 };

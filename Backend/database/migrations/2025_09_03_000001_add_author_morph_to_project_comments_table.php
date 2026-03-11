@@ -8,16 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('project_comments', function (Blueprint $table) {
+        if (Schema::hasTable('project_comments')) {
+            Schema::table('project_comments', function (Blueprint $table) {
             $table->nullableMorphs('author');
         });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('project_comments', function (Blueprint $table) {
+        if (Schema::hasTable('project_comments')) {
+            Schema::table('project_comments', function (Blueprint $table) {
             $table->dropMorphs('author');
         });
+        }
     }
 };
 

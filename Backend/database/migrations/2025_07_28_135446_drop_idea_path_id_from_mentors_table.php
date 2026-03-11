@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             $table->dropForeign('mentors_idea_path_id_foreign');
             $table->dropColumn('idea_path_id');
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             //
         });
+        }
     }
 };

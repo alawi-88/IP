@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('contact_us', function (Blueprint $table) {
+        if (Schema::hasTable('contact_us')) {
+            Schema::table('contact_us', function (Blueprint $table) {
             $table->dropForeign('contact_us_participant_id_foreign');
 
             $table->renameColumn('participant_id', 'model_id');
@@ -20,6 +21,7 @@ return new class extends Migration
 
             $table->index(['model_type', 'model_id'], 'contact_us_morph_idx');
         });
+        }
     }
 
     /**
@@ -27,12 +29,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('contact_us', function (Blueprint $table) {
+        if (Schema::hasTable('contact_us')) {
+            Schema::table('contact_us', function (Blueprint $table) {
             $table->dropColumn('model_type');
 
             $table->renameColumn('model_id', 'participant_id');
 
             $table->foreign('participant_id')->references('id')->on('participants')->cascadeOnDelete();
         });
+        }
     }
 };

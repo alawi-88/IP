@@ -8,17 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('mentor_sessions', function (Blueprint $table) {
+        if (Schema::hasTable('mentor_sessions')) {
+            Schema::table('mentor_sessions', function (Blueprint $table) {
             $table->text('declined_reason')->nullable();
             $table->datetime('proposed_time')->nullable();
         });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('mentor_sessions', function (Blueprint $table) {
+        if (Schema::hasTable('mentor_sessions')) {
+            Schema::table('mentor_sessions', function (Blueprint $table) {
             $table->dropColumn(['declined_reason', 'proposed_time']);
         });
+        }
     }
 };
 

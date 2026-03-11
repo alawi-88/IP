@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('stages', function (Blueprint $table) {
+        if (Schema::hasTable('stages')) {
+            Schema::table('stages', function (Blueprint $table) {
             // Add JSON column to store multiple form IDs
             $table->json('form_ids')->nullable()->comment('Array of form IDs associated with this stage');
         });
+        }
     }
 
     /**
@@ -22,9 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('stages', function (Blueprint $table) {
+        if (Schema::hasTable('stages')) {
+            Schema::table('stages', function (Blueprint $table) {
             $table->dropColumn('form_ids');
         });
+        }
     }
 };
 

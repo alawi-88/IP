@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('project_evaluations', function (Blueprint $table) {
+        if (Schema::hasTable('project_evaluations')) {
+            Schema::table('project_evaluations', function (Blueprint $table) {
             $table->dropForeign(['path_id']);
             $table->dropColumn('path_id');
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('project_evaluations', function (Blueprint $table) {
+        if (Schema::hasTable('project_evaluations')) {
+            Schema::table('project_evaluations', function (Blueprint $table) {
             //
         });
+        }
     }
 };

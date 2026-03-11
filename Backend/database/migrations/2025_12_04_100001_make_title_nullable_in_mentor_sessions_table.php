@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mentor_sessions', function (Blueprint $table) {
+        if (Schema::hasTable('mentor_sessions')) {
+            Schema::table('mentor_sessions', function (Blueprint $table) {
             $table->string('title')->nullable()->change();
         });
+        }
     }
 
     /**
@@ -21,9 +23,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mentor_sessions', function (Blueprint $table) {
+        if (Schema::hasTable('mentor_sessions')) {
+            Schema::table('mentor_sessions', function (Blueprint $table) {
             $table->string('title')->nullable(false)->change();
         });
+        }
     }
 };
 

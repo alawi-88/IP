@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             if (!Schema::hasColumn('mentors', 'password_reset_code_expires_at')) {
                 $table->timestamp('password_reset_code_expires_at')->nullable();
             }
         });
+        }
     }
 
     /**
@@ -23,11 +25,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mentors', function (Blueprint $table) {
+        if (Schema::hasTable('mentors')) {
+            Schema::table('mentors', function (Blueprint $table) {
             if (Schema::hasColumn('mentors', 'password_reset_code_expires_at')) {
                 $table->dropColumn('password_reset_code_expires_at');
             }
         });
+        }
     }
 };
 

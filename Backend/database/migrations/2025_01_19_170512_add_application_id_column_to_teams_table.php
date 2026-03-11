@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('teams', function (Blueprint $table) {
+        if (Schema::hasTable('teams')) {
+            Schema::table('teams', function (Blueprint $table) {
             $table->foreignId('application_id')
                 
                 ->constrained('competition_applications')
                 ->onDelete('cascade');
         });
+        }
     }
 
     /**
@@ -24,9 +26,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('teams', function (Blueprint $table) {
+        if (Schema::hasTable('teams')) {
+            Schema::table('teams', function (Blueprint $table) {
             $table->dropForeign(['application_id']);
             $table->dropColumn('application_id');
         });
+        }
     }
 };

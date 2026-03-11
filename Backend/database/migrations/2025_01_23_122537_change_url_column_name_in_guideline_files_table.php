@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('guideline_files', function (Blueprint $table) {
+        if (Schema::hasTable('guideline_files')) {
+            Schema::table('guideline_files', function (Blueprint $table) {
             $table->renameColumn('url', 'attachment');
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('guideline_files', function (Blueprint $table) {
+        if (Schema::hasTable('guideline_files')) {
+            Schema::table('guideline_files', function (Blueprint $table) {
             $table->renameColumn('attachment', 'url');
         });
+        }
     }
 };

@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('roles', function (Blueprint $table) {
+        if (Schema::hasTable('roles')) {
+            Schema::table('roles', function (Blueprint $table) {
             $table->text('description')->nullable();
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('roles', function (Blueprint $table) {
+        if (Schema::hasTable('roles')) {
+            Schema::table('roles', function (Blueprint $table) {
             //
         });
+        }
     }
 };

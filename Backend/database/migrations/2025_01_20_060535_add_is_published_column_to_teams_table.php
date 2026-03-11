@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('teams', function (Blueprint $table) {
+        if (Schema::hasTable('teams')) {
+            Schema::table('teams', function (Blueprint $table) {
             $table->boolean('is_published')->default(false);
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('teams', function (Blueprint $table) {
+        if (Schema::hasTable('teams')) {
+            Schema::table('teams', function (Blueprint $table) {
             $table->dropColumn('is_published');
         });
+        }
     }
 };

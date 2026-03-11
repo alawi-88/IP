@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('landing_pages', function (Blueprint $table) {
+        if (Schema::hasTable('landing_pages')) {
+            Schema::table('landing_pages', function (Blueprint $table) {
             $table->boolean('government_verification_banner_enabled')->default(false);
         });
+        }
     }
 
     /**
@@ -21,9 +23,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('landing_pages', function (Blueprint $table) {
+        if (Schema::hasTable('landing_pages')) {
+            Schema::table('landing_pages', function (Blueprint $table) {
             $table->dropColumn('government_verification_banner_enabled');
         });
+        }
     }
 };
 

@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('forms', function (Blueprint $table) {
+        if (Schema::hasTable('forms')) {
+            Schema::table('forms', function (Blueprint $table) {
             $table->json('evaluation_config')->nullable();
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('forms', function (Blueprint $table) {
+        if (Schema::hasTable('forms')) {
+            Schema::table('forms', function (Blueprint $table) {
             $table->dropColumn('evaluation_config');
         });
+        }
     }
 };

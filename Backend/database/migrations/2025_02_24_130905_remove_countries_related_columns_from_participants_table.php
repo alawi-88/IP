@@ -11,11 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->dropColumn('nationality');
             $table->dropColumn('country');
             $table->dropColumn('residence_city');
         });
+        }
     }
 
     /**
@@ -23,10 +25,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('participants', function (Blueprint $table) {
+        if (Schema::hasTable('participants')) {
+            Schema::table('participants', function (Blueprint $table) {
             $table->string('nationality')->nullable();
             $table->string('country')->nullable();
             $table->string('residence_city')->nullable();
         });
+        }
     }
 };

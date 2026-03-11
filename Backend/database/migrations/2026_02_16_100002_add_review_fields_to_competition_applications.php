@@ -12,7 +12,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             // Evaluation framework fields
             $table->decimal('final_evaluation_score', 8, 2)->nullable()
                 
@@ -42,18 +43,22 @@ return new class extends Migration
             $table->timestamp('reviewed_at')->nullable()
                 ;
         });
+        }
 
         // Add minimum score threshold to registration form configs
-        Schema::table('registration_form_configs', function (Blueprint $table) {
+        if (Schema::hasTable('registration_form_configs')) {
+            Schema::table('registration_form_configs', function (Blueprint $table) {
             $table->unsignedInteger('minimum_score_threshold')->nullable()
                 
                 ->comment('Minimum score required for auto-qualification');
         });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             $table->dropForeign(['reviewed_by']);
             $table->dropColumn([
                 'final_evaluation_score',
@@ -67,9 +72,12 @@ return new class extends Migration
                 'reviewed_at',
             ]);
         });
+        }
 
-        Schema::table('registration_form_configs', function (Blueprint $table) {
+        if (Schema::hasTable('registration_form_configs')) {
+            Schema::table('registration_form_configs', function (Blueprint $table) {
             $table->dropColumn('minimum_score_threshold');
         });
+        }
     }
 };

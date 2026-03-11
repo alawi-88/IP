@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('services', function (Blueprint $table) {
+        if (Schema::hasTable('services')) {
+            Schema::table('services', function (Blueprint $table) {
             $table->integer('order')->default(0);
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('services', function (Blueprint $table) {
+        if (Schema::hasTable('services')) {
+            Schema::table('services', function (Blueprint $table) {
             $table->dropColumn('order');
         });
+        }
     }
 };

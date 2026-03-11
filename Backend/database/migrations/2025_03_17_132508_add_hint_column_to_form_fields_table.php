@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('form_fields', function (Blueprint $table) {
+        if (Schema::hasTable('form_fields')) {
+            Schema::table('form_fields', function (Blueprint $table) {
             $table->json('hint')->nullable();
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('form_fields', function (Blueprint $table) {
+        if (Schema::hasTable('form_fields')) {
+            Schema::table('form_fields', function (Blueprint $table) {
             $table->dropColumn('hint');
         });
+        }
     }
 };

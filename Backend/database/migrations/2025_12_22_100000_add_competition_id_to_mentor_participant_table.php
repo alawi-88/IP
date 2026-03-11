@@ -30,7 +30,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('mentor_participant', function (Blueprint $table) {
+        if (Schema::hasTable('mentor_participant')) {
+            Schema::table('mentor_participant', function (Blueprint $table) {
             $table->dropForeign(['competition_id']);
             $table->dropUnique('mentor_participant_unique_v2');
             $table->dropColumn('competition_id');
@@ -38,5 +39,6 @@ return new class extends Migration
             // Restore old unique constraint
             $table->unique(['mentor_id', 'participant_id']);
         });
+        }
     }
 };

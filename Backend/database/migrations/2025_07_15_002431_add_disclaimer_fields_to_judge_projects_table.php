@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('judge_projects', function (Blueprint $table) {
+        if (Schema::hasTable('judge_projects')) {
+            Schema::table('judge_projects', function (Blueprint $table) {
             $table->boolean('disclaimer_accepted')->default(false);
             $table->timestamp('disclaimer_accepted_at')->nullable();
         });
+        }
     }
 
     /**
@@ -22,8 +24,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-         Schema::table('judge_projects', function (Blueprint $table) {
+         if (Schema::hasTable('judge_projects')) {
+             Schema::table('judge_projects', function (Blueprint $table) {
             $table->dropColumn(['disclaimer_accepted', 'disclaimer_accepted_at']);
         });
+         }
     }
 };

@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('form_evaluation_scores', function (Blueprint $table) {
+        if (Schema::hasTable('form_evaluation_scores')) {
+            Schema::table('form_evaluation_scores', function (Blueprint $table) {
             $table->boolean('exclude_from_calculation')->default(false);
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('form_evaluation_scores', function (Blueprint $table) {
+        if (Schema::hasTable('form_evaluation_scores')) {
+            Schema::table('form_evaluation_scores', function (Blueprint $table) {
             $table->dropColumn('exclude_from_calculation');
         });
+        }
     }
 };

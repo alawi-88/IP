@@ -11,17 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             $table->string('team_name')->nullable();
             $table->string('team_logo')->nullable();
             $table->string('team_serial')->nullable();
         });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('competition_applications', function (Blueprint $table) {
+        if (Schema::hasTable('competition_applications')) {
+            Schema::table('competition_applications', function (Blueprint $table) {
             $table->dropColumn(['team_name', 'team_logo', 'team_serial']);
         });
+        }
     }
 };

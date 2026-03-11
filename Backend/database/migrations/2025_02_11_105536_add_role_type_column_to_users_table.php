@@ -12,11 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (Schema::hasTable('users')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->string('role_type')
                 ->nullable()
                 ;
         });
+        }
 
         // any user with email starting with admin will be assigned the role of admin
         DB::table('users')->where('email', 'like', 'admin%')->update(['role' => 'admin']);
@@ -27,8 +29,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        if (Schema::hasTable('users')) {
+            Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('role_type');
         });
+        }
     }
 };

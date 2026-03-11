@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('nafath_settings', function (Blueprint $table) {
+        if (Schema::hasTable('nafath_settings')) {
+            Schema::table('nafath_settings', function (Blueprint $table) {
             $table->string('login_method')->default('both')->comment('nafath, credentials, or both');
         });
+        }
     }
 
     /**
@@ -21,8 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('nafath_settings', function (Blueprint $table) {
+        if (Schema::hasTable('nafath_settings')) {
+            Schema::table('nafath_settings', function (Blueprint $table) {
             $table->dropColumn('login_method');
         });
+        }
     }
 };

@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('contact_us', function (Blueprint $table) {
+        if (Schema::hasTable('contact_us')) {
+            Schema::table('contact_us', function (Blueprint $table) {
             $table->dropForeign(['competition_id']);
             $table->dropColumn('competition_id');
         });
+        }
     }
 
     /**
@@ -22,9 +24,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('contact_us', function (Blueprint $table) {
+        if (Schema::hasTable('contact_us')) {
+            Schema::table('contact_us', function (Blueprint $table) {
             $table->unsignedBigInteger('competition_id')->nullable();
             $table->foreign('competition_id')->references('id')->on('competitions');
         });
+        }
     }
 };
