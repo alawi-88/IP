@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('contact_us', function (Blueprint $table) {
-            $table->enum('status', ['pending', 'resolved'])->default('pending')->after('attachments');
-            $table->unsignedBigInteger('replied_by')->nullable()->after('status');
+            $table->enum('status', ['pending', 'resolved'])->default('pending');
+            $table->unsignedBigInteger('replied_by')->nullable();
             $table->foreign('replied_by')->references('id')->on('users')->onDelete('set null');
-            $table->longText('reply')->nullable()->after('status');
-            $table->timestamp('replied_at')->nullable()->after('reply');
+            $table->longText('reply')->nullable();
+            $table->timestamp('replied_at')->nullable();
 
         });
     }

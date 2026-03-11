@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mentor_sessions', function (Blueprint $table) {
-            $table->text('cancellation_reason')->nullable()->after('declined_reason');
+            $table->text('cancellation_reason')->nullable();
         });
     }
 

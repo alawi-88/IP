@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::table('registration_form_configs', function (Blueprint $table) {
             // Now add the new fields
-            $table->unsignedTinyInteger('min_team_members')->default(2)->after('max_age');
-            $table->unsignedTinyInteger('max_team_members')->nullable()->after('min_team_members');
-            $table->boolean('team_fields_enabled')->default(true)->after('max_team_members');
+            $table->unsignedTinyInteger('min_team_members')->default(2);
+            $table->unsignedTinyInteger('max_team_members')->nullable();
+            $table->boolean('team_fields_enabled')->default(true);
 
-            $table->json('label_register_as')->nullable()->after('team_fields_enabled');
-            $table->json('option_register_individual')->nullable()->after('label_register_as');
-            $table->json('option_register_team')->nullable()->after('option_register_individual');
+            $table->json('label_register_as')->nullable();
+            $table->json('option_register_individual')->nullable();
+            $table->json('option_register_team')->nullable();
 
-            $table->json('label_team_name')->nullable()->after('option_register_team');
-            $table->json('label_team_logo')->nullable()->after('label_team_name');
-            $table->json('label_team_serial')->nullable()->after('label_team_logo');
-            $table->json('help_team_serial')->nullable()->after('label_team_serial');
+            $table->json('label_team_name')->nullable();
+            $table->json('label_team_logo')->nullable();
+            $table->json('label_team_serial')->nullable();
+            $table->json('help_team_serial')->nullable();
         });
     }
 

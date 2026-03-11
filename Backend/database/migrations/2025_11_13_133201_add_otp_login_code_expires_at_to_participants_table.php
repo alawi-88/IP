@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('participants', function (Blueprint $table) {
             if (!Schema::hasColumn('participants', 'otp_login_code_expires_at')) {
-                $table->timestamp('otp_login_code_expires_at')->nullable()->after('last_login_at');
+                $table->timestamp('otp_login_code_expires_at')->nullable();
             }
         });
     }

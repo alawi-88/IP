@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('competition_applications', function (Blueprint $table) {
-            $table->string('status')->default('pending')->after('team_member_previous_participation');
+            $table->string('status')->default('pending');
         });
     }
 

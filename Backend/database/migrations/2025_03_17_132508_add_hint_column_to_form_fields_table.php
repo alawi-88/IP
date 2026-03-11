@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('form_fields', function (Blueprint $table) {
-            $table->json('hint')->nullable()->after('placeholder');
+            $table->json('hint')->nullable();
         });
     }
 

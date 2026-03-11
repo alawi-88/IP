@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('competition_applications', function (Blueprint $table) {
-            $table->foreignId('form_id')->constrained('forms')->onDelete('cascade')->after('participant_id');
-            $table->json('form_submissions')->nullable()->after('form_id');
+            $table->foreignId('form_id')->constrained('forms')->onDelete('cascade');
+            $table->json('form_submissions')->nullable();
         });
     }
 

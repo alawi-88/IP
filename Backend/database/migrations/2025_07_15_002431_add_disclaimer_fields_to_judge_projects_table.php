@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('judge_projects', function (Blueprint $table) {
-            $table->boolean('disclaimer_accepted')->default(false)->after('evaluation_score');
-            $table->timestamp('disclaimer_accepted_at')->nullable()->after('disclaimer_accepted');
+            $table->boolean('disclaimer_accepted')->default(false);
+            $table->timestamp('disclaimer_accepted_at')->nullable();
         });
     }
 

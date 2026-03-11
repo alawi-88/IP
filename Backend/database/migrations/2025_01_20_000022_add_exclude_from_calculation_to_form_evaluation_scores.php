@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('form_evaluation_scores', function (Blueprint $table) {
-            $table->boolean('exclude_from_calculation')->default(false)->after('archived_at');
+            $table->boolean('exclude_from_calculation')->default(false);
         });
     }
 

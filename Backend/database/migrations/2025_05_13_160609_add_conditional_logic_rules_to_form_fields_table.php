@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('form_fields', function (Blueprint $table) {
-            $table->json('conditional_logic_rules')->nullable()->after('validation_rules'); // Adjust position if needed
+            $table->json('conditional_logic_rules')->nullable(); // Adjust position if needed
         });
     }
 

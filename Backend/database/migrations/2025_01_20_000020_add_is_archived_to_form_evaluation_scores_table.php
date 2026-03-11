@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('form_evaluation_scores', function (Blueprint $table) {
-            $table->boolean('is_archived')->default(false)->after('evaluation_score');
-            $table->timestamp('archived_at')->nullable()->after('is_archived');
+            $table->boolean('is_archived')->default(false);
+            $table->timestamp('archived_at')->nullable();
         });
     }
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('stages', function (Blueprint $table) {
             // Add JSON column to store multiple form IDs
-            $table->json('form_ids')->nullable()->after('form_id')->comment('Array of form IDs associated with this stage');
+            $table->json('form_ids')->nullable()->comment('Array of form IDs associated with this stage');
         });
     }
 

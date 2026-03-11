@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->boolean('is_visible')->default(true)->after('event_link');
+            $table->boolean('is_visible')->default(true);
 
         });
     }

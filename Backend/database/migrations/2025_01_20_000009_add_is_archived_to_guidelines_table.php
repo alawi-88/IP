@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('guidelines', function (Blueprint $table) {
-            $table->boolean('is_archived')->default(false)->after('is_visible');
-            $table->timestamp('archived_at')->nullable()->after('is_archived');
+            $table->boolean('is_archived')->default(false);
+            $table->timestamp('archived_at')->nullable();
         });
     }
 

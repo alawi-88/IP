@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mentors', function (Blueprint $table) {
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending')->after('is_visible');
-            $table->timestamp('approved_at')->nullable()->after('status');
-            $table->timestamp('rejected_at')->nullable()->after('approved_at');
-            $table->foreignId('approved_by')->nullable()->constrained('users')->after('rejected_at');
-            $table->text('rejection_reason')->nullable()->after('approved_by');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->timestamp('approved_at')->nullable();
+            $table->timestamp('rejected_at')->nullable();
+            $table->foreignId('approved_by')->nullable()->constrained('users');
+            $table->text('rejection_reason')->nullable();
         });
     }
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('events', function (Blueprint $table) {
             // Add speakers column to store JSON data
-            $table->json('speakers')->nullable()->after('location');
+            $table->json('speakers')->nullable();
             
             // Remove old speaker columns
             $table->dropColumn([
@@ -35,10 +35,10 @@ return new class extends Migration
             $table->dropColumn('speakers');
             
             // Add back old speaker columns
-            $table->string('speaker_photo')->nullable()->after('location');
-            $table->json('speaker_name')->nullable()->after('speaker_photo');
-            $table->json('speaker_experience')->nullable()->after('speaker_name');
-            $table->json('speaker_brief')->nullable()->after('speaker_experience');
+            $table->string('speaker_photo')->nullable();
+            $table->json('speaker_name')->nullable();
+            $table->json('speaker_experience')->nullable();
+            $table->json('speaker_brief')->nullable();
         });
     }
 };

@@ -13,8 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('competition_tabs', function (Blueprint $table) {
-            $table->string('label_en')->nullable()->after('tab');
-            $table->string('label_ar')->nullable()->after('label_en');
+            $table->string('label_en')->nullable();
+            $table->string('label_ar')->nullable();
         });
     }
 

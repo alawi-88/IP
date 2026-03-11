@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->boolean('evaluation_status')->default(0)->after('total_score');
+            $table->boolean('evaluation_status')->default(0);
         });
     }
 

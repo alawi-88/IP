@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mentor_sessions', function (Blueprint $table) {
-            $table->text('feedback_comments')->nullable()->after('feedback');
-            $table->text('feedback_strengths')->nullable()->after('feedback_comments');
-            $table->text('feedback_improvements')->nullable()->after('feedback_strengths');
+            $table->text('feedback_comments')->nullable();
+            $table->text('feedback_strengths')->nullable();
+            $table->text('feedback_improvements')->nullable();
         });
     }
 

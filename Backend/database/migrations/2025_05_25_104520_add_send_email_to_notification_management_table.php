@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('notification_management', function (Blueprint $table) {
-            $table->boolean('send_email')->default(false)->after('admin_id');
+            $table->boolean('send_email')->default(false);
 
         });
     }

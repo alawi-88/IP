@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('competition_applications', function (Blueprint $table) {
-            $table->json('assessment_scores')->nullable()->after('status')->comment('JSON object storing scores for each assessment criterion');
-            $table->unsignedInteger('total_score')->nullable()->after('assessment_scores')->comment('Total calculated score from all criteria');
+            $table->json('assessment_scores')->nullable()->comment('JSON object storing scores for each assessment criterion');
+            $table->unsignedInteger('total_score')->nullable()->comment('Total calculated score from all criteria');
         });
     }
 

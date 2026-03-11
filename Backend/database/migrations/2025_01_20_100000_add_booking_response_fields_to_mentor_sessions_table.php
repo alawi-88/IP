@@ -9,8 +9,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('mentor_sessions', function (Blueprint $table) {
-            $table->text('declined_reason')->nullable()->after('notes');
-            $table->datetime('proposed_time')->nullable()->after('declined_reason');
+            $table->text('declined_reason')->nullable();
+            $table->datetime('proposed_time')->nullable();
         });
     }
 

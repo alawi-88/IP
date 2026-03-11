@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('participants', function (Blueprint $table) {
-            $table->boolean('is_active')->default(true)->after('last_login_at');
+            $table->boolean('is_active')->default(true);
         });
     }
 

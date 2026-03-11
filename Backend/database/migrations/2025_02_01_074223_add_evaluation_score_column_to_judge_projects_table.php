@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('judge_projects', function (Blueprint $table) {
-            $table->float('evaluation_score')->default(0)->after('project_id');
+            $table->float('evaluation_score')->default(0);
         });
     }
 

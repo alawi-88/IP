@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('form_submissions', function (Blueprint $table) {
-            $table->string('type')->nullable()->after('form_id'); // Adjust position if needed
+            $table->string('type')->nullable(); // Adjust position if needed
         });
     }
 

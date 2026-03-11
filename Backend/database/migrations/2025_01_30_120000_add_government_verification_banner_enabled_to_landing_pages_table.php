@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('landing_pages', function (Blueprint $table) {
-            $table->boolean('government_verification_banner_enabled')->default(false)->after('content');
+            $table->boolean('government_verification_banner_enabled')->default(false);
         });
     }
 

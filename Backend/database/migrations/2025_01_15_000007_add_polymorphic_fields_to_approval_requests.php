@@ -9,9 +9,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('approval_requests', function (Blueprint $table) {
-            $table->string('target_type')->nullable()->after('action');
-            $table->unsignedBigInteger('target_id')->nullable()->after('target_type');
-            $table->timestamp('executed_at')->nullable()->after('cancelled_at');
+            $table->string('target_type')->nullable();
+            $table->unsignedBigInteger('target_id')->nullable();
+            $table->timestamp('executed_at')->nullable();
             
             $table->index(['target_type', 'target_id']);
             $table->index(['executed_at']);

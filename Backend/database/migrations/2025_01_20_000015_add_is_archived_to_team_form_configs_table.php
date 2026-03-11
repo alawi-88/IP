@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('team_form_configs', function (Blueprint $table) {
-            $table->boolean('is_archived')->default(false)->after('auto_publish_teams');
-            $table->timestamp('archived_at')->nullable()->after('is_archived');
+            $table->boolean('is_archived')->default(false);
+            $table->timestamp('archived_at')->nullable();
         });
     }
 

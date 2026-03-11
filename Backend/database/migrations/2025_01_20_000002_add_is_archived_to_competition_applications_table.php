@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('competition_applications', function (Blueprint $table) {
-            $table->boolean('is_archived')->default(false)->after('team_serial');
-            $table->timestamp('archived_at')->nullable()->after('is_archived');
+            $table->boolean('is_archived')->default(false);
+            $table->timestamp('archived_at')->nullable();
         });
     }
 

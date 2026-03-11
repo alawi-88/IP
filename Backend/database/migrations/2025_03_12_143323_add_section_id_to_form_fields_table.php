@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::table('form_fields', function (Blueprint $table) {
             $table->foreignId('section_id')
                 ->nullable()
-                ->after('form_id')
+                
                 ->constrained('form_sections')
                 ->onDelete('cascade');
         });

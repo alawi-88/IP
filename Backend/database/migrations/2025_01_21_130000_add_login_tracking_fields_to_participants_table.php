@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('participants', function (Blueprint $table) {
-            $table->string('login_by')->default('credentials')->after('last_login_at');
-            $table->json('nafath_data')->nullable()->after('login_by');
+            $table->string('login_by')->default('credentials');
+            $table->json('nafath_data')->nullable();
         });
     }
 

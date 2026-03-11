@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::table('participants', function (Blueprint $table) {
             $table->foreignId('nationality_id')
                 ->nullable()
-                ->after('password')
+                
                 ->constrained('nationalities');
             $table->foreignId('country_id')
                 ->nullable()
-                ->after('nationality_id')
+                
                 ->constrained('countries');
             $table->foreignId('residence_city_id')
                 ->nullable()
-                ->after('country_id')
+                
                 ->constrained('cities');
         });
     }

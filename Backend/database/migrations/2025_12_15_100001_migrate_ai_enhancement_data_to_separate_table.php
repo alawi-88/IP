@@ -48,10 +48,10 @@ return new class extends Migration
     {
         // Add AI enhancement fields back to form_ai_scoring_configs
         Schema::table('form_ai_scoring_configs', function (Blueprint $table) {
-            $table->boolean('ai_enhancement_enabled')->default(false)->after('total_weight');
-            $table->text('ai_enhancement_context')->nullable()->after('ai_enhancement_enabled');
-            $table->text('ai_enhancement_instructions')->nullable()->after('ai_enhancement_context');
-            $table->json('ai_enhancement_fields')->nullable()->after('ai_enhancement_instructions');
+            $table->boolean('ai_enhancement_enabled')->default(false);
+            $table->text('ai_enhancement_context')->nullable();
+            $table->text('ai_enhancement_instructions')->nullable();
+            $table->json('ai_enhancement_fields')->nullable();
         });
 
         // Migrate data back

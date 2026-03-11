@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('competition_applications', function (Blueprint $table) {
-            $table->foreignId('track_id')->nullable()->after('has_idea')->constrained('paths')->cascadeOnDelete();
-            $table->foreignId('idea_challenge_id')->nullable()->after('track_id')->constrained('challenges')->cascadeOnDelete();
+            $table->foreignId('track_id')->nullable()->constrained('paths')->cascadeOnDelete();
+            $table->foreignId('idea_challenge_id')->nullable()->constrained('challenges')->cascadeOnDelete();
         });
     }
 

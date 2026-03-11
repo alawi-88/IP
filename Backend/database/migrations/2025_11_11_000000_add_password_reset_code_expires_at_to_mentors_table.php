@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('mentors', function (Blueprint $table) {
             if (!Schema::hasColumn('mentors', 'password_reset_code_expires_at')) {
-                $table->timestamp('password_reset_code_expires_at')->nullable()->after('password_reset_code');
+                $table->timestamp('password_reset_code_expires_at')->nullable();
             }
         });
     }

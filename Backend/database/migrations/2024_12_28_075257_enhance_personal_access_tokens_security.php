@@ -18,16 +18,16 @@ return new class extends Migration
             $table->index('last_used_at', 'idx_last_used_at');
             
             // Add column to track token creation IP
-            $table->string('created_from_ip', 45)->nullable()->after('last_used_at');
+            $table->string('created_from_ip', 45)->nullable();
             
             // Add column to track last used IP
-            $table->string('last_used_from_ip', 45)->nullable()->after('created_from_ip');
+            $table->string('last_used_from_ip', 45)->nullable();
             
             // Add column to track user agent
-            $table->text('last_used_user_agent')->nullable()->after('last_used_from_ip');
+            $table->text('last_used_user_agent')->nullable();
             
             // Add column to track token revocation reason
-            $table->string('revoked_reason')->nullable()->after('last_used_user_agent');
+            $table->string('revoked_reason')->nullable();
         });
     }
 

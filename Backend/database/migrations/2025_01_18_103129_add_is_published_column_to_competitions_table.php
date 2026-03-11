@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('competitions', function (Blueprint $table) {
-            $table->boolean('is_published')->default(false)->after('registration_closed_date');
+            $table->boolean('is_published')->default(false);
         });
     }
 

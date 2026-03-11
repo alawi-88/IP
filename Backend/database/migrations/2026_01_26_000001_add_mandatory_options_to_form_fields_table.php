@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('form_fields', function (Blueprint $table) {
-            $table->json('mandatory_options')->nullable()->after('options');
+            $table->json('mandatory_options')->nullable();
         });
     }
 

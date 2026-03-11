@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('registration_form_configs', function (Blueprint $table) {
-            $table->boolean('scoring_enabled')->default(false)->after('is_active')->comment('Enable scoring for registration form submissions');
+            $table->boolean('scoring_enabled')->default(false)->comment('Enable scoring for registration form submissions');
         });
     }
 

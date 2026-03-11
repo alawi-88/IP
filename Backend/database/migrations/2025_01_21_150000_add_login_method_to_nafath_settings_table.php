@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('nafath_settings', function (Blueprint $table) {
-            $table->string('login_method')->default('both')->after('environment')->comment('nafath, credentials, or both');
+            $table->string('login_method')->default('both')->comment('nafath, credentials, or both');
         });
     }
 

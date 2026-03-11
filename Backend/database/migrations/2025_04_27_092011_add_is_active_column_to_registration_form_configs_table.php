@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('registration_form_configs', function (Blueprint $table) {
-            $table->boolean('is_active')->default(true)->after('max_age');
+            $table->boolean('is_active')->default(true);
         });
     }
 

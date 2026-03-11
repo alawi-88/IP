@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('teams', function (Blueprint $table) {
-            $table->boolean('is_published')->default(false)->after('previous_participation');
+            $table->boolean('is_published')->default(false);
         });
     }
 

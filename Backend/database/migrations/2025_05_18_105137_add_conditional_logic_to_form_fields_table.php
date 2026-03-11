@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('form_fields', function (Blueprint $table) {
-            $table->boolean('conditional_logic')->default(false)->after('validation_rules');
+            $table->boolean('conditional_logic')->default(false);
 
         });
     }

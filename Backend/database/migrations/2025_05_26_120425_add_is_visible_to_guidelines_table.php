@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('guidelines', function (Blueprint $table) {
-            $table->boolean('is_visible')->default(true)->after('title');
+            $table->boolean('is_visible')->default(true);
 
         });
     }

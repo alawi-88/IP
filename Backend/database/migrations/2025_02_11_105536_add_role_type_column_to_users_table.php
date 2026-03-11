@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('role_type')
                 ->nullable()
-                ->after('role');
+                ;
         });
 
         // any user with email starting with admin will be assigned the role of admin

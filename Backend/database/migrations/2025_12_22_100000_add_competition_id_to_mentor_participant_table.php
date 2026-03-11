@@ -16,7 +16,7 @@ return new class extends Migration
             if (! Schema::hasColumn('mentor_participant', 'competition_id')) {
                 $table->foreignId('competition_id')
                     ->nullable()
-                    ->after('participant_id')
+                    
                     ->constrained('competitions')
                     ->nullOnDelete();
             }

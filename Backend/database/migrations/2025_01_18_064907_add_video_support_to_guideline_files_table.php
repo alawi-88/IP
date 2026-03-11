@@ -26,7 +26,7 @@ return new class extends Migration
             // Add file_type safely
             if (!Schema::hasColumn('guideline_files', 'file_type')) {
                 if ($afterColumn) {
-                    $table->string('file_type')->default('video')->after($afterColumn);
+                    $table->string('file_type')->default('video');
                 } else {
                     $table->string('file_type')->default('video');
                 }
@@ -34,7 +34,7 @@ return new class extends Migration
 
             // Add description safely
             if (!Schema::hasColumn('guideline_files', 'description')) {
-                $table->json('description')->nullable()->after('file_type');
+                $table->json('description')->nullable();
             }
         });
     }

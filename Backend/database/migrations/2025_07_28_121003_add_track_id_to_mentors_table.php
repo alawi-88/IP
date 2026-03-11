@@ -16,7 +16,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('tracks')
                 ->nullOnDelete()
-                ->after('id');
+                ;
         });
     }
 

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('competition_applications', function (Blueprint $table) {
-            $table->boolean('has_team')->default(false)->after('form_submissions');
-            $table->string('registered_as')->nullable()->after('has_team');
+            $table->boolean('has_team')->default(false);
+            $table->string('registered_as')->nullable();
         });
     }
 

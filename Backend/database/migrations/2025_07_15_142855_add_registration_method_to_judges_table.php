@@ -16,7 +16,7 @@ return new class extends Migration
             $table->enum('registration_method', [
                 Judge::REGISTRATION_METHOD_SELF,
                 Judge::REGISTRATION_METHOD_ADMIN,
-            ])->default(Judge::REGISTRATION_METHOD_ADMIN)->after('activation_code');
+            ])->default(Judge::REGISTRATION_METHOD_ADMIN);
         });
     }
 

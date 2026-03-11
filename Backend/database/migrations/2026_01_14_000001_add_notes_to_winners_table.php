@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('winners', function (Blueprint $table) {
             if (!Schema::hasColumn('winners', 'notes')) {
-                $table->text('notes')->nullable()->after('is_visible');
+                $table->text('notes')->nullable();
             }
         });
     }

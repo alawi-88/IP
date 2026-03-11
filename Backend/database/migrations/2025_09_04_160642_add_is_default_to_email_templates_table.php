@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('email_templates', function (Blueprint $table) {
-            $table->boolean('is_default')->default(false)->after('body');
+            $table->boolean('is_default')->default(false);
         });
     }
 

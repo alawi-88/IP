@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('branding_settings', function (Blueprint $table) {
-            $table->string('white_logo')->nullable()->after('logo');
+            $table->string('white_logo')->nullable();
         });
     }
 

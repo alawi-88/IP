@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('competition_applications', function (Blueprint $table) {
-            $table->json('ai_evaluation_response')->nullable()->after('assessment_scores');
-            $table->timestamp('ai_evaluated_at')->nullable()->after('ai_evaluation_response');
+            $table->json('ai_evaluation_response')->nullable();
+            $table->timestamp('ai_evaluated_at')->nullable();
         });
     }
 

@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('team_members', function (Blueprint $table) {
             $table->foreignId('participant_id')
-                ->after('id')
+                
                 ->constrained()->cascadeOnDelete();
         });
     }

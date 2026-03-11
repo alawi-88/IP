@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('landing_pages', function (Blueprint $table) {
-            $table->string('dga_registration_number')->nullable()->after('government_verification_banner_enabled');
-            $table->string('dga_certificate_url')->nullable()->after('dga_registration_number');
+            $table->string('dga_registration_number')->nullable();
+            $table->string('dga_certificate_url')->nullable();
         });
     }
 

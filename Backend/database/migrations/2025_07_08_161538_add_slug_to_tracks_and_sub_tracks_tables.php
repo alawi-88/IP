@@ -14,13 +14,13 @@ return new class extends Migration
 
         if (!Schema::hasColumn('tracks', 'slug')) {
             Schema::table('tracks', function (Blueprint $table) {
-                $table->string('slug')->unique()->after('name');
+                $table->string('slug')->unique();
             });
         }
 
         if (!Schema::hasColumn('sub_tracks', 'slug')) {
         Schema::table('sub_tracks', function (Blueprint $table) {
-            $table->string('slug')->unique()->after('name');
+            $table->string('slug')->unique();
         });
         }
     }
