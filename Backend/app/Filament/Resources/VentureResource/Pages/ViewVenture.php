@@ -74,7 +74,7 @@ class ViewVenture extends ViewRecord
             ]);
     }
 
-    protected function getRelationManagers(): array
+    public function getRelationManagers(): array
     {
         return [
             TabsRelationManager::class,
