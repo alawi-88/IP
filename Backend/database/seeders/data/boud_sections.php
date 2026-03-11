@@ -260,7 +260,7 @@
                     ['Vision 2030 Alignment', 'Native compliance & impact tracking', 'Custom implementation needed', 'Not designed for KSA'],
                     ['Integrated Tools', 'Hackify, SALIS, Connect AI included', 'External tool dependencies', 'Feature-limited'],
                     ['Implementation Support', 'Full consulting + software support', 'Engagement-based only', 'Self-service only'],
-                    ['Time-to-Value', '3-6 months', '6-12 months', '2-4 months (limited)',
+                    ['Time-to-Value', '3-6 months', '6-12 months', '2-4 months (limited)'],
                     ['Cost Structure', 'Flexible SaaS + advisory pricing', 'High fixed costs', 'Subscription only'],
                     ['Local Expertise', 'Saudi Vision 2030 specialized team', 'General global approach', 'No local focus'],
                 ]
