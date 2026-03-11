@@ -254,12 +254,23 @@ function renderViability(c){
 }
 
 function renderText(c){
-  const text=c.text_content?c.text_content.content:(c.content||c.text||JSON.stringify(c));
+  const tc=c.text_content||c;
+  if(tc.sections&&Array.isArray(tc.sections)){
+    let html='<div class="text-content">';
+    if(tc.title)html+=`<h4 style="margin-bottom:12px">${tc.title}</h4>`;
+    tc.sections.forEach(s=>{
+      if(s.heading)html+=`<h5 style="margin:12px 0 6px;color:#2d3748">${s.heading}</h5>`;
+      html+=`<p>${String(s.content||'').replace(/\n/g,'<br>')}</p>`;
+    });
+    return html+'</div>';
+  }
+  const text=tc.content||tc.text||c.content||c.text||(typeof tc==='string'?tc:JSON.stringify(tc));
   return `<div class="text-content"><p>${String(text).replace(/\n\n/g,'</p><p>').replace(/\n/g,'<br>')}</p></div>`;
 }
 
 function renderStatCards(c){
-  const cards=c.cards||c.metrics||c.stats||[];
+  const d=c.stat_cards||c;
+  const cards=Array.isArray(d)?d:(d.cards||d.metrics||d.stats||[]);
   let html=`<div class="stat-cards">`;
   cards.forEach(card=>{
     html+=`<div class="stat-card"><div class="label">${card.label||card.title||card.metric||''}</div><div class="value">${card.value||card.amount||''}</div><div class="trend">${card.description||card.trend||card.change||''}</div></div>`;
@@ -268,9 +279,10 @@ function renderStatCards(c){
 }
 
 function renderSwot(c){
+  const d=c.swot_grid||c;
   let html=`<div class="swot-grid">`;
   ['strengths','weaknesses','opportunities','threats'].forEach(k=>{
-    const items=c[k]||[];
+    const items=d[k]||[];
     html+=`<div class="swot-cell ${k}"><h4>${k}</h4><ul>`;
     (Array.isArray(items)?items:[items]).forEach(i=>{
       html+=`<li>${typeof i==='string'?i:(i.text||i.description||JSON.stringify(i))}</li>`;
@@ -281,7 +293,10 @@ function renderSwot(c){
 }
 
 function renderCanvas(c){
-  const blocks=c.blocks||c.sections||c.cells||Object.entries(c).filter(([k])=>!['type'].includes(k));
+  // Handle mismatch: canvas_grid might have comparison_table data
+  if(c.comparison_table) return renderCompTable(c);
+  const d=c.canvas_grid||c;
+  const blocks=d.blocks||d.sections||d.cells||Object.entries(d).filter(([k])=>!['type','canvas_grid'].includes(k));
   let html=`<div class="canvas-grid">`;
   if(Array.isArray(blocks)){
     blocks.forEach(b=>{
@@ -297,10 +312,12 @@ function renderCanvas(c){
 }
 
 function renderCompTable(c){
-  const headers=c.headers||c.columns||[];
-  const rows=c.rows||c.data||[];
+  const d=c.comparison_table||c;
+  const headers=d.headers||d.columns||[];
+  const rows=d.rows||d.data||[];
   let html=`<table class="comp-table"><thead><tr>`;
-  headers.forEach(h=>html+=`<th>${typeof h==='string'?h:(h.label||h.title||'')}</th>`);
+  if(headers.length){headers.forEach(h=>html+=`<th>${typeof h==='string'?h:(h.label||h.title||'')}</th>`);}
+  else if(rows.length&&Array.isArray(rows[0])){rows[0].forEach((_,i)=>html+=`<th>${i===0?'Feature':'Option '+(i)}</th>`);}
   html+=`</tr></thead><tbody>`;
   rows.forEach(r=>{
     html+=`<tr>`;
@@ -311,7 +328,10 @@ function renderCompTable(c){
 }
 
 function renderCostTable(c){
-  const items=c.items||c.costs||c.rows||[];
+  // Handle mismatch: cost_table might have progress_bars data
+  if(c.progress_bars) return renderProgressBars(c);
+  const d=c.cost_table||c;
+  const items=d.items||d.costs||d.rows||[];
   let total=0;
   let html=`<table class="cost-table"><thead><tr><th>Item</th><th>Category</th><th>Amount</th></tr></thead><tbody>`;
   items.forEach(i=>{
@@ -324,7 +344,9 @@ function renderCostTable(c){
 }
 
 function renderTimeline(c){
-  const phases=c.phases||c.items||c.milestones||[];
+  // Handle journey_timeline format
+  const d=c.journey_timeline||c.timeline||c;
+  const phases=d.stages||d.phases||d.items||d.milestones||[];
   let html=`<div class="timeline">`;
   phases.forEach(p=>{
     html+=`<div class="timeline-item"><div class="phase">${p.phase||p.title||p.name||''}</div><div class="duration">${p.duration||p.timeline||p.date||''}</div><div class="desc">${p.description||p.details||''}</div></div>`;
@@ -333,7 +355,8 @@ function renderTimeline(c){
 }
 
 function renderRiskMatrix(c){
-  const risks=c.risks||c.items||c.data||[];
+  const d=c.risk_matrix||c;
+  const risks=Array.isArray(d)?d:(d.risks||d.items||d.data||[]);
   let html=`<div class="risk-matrix">`;
   risks.forEach(r=>{
     const level=(r.level||r.severity||r.impact||'medium').toLowerCase();
@@ -343,7 +366,8 @@ function renderRiskMatrix(c){
 }
 
 function renderProgressBars(c){
-  const items=c.metrics||c.items||c.bars||[];
+  const d=c.progress_bars||c;
+  const items=d.items||d.metrics||d.bars||[];
   let html=`<div class="progress-bars">`;
   items.forEach(i=>{
     const val=i.value||i.progress||i.percentage||0;
@@ -353,16 +377,21 @@ function renderProgressBars(c){
 }
 
 function renderPersonaCards(c){
-  const personas=c.personas||c.cards||c.items||[];
+  // Handle single persona_card or array
+  const d=c.persona_card||c.persona_cards||c;
+  const personas=Array.isArray(d)?d:(d.personas||d.cards||d.items||[d]);
   let html=`<div class="persona-cards">`;
   personas.forEach(p=>{
-    html+=`<div class="persona-card"><div class="name">${p.name||p.title||''}</div><div class="role">${p.role||p.demographic||p.segment||''}</div><div class="detail">${p.description||p.goals||p.pain_points||''}</div></div>`;
+    const goals=Array.isArray(p.goals)?p.goals.join(', '):p.goals;
+    const pains=Array.isArray(p.pain_points)?p.pain_points.join(', '):p.pain_points;
+    html+=`<div class="persona-card"><div class="name">${p.name||p.title||''}</div><div class="role">${p.role||p.demographic||p.segment||''} ${p.age?'(Age '+p.age+')':''}</div><div class="detail">${p.description||goals||pains||p.quote||''}</div></div>`;
   });
   return html+`</div>`;
 }
 
 function renderKeyValue(c){
-  const items=c.items||c.pairs||Object.entries(c).filter(([k])=>!['type'].includes(k));
+  const d=c.key_value||c;
+  const items=d.items||d.pairs||Object.entries(d).filter(([k])=>!['type','key_value'].includes(k));
   let html=`<div class="key-values">`;
   if(Array.isArray(items)&&items.length>0&&Array.isArray(items[0])){
     items.forEach(([k,v])=>{html+=`<div class="kv-item"><div class="key">${k}</div><div class="val">${v}</div></div>`;});
@@ -382,7 +411,8 @@ function renderPricingTable(c){
 }
 
 function renderFunnel(c){
-  const levels=c.levels||c.items||c.data||[];
+  const d=c.funnel_chart||c;
+  const levels=Array.isArray(d)?d:(d.levels||d.items||d.data||[]);
   const colors=['#667eea','#764ba2','#e53e3e'];
   let html=`<div class="funnel">`;
   levels.forEach((l,i)=>{
