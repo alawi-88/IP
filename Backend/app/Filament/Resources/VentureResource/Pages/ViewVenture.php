@@ -15,8 +15,6 @@ class ViewVenture extends ViewRecord
 {
     protected static string $resource = VentureResource::class;
 
-    protected static string $view = 'filament.resources.venture-resource.pages.view-venture';
-
     protected static ?string $navigationLabel = 'View';
 
     public function infolist(Infolist $infolist): Infolist
