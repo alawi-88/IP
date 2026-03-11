@@ -14,17 +14,19 @@ return new class extends Migration
     {
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            if (!Schema::hasColumn('participants', 'current_role')) { $table->string('current_role')->change(); // Temporarily convert ENUM to VARCHAR }
+            if (Schema::hasColumn('participants', 'current_role')) {
+                $table->string('current_role')->change();
+            }
         });
         }
 
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            if (!Schema::hasColumn('participants', 'current_role')) {
-                $table->enum('current_role', [ 
+            if (Schema::hasColumn('participants', 'current_role')) {
+                $table->enum('current_role', [
                 'high_school_student',
                 'university_student',
-                'recently_graduated', // Updated value
+                'recently_graduated',
                 'private_sector_employee',
                 'government_sector_employee',
                 'non_profit_sector_employee',

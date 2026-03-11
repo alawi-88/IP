@@ -13,7 +13,7 @@ return new class extends Migration
     {
                 if (Schema::hasTable('form_fields')) {
             Schema::table('form_fields', function (Blueprint $table) {
-            if (!Schema::hasColumn('form_fields', 'conditional_logic_rules')) { $table->json('conditional_logic_rules')->nullable(); // Adjust position if needed }
+            if (!Schema::hasColumn('form_fields', 'conditional_logic_rules')) { $table->json('conditional_logic_rules')->nullable(); }
         });
         }
     }
