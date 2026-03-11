@@ -60,10 +60,10 @@ export default function StartupBuilderPage() {
               className="block"
             >
               <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100">
-                <div className="bg-gradient-to-r from-[#25935F] to-[#1a7a4e] p-5">
-                  <div className="flex items-start justify-between gap-3">
+                <div className="bg-gradient-to-r from-[#25935F] to-[#1a7a4e] p-5 min-h-[120px] flex items-end">
+                  <div className="flex items-start justify-between gap-3 w-full">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-white text-lg font-semibold line-clamp-2">
+                      <h3 className="text-white text-base font-semibold line-clamp-2 leading-snug">
                         {venture.title}
                       </h3>
                       <Tag
