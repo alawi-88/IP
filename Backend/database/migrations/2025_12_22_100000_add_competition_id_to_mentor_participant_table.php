@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-
+        if (Schema::hasTable('mentor_participant')) {
         // Drop foreign keys before dropping columns
         $__fks = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'mentor_participant' AND CONSTRAINT_TYPE = 'FOREIGN KEY'");
         $__fkNames = array_map(fn($fk) => $fk->CONSTRAINT_NAME, $__fks);
@@ -20,7 +20,7 @@ return new class extends Migration
             Schema::table('mentor_participant', fn(Blueprint $t) => $t->dropForeign(['competition_id']));
         }
 
-                Schema::table('mentor_participant', function (Blueprint $table) {
+        Schema::table('mentor_participant', function (Blueprint $table) {
             // Add column only if it doesn't already exist to avoid "Duplicate column" errors
             if (! Schema::hasColumn('mentor_participant', 'competition_id')) {
                 $table->foreignId('competition_id')
@@ -32,6 +32,7 @@ return new class extends Migration
             // ملاحظة: تركنا الـ unique/index القديم كما هو لتجنّب كسر أي foreign key
             // ويمكن تعديل الـ constraints لاحقًا بعد مراجعة بنية الجدول في قاعدة البيانات.
         });
+        }
     }
 
     /**
