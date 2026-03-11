@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('description');
             $table->string('status');
             $table->boolean('is_published');
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }

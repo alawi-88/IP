@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('form_id')->constrained()->onDelete('cascade');
             $table->foreignId('stage_id')->constrained()->onDelete('cascade');
             $table->decimal('evaluation_score', 8, 2);
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }

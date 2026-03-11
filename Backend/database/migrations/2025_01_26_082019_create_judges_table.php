@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('otp_code')->nullable();
             $table->string('password_reset_code')->nullable();
             $table->timestamp('last_login_at')->nullable();
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }

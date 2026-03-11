@@ -29,6 +29,7 @@ return new class extends Migration
             // Publishing
             $table->boolean('auto_publish_teams')->default(false);
 
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }

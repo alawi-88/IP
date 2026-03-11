@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('path_id')->constrained()->onDelete('cascade');
             $table->string('question');
             $table->integer('answer');
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }

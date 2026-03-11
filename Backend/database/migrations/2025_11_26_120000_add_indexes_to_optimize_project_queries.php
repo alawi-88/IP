@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -19,24 +20,28 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (Schema::hasTable('projects')) {
-            Schema::table('projects', function (Blueprint $table) {
-            // Composite index for filtering by form_id, is_archived, and sorting by created_at
-            // This allows MySQL to efficiently filter and sort without loading all rows into memory
-            $table->index(['form_id', 'is_archived', 'created_at'], 'idx_projects_form_archived_created');
-            
-            // Index for the application_id join condition
-            // This helps optimize the EXISTS subquery
-            $table->index(['application_id', 'is_archived'], 'idx_projects_application_archived');
-        });
+        if (Schema::hasTable('projects') && Schema::hasColumn('projects', 'is_archived') && Schema::hasColumn('projects', 'form_id')) {
+            $__indexes = DB::select("SELECT INDEX_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'projects' AND INDEX_NAME = 'idx_projects_form_archived_created'");
+            if (empty($__indexes)) {
+                Schema::table('projects', function (Blueprint $table) {
+                    $table->index(['form_id', 'is_archived', 'created_at'], 'idx_projects_form_archived_created');
+                });
+            }
+            $__indexes2 = DB::select("SELECT INDEX_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'projects' AND INDEX_NAME = 'idx_projects_application_archived'");
+            if (empty($__indexes2)) {
+                Schema::table('projects', function (Blueprint $table) {
+                    $table->index(['application_id', 'is_archived'], 'idx_projects_application_archived');
+                });
+            }
         }
 
         if (Schema::hasTable('competition_applications')) {
-            Schema::table('competition_applications', function (Blueprint $table) {
-            // Composite index for the EXISTS subquery
-            // This allows MySQL to quickly find matching records by id and participant_id
-            $table->index(['id', 'participant_id'], 'idx_applications_id_participant');
-        });
+            $__indexes3 = DB::select("SELECT INDEX_NAME FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'competition_applications' AND INDEX_NAME = 'idx_applications_id_participant'");
+            if (empty($__indexes3)) {
+                Schema::table('competition_applications', function (Blueprint $table) {
+                    $table->index(['id', 'participant_id'], 'idx_applications_id_participant');
+                });
+            }
         }
     }
 

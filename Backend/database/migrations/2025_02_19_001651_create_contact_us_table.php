@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('message');
             $table->json('attachments')->nullable();
 
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }

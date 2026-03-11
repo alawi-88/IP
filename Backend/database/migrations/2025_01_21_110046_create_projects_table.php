@@ -23,6 +23,7 @@ return new class extends Migration
             $table->json('references')->nullable();
             $table->json('documents')->nullable();
             $table->string('status')->default('pending');
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }

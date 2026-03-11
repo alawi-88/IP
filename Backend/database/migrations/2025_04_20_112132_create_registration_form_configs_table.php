@@ -21,6 +21,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('max_age')->nullable();
 
             $table->string('status')->default('active');
+            $table->boolean('is_archived')->default(false);
             $table->timestamps();
         });
     }
