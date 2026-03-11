@@ -207,6 +207,14 @@ function getContentBasedRenderer(content: any, effectiveType: string) {
 function unwrapContent(content: any, componentType: string): { unwrapped: any; detectedType: string | null } {
   if (!content || typeof content !== "object") return { unwrapped: content, detectedType: null };
 
+  // Handle content wrapped in { data: {...}, component_type: "..." } format
+  if (content.data && typeof content.data === "object" && content.component_type) {
+    const innerType = content.component_type;
+    const innerData = content.data;
+    // Recursively unwrap in case data itself has nested type keys
+    return unwrapContent(innerData, innerType || componentType);
+  }
+
   // Common nested keys from seeder - order matters (check componentType first)
   const typeKeys = [
     componentType,
