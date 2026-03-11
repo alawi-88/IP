@@ -47,7 +47,6 @@ class VentureDataSeeder extends Seeder
             ]);
         }
     }
-    }
 
     private function getSectionConfigs(): array
     {
