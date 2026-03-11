@@ -26,7 +26,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('notification_management')) {
             Schema::table('notification_management', function (Blueprint $table) {
-            $table->dropColumn('send_email');
+            if (Schema::hasColumn('notification_management', 'send_email')) { $table->dropColumn('send_email'); }
         });
         }
     }

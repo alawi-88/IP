@@ -26,7 +26,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            $table->dropColumn(['is_archived', 'archived_at']);
+                            if (Schema::hasColumn('participants', 'is_archived')) { $table->dropColumn('is_archived'); }
+                if (Schema::hasColumn('participants', 'archived_at')) { $table->dropColumn('archived_at'); }
         });
         }
     }

@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('landing_pages')) {
             Schema::table('landing_pages', function (Blueprint $table) {
-            $table->dropColumn('government_verification_banner_enabled');
+            if (Schema::hasColumn('landing_pages', 'government_verification_banner_enabled')) { $table->dropColumn('government_verification_banner_enabled'); }
         });
         }
     }

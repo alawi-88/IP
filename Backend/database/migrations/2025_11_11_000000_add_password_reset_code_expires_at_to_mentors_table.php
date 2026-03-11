@@ -28,7 +28,7 @@ return new class extends Migration
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
             if (Schema::hasColumn('mentors', 'password_reset_code_expires_at')) {
-                $table->dropColumn('password_reset_code_expires_at');
+                if (Schema::hasColumn('mentors', 'password_reset_code_expires_at')) { $table->dropColumn('password_reset_code_expires_at'); }
             }
         });
         }

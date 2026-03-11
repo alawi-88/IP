@@ -27,7 +27,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_tabs')) {
             Schema::table('competition_tabs', function (Blueprint $table) {
-            $table->dropColumn(['label_en', 'label_ar']);
+                            if (Schema::hasColumn('competition_tabs', 'label_en')) { $table->dropColumn('label_en'); }
+                if (Schema::hasColumn('competition_tabs', 'label_ar')) { $table->dropColumn('label_ar'); }
         });
         }
     }

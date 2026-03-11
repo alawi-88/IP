@@ -26,7 +26,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('guidelines')) {
             Schema::table('guidelines', function (Blueprint $table) {
-            $table->dropColumn(['is_archived', 'archived_at']);
+                            if (Schema::hasColumn('guidelines', 'is_archived')) { $table->dropColumn('is_archived'); }
+                if (Schema::hasColumn('guidelines', 'archived_at')) { $table->dropColumn('archived_at'); }
         });
         }
     }

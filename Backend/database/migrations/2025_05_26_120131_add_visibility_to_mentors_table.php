@@ -26,7 +26,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-            $table->dropColumn('is_visible');
+            if (Schema::hasColumn('mentors', 'is_visible')) { $table->dropColumn('is_visible'); }
         });
         }
     }

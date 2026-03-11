@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
-            $table->renameColumn('team_member_previous_participation', 'previous_participation');
+            if (Schema::hasColumn('teams', 'team_member_previous_participation')) { $table->renameColumn('team_member_previous_participation', 'previous_participation'); }
         });
         }
     }
@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
-            $table->renameColumn('previous_participation', 'team_member_previous_participation');
+            if (Schema::hasColumn('teams', 'previous_participation')) { $table->renameColumn('previous_participation', 'team_member_previous_participation'); }
         });
         }
     }

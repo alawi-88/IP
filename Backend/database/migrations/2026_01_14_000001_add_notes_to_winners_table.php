@@ -28,7 +28,7 @@ return new class extends Migration
         if (Schema::hasTable('winners')) {
             Schema::table('winners', function (Blueprint $table) {
             if (Schema::hasColumn('winners', 'notes')) {
-                $table->dropColumn('notes');
+                if (Schema::hasColumn('winners', 'notes')) { $table->dropColumn('notes'); }
             }
         });
         }

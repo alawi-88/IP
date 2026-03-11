@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
-            $table->dropColumn('is_completed');
+            if (Schema::hasColumn('teams', 'is_completed')) { $table->dropColumn('is_completed'); }
         });
         }
     }

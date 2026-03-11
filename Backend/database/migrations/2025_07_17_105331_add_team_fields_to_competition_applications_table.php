@@ -24,7 +24,9 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->dropColumn(['team_name', 'team_logo', 'team_serial']);
+                            if (Schema::hasColumn('competition_applications', 'team_name')) { $table->dropColumn('team_name'); }
+                if (Schema::hasColumn('competition_applications', 'team_logo')) { $table->dropColumn('team_logo'); }
+                if (Schema::hasColumn('competition_applications', 'team_serial')) { $table->dropColumn('team_serial'); }
         });
         }
     }

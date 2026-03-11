@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('last_login_at');
+            if (Schema::hasColumn('users', 'last_login_at')) { $table->dropColumn('last_login_at'); }
         });
         }
     }

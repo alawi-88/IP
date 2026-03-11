@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            $table->dropColumn('is_active');
+            if (Schema::hasColumn('participants', 'is_active')) { $table->dropColumn('is_active'); }
         });
         }
     }

@@ -59,23 +59,21 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-try { $table->dropColumn([
-                'final_evaluation_score',
-                'minimum_score_threshold',
-                'decision_reason',
-                'editable_fields',
-                'edit_notes',
-                'edit_requested_at',
-                'resubmitted_at',
-                'reviewed_by',
-                'reviewed_at',
-            ]); } catch (\Exception $e) {}
+try {                 if (Schema::hasColumn('registration_form_configs', 'final_evaluation_score')) { if (Schema::hasColumn('competition_applications', 'final_evaluation_score')) { $table->dropColumn('final_evaluation_score'); } }
+                if (Schema::hasColumn('registration_form_configs', 'minimum_score_threshold')) { if (Schema::hasColumn('competition_applications', 'minimum_score_threshold')) { $table->dropColumn('minimum_score_threshold'); } }
+                if (Schema::hasColumn('registration_form_configs', 'decision_reason')) { if (Schema::hasColumn('competition_applications', 'decision_reason')) { $table->dropColumn('decision_reason'); } }
+                if (Schema::hasColumn('registration_form_configs', 'editable_fields')) { if (Schema::hasColumn('competition_applications', 'editable_fields')) { $table->dropColumn('editable_fields'); } }
+                if (Schema::hasColumn('registration_form_configs', 'edit_notes')) { if (Schema::hasColumn('competition_applications', 'edit_notes')) { $table->dropColumn('edit_notes'); } }
+                if (Schema::hasColumn('registration_form_configs', 'edit_requested_at')) { if (Schema::hasColumn('competition_applications', 'edit_requested_at')) { $table->dropColumn('edit_requested_at'); } }
+                if (Schema::hasColumn('registration_form_configs', 'resubmitted_at')) { if (Schema::hasColumn('competition_applications', 'resubmitted_at')) { $table->dropColumn('resubmitted_at'); } }
+                if (Schema::hasColumn('registration_form_configs', 'reviewed_by')) { if (Schema::hasColumn('competition_applications', 'reviewed_by')) { $table->dropColumn('reviewed_by'); } }
+                if (Schema::hasColumn('registration_form_configs', 'reviewed_at')) { if (Schema::hasColumn('competition_applications', 'reviewed_at')) { $table->dropColumn('reviewed_at'); } } } catch (\Exception $e) {}
         });
         }
 
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
-            $table->dropColumn('minimum_score_threshold');
+            if (Schema::hasColumn('registration_form_configs', 'minimum_score_threshold')) { if (Schema::hasColumn('competition_applications', 'minimum_score_threshold')) { $table->dropColumn('minimum_score_threshold'); } }
         });
         }
     }

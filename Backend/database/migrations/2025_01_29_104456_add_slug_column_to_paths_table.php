@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('paths')) {
             Schema::table('paths', function (Blueprint $table) {
-            $table->dropColumn('slug');
+            if (Schema::hasColumn('paths', 'slug')) { $table->dropColumn('slug'); }
         });
         }
     }

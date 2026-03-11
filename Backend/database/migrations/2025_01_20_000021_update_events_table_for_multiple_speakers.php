@@ -17,12 +17,10 @@ return new class extends Migration
             $table->json('speakers')->nullable();
             
             // Remove old speaker columns
-            try { $table->dropColumn([
-                'speaker_photo',
-                'speaker_name',
-                'speaker_experience',
-                'speaker_brief'
-            ]); } catch (\Exception $e) {}
+            try {                 if (Schema::hasColumn('events', 'speaker_photo')) { $table->dropColumn('speaker_photo'); }
+                if (Schema::hasColumn('events', 'speaker_name')) { $table->dropColumn('speaker_name'); }
+                if (Schema::hasColumn('events', 'speaker_experience')) { $table->dropColumn('speaker_experience'); }
+                if (Schema::hasColumn('events', 'speaker_brief')) { $table->dropColumn('speaker_brief'); } } catch (\Exception $e) {}
         });
         }
     }
@@ -35,7 +33,7 @@ return new class extends Migration
         if (Schema::hasTable('events')) {
             Schema::table('events', function (Blueprint $table) {
             // Remove speakers column
-            $table->dropColumn('speakers');
+            if (Schema::hasColumn('events', 'speakers')) { $table->dropColumn('speakers'); }
             
             // Add back old speaker columns
             $table->string('speaker_photo')->nullable();

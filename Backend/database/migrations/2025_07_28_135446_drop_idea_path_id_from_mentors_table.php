@@ -14,7 +14,7 @@ return new class extends Migration
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
             $table->dropForeign('mentors_idea_path_id_foreign');
-            $table->dropColumn('idea_path_id');
+            if (Schema::hasColumn('mentors', 'idea_path_id')) { $table->dropColumn('idea_path_id'); }
         });
         }
     }

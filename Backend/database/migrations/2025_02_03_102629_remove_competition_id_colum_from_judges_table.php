@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('judges')) {
             Schema::table('judges', function (Blueprint $table) {
-$table->dropColumn('competition_id');
+if (Schema::hasColumn('judges', 'competition_id')) { $table->dropColumn('competition_id'); }
         });
         }
     }

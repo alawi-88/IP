@@ -29,7 +29,11 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-$table->dropColumn(['status', 'approved_at', 'rejected_at', 'approved_by', 'rejection_reason']);
+                if (Schema::hasColumn('mentors', 'status')) { $table->dropColumn('status'); }
+                if (Schema::hasColumn('mentors', 'approved_at')) { $table->dropColumn('approved_at'); }
+                if (Schema::hasColumn('mentors', 'rejected_at')) { $table->dropColumn('rejected_at'); }
+                if (Schema::hasColumn('mentors', 'approved_by')) { $table->dropColumn('approved_by'); }
+                if (Schema::hasColumn('mentors', 'rejection_reason')) { $table->dropColumn('rejection_reason'); }
         });
         }
     }

@@ -33,7 +33,7 @@ return new class extends Migration
         if (Schema::hasTable('mentor_participant')) {
             Schema::table('mentor_participant', function (Blueprint $table) {
 $table->dropUnique('mentor_participant_unique_v2');
-            $table->dropColumn('competition_id');
+            if (Schema::hasColumn('mentor_participant', 'competition_id')) { $table->dropColumn('competition_id'); }
             
             // Restore old unique constraint
             $table->unique(['mentor_id', 'participant_id']);

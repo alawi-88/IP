@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-$table->dropColumn('track_id');
+if (Schema::hasColumn('mentors', 'track_id')) { $table->dropColumn('track_id'); }
         });
         }
     }

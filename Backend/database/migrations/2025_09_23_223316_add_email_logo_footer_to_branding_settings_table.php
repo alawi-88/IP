@@ -26,8 +26,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
-            $table->dropColumn('email_logo');
-            $table->dropColumn('email_footer_footer');
+            if (Schema::hasColumn('branding_settings', 'email_logo')) { $table->dropColumn('email_logo'); }
+            if (Schema::hasColumn('branding_settings', 'email_footer_footer')) { $table->dropColumn('email_footer_footer'); }
         });
         }
     }

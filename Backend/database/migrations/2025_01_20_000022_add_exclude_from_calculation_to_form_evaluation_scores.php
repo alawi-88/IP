@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('form_evaluation_scores')) {
             Schema::table('form_evaluation_scores', function (Blueprint $table) {
-            $table->dropColumn('exclude_from_calculation');
+            if (Schema::hasColumn('form_evaluation_scores', 'exclude_from_calculation')) { $table->dropColumn('exclude_from_calculation'); }
         });
         }
     }

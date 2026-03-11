@@ -26,7 +26,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('landing_pages')) {
             Schema::table('landing_pages', function (Blueprint $table) {
-            $table->dropColumn(['dga_registration_number', 'dga_certificate_url']);
+                            if (Schema::hasColumn('landing_pages', 'dga_registration_number')) { $table->dropColumn('dga_registration_number'); }
+                if (Schema::hasColumn('landing_pages', 'dga_certificate_url')) { $table->dropColumn('dga_certificate_url'); }
         });
         }
     }

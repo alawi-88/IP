@@ -13,15 +13,13 @@ return new class extends Migration
     {
         if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-            try { $table->dropColumn([
-                'name',
-                'summary',
-                'description',
-                'presentation_file',
-                'link',
-                'references',
-                'documents',
-            ]); } catch (\Exception $e) {}
+            try {                 if (Schema::hasColumn('projects', 'name')) { $table->dropColumn('name'); }
+                if (Schema::hasColumn('projects', 'summary')) { $table->dropColumn('summary'); }
+                if (Schema::hasColumn('projects', 'description')) { $table->dropColumn('description'); }
+                if (Schema::hasColumn('projects', 'presentation_file')) { $table->dropColumn('presentation_file'); }
+                if (Schema::hasColumn('projects', 'link')) { $table->dropColumn('link'); }
+                if (Schema::hasColumn('projects', 'references')) { $table->dropColumn('references'); }
+                if (Schema::hasColumn('projects', 'documents')) { $table->dropColumn('documents'); } } catch (\Exception $e) {}
         });
         }
     }

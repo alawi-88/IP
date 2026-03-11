@@ -80,13 +80,13 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
-            $table->dropColumn('profession');
-            $table->dropColumn('email');
-            $table->dropColumn('phone');
-            $table->dropColumn('password');
-            $table->dropColumn('password_reset_code');
-            $table->dropColumn('otp_code');
-            $table->dropColumn('last_login_at');
+            if (Schema::hasColumn('mentors', 'profession')) { $table->dropColumn('profession'); }
+            if (Schema::hasColumn('mentors', 'email')) { $table->dropColumn('email'); }
+            if (Schema::hasColumn('mentors', 'phone')) { $table->dropColumn('phone'); }
+            if (Schema::hasColumn('mentors', 'password')) { $table->dropColumn('password'); }
+            if (Schema::hasColumn('mentors', 'password_reset_code')) { $table->dropColumn('password_reset_code'); }
+            if (Schema::hasColumn('mentors', 'otp_code')) { $table->dropColumn('otp_code'); }
+            if (Schema::hasColumn('mentors', 'last_login_at')) { $table->dropColumn('last_login_at'); }
         });
         }
     }

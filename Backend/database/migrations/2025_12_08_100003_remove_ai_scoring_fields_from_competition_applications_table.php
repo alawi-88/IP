@@ -14,18 +14,16 @@ return new class extends Migration
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
 
-try { $table->dropColumn([
-                'ai_scored',
-                'ai_scores',
-                'ai_confidence',
-                'ai_reasoning',
-                'ai_score_overridden',
-                'ai_scored_by',
-                'ai_scored_at',
-                'ai_overridden_by',
-                'ai_overridden_at',
-                'ai_metadata',
-            ]); } catch (\Exception $e) {}
+try {                 if (Schema::hasColumn('competition_applications', 'ai_scored')) { $table->dropColumn('ai_scored'); }
+                if (Schema::hasColumn('competition_applications', 'ai_scores')) { $table->dropColumn('ai_scores'); }
+                if (Schema::hasColumn('competition_applications', 'ai_confidence')) { $table->dropColumn('ai_confidence'); }
+                if (Schema::hasColumn('competition_applications', 'ai_reasoning')) { $table->dropColumn('ai_reasoning'); }
+                if (Schema::hasColumn('competition_applications', 'ai_score_overridden')) { $table->dropColumn('ai_score_overridden'); }
+                if (Schema::hasColumn('competition_applications', 'ai_scored_by')) { $table->dropColumn('ai_scored_by'); }
+                if (Schema::hasColumn('competition_applications', 'ai_scored_at')) { $table->dropColumn('ai_scored_at'); }
+                if (Schema::hasColumn('competition_applications', 'ai_overridden_by')) { $table->dropColumn('ai_overridden_by'); }
+                if (Schema::hasColumn('competition_applications', 'ai_overridden_at')) { $table->dropColumn('ai_overridden_at'); }
+                if (Schema::hasColumn('competition_applications', 'ai_metadata')) { $table->dropColumn('ai_metadata'); } } catch (\Exception $e) {}
         });
         }
     }

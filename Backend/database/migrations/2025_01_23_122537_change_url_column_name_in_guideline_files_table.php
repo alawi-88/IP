@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('guideline_files')) {
             Schema::table('guideline_files', function (Blueprint $table) {
-            $table->renameColumn('url', 'attachment');
+            if (Schema::hasColumn('guideline_files', 'url')) { $table->renameColumn('url', 'attachment'); }
         });
         }
     }
@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('guideline_files')) {
             Schema::table('guideline_files', function (Blueprint $table) {
-            $table->renameColumn('attachment', 'url');
+            if (Schema::hasColumn('guideline_files', 'attachment')) { $table->renameColumn('attachment', 'url'); }
         });
         }
     }

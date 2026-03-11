@@ -26,7 +26,8 @@ return new class extends Migration
     {
          if (Schema::hasTable('judge_projects')) {
              Schema::table('judge_projects', function (Blueprint $table) {
-            $table->dropColumn(['disclaimer_accepted', 'disclaimer_accepted_at']);
+                            if (Schema::hasColumn('judge_projects', 'disclaimer_accepted')) { $table->dropColumn('disclaimer_accepted'); }
+                if (Schema::hasColumn('judge_projects', 'disclaimer_accepted_at')) { $table->dropColumn('disclaimer_accepted_at'); }
         });
          }
     }

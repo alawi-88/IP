@@ -28,7 +28,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
-$table->dropColumn('application_id');
+if (Schema::hasColumn('teams', 'application_id')) { $table->dropColumn('application_id'); }
         });
         }
     }

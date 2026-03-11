@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('nafath_settings')) {
             Schema::table('nafath_settings', function (Blueprint $table) {
-            $table->dropColumn('login_method');
+            if (Schema::hasColumn('nafath_settings', 'login_method')) { $table->dropColumn('login_method'); }
         });
         }
     }

@@ -31,7 +31,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('users')) {
             Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('role_type');
+            if (Schema::hasColumn('users', 'role_type')) { $table->dropColumn('role_type'); }
         });
         }
     }

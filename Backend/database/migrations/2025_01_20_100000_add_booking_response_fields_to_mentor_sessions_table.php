@@ -20,7 +20,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('mentor_sessions')) {
             Schema::table('mentor_sessions', function (Blueprint $table) {
-            $table->dropColumn(['declined_reason', 'proposed_time']);
+                            if (Schema::hasColumn('mentor_sessions', 'declined_reason')) { $table->dropColumn('declined_reason'); }
+                if (Schema::hasColumn('mentor_sessions', 'proposed_time')) { $table->dropColumn('proposed_time'); }
         });
         }
     }

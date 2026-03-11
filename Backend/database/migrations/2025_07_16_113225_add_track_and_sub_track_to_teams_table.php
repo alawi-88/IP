@@ -31,7 +31,8 @@ return new class extends Migration
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
 
-$table->dropColumn(['track_id', 'sub_track_id']);
+                if (Schema::hasColumn('teams', 'track_id')) { $table->dropColumn('track_id'); }
+                if (Schema::hasColumn('teams', 'sub_track_id')) { $table->dropColumn('sub_track_id'); }
         });
         }
     }

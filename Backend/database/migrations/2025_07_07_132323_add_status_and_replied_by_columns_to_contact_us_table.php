@@ -30,10 +30,10 @@ return new class extends Migration
     {
         if (Schema::hasTable('contact_us')) {
             Schema::table('contact_us', function (Blueprint $table) {
-$table->dropColumn('replied_by');
-            $table->dropColumn('status');
-            $table->dropColumn('reply');
-            $table->dropColumn('replied_at');
+if (Schema::hasColumn('contact_us', 'replied_by')) { $table->dropColumn('replied_by'); }
+            if (Schema::hasColumn('contact_us', 'status')) { $table->dropColumn('status'); }
+            if (Schema::hasColumn('contact_us', 'reply')) { $table->dropColumn('reply'); }
+            if (Schema::hasColumn('contact_us', 'replied_at')) { $table->dropColumn('replied_at'); }
         });
         }
     }

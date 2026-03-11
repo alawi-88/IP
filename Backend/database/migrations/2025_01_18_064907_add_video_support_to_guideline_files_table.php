@@ -50,10 +50,10 @@ return new class extends Migration
         if (Schema::hasTable('guideline_files')) {
             Schema::table('guideline_files', function (Blueprint $table) {
             if (Schema::hasColumn('guideline_files', 'description')) {
-                $table->dropColumn('description');
+                if (Schema::hasColumn('guideline_files', 'description')) { $table->dropColumn('description'); }
             }
             if (Schema::hasColumn('guideline_files', 'file_type')) {
-                $table->dropColumn('file_type');
+                if (Schema::hasColumn('guideline_files', 'file_type')) { $table->dropColumn('file_type'); }
             }
         });
         }

@@ -26,7 +26,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->dropColumn(['ai_evaluation_response', 'ai_evaluated_at']);
+                            if (Schema::hasColumn('competition_applications', 'ai_evaluation_response')) { $table->dropColumn('ai_evaluation_response'); }
+                if (Schema::hasColumn('competition_applications', 'ai_evaluated_at')) { $table->dropColumn('ai_evaluated_at'); }
         });
         }
     }

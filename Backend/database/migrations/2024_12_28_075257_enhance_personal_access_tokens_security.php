@@ -43,12 +43,10 @@ return new class extends Migration
             $table->dropIndex('idx_tokenable');
             $table->dropIndex('idx_expires_at');
             $table->dropIndex('idx_last_used_at');
-            try { $table->dropColumn([
-                'created_from_ip',
-                'last_used_from_ip',
-                'last_used_user_agent',
-                'revoked_reason'
-            ]); } catch (\Exception $e) {}
+            try {                 if (Schema::hasColumn('personal_access_tokens', 'created_from_ip')) { $table->dropColumn('created_from_ip'); }
+                if (Schema::hasColumn('personal_access_tokens', 'last_used_from_ip')) { $table->dropColumn('last_used_from_ip'); }
+                if (Schema::hasColumn('personal_access_tokens', 'last_used_user_agent')) { $table->dropColumn('last_used_user_agent'); }
+                if (Schema::hasColumn('personal_access_tokens', 'revoked_reason')) { $table->dropColumn('revoked_reason'); } } catch (\Exception $e) {}
         });
         }
     }

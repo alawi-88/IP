@@ -36,18 +36,16 @@ return new class extends Migration
     {
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
-                try { $table->dropColumn([
-                    'min_team_members',
-                    'max_team_members',
-                    'team_fields_enabled',
-                    'label_register_as',
-                    'option_register_individual',
-                    'option_register_team',
-                    'label_team_name',
-                    'label_team_logo',
-                    'label_team_serial',
-                    'help_team_serial',
-                ]); } catch (\Exception $e) {}
+                try {                 if (Schema::hasColumn('registration_form_configs', 'min_team_members')) { $table->dropColumn('min_team_members'); }
+                if (Schema::hasColumn('registration_form_configs', 'max_team_members')) { $table->dropColumn('max_team_members'); }
+                if (Schema::hasColumn('registration_form_configs', 'team_fields_enabled')) { $table->dropColumn('team_fields_enabled'); }
+                if (Schema::hasColumn('registration_form_configs', 'label_register_as')) { $table->dropColumn('label_register_as'); }
+                if (Schema::hasColumn('registration_form_configs', 'option_register_individual')) { $table->dropColumn('option_register_individual'); }
+                if (Schema::hasColumn('registration_form_configs', 'option_register_team')) { $table->dropColumn('option_register_team'); }
+                if (Schema::hasColumn('registration_form_configs', 'label_team_name')) { $table->dropColumn('label_team_name'); }
+                if (Schema::hasColumn('registration_form_configs', 'label_team_logo')) { $table->dropColumn('label_team_logo'); }
+                if (Schema::hasColumn('registration_form_configs', 'label_team_serial')) { $table->dropColumn('label_team_serial'); }
+                if (Schema::hasColumn('registration_form_configs', 'help_team_serial')) { $table->dropColumn('help_team_serial'); } } catch (\Exception $e) {}
             });
         }
     }
