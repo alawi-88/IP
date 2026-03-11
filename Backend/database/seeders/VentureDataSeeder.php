@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\AIProvider;
+use App\Models\AiProvider;
 use App\Models\VentureSectionConfig;
 
 class VentureDataSeeder extends Seeder
@@ -16,17 +16,17 @@ class VentureDataSeeder extends Seeder
 
     private function seedAIProviders(): void
     {
-        AIProvider::updateOrCreate(
+        AiProvider::updateOrCreate(
             ['provider' => 'claude'],
-            ['model' => 'claude-sonnet-4', 'api_key' => 'sk-ant-placeholder-key', 'priority' => 1, 'is_active' => true]
+            ['name' => 'Claude (Anthropic)', 'model_name' => 'claude-sonnet-4', 'api_key' => 'sk-ant-placeholder-key', 'priority' => 1, 'is_active' => true, 'max_tokens' => 4096, 'temperature' => 0.70]
         );
-        AIProvider::updateOrCreate(
+        AiProvider::updateOrCreate(
             ['provider' => 'openai'],
-            ['model' => 'gpt-4o', 'api_key' => 'sk-proj-placeholder-key', 'priority' => 2, 'is_active' => true]
+            ['name' => 'GPT-4o (OpenAI)', 'model_name' => 'gpt-4o', 'api_key' => 'sk-proj-placeholder-key', 'priority' => 2, 'is_active' => true, 'max_tokens' => 4096, 'temperature' => 0.70]
         );
-        AIProvider::updateOrCreate(
+        AiProvider::updateOrCreate(
             ['provider' => 'gemini'],
-            ['model' => 'gemini-2.5-pro', 'api_key' => 'AIzaSy-placeholder-key', 'priority' => 3, 'is_active' => true]
+            ['name' => 'Gemini Pro (Google)', 'model_name' => 'gemini-2.5-pro', 'api_key' => 'AIzaSy-placeholder-key', 'priority' => 3, 'is_active' => true, 'max_tokens' => 4096, 'temperature' => 0.70]
         );
     }
 
