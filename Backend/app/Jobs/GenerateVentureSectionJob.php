@@ -26,16 +26,12 @@ class GenerateVentureSectionJob implements ShouldQueue
     public int $tries = 1;
 
     /**
-     * The queue that the job should be placed on.
-     */
-    public string $queue = 'venture-generation';
-
-    /**
      * Create a new job instance.
      */
     public function __construct(VentureSection $section)
     {
         $this->section = $section;
+        $this->onQueue('venture-generation');
     }
 
     /**
