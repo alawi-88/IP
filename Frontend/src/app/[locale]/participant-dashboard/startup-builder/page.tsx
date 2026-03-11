@@ -60,10 +60,10 @@ export default function StartupBuilderPage() {
               className="block"
             >
               <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-100">
-                <div className="bg-gradient-to-r from-[#25935F] to-[#1a7a4e] p-5 min-h-[120px] flex items-end">
-                  <div className="flex items-start justify-between gap-3 w-full">
+                <div className="bg-gradient-to-r from-[#25935F] to-[#1a7a4e] px-5 py-6">
+                  <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-white text-base font-semibold line-clamp-2 leading-snug">
+                      <h3 className="text-white text-base font-bold line-clamp-2 leading-tight">
                         {venture.title}
                       </h3>
                       <Tag
@@ -74,8 +74,8 @@ export default function StartupBuilderPage() {
                       </Tag>
                     </div>
                     {venture.viability_score && (
-                      <div className="flex-shrink-0 flex items-center justify-center w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm">
-                        <span className="text-white font-bold text-lg">
+                      <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm">
+                        <span className="text-white font-bold text-sm">
                           {venture.viability_score}%
                         </span>
                       </div>
