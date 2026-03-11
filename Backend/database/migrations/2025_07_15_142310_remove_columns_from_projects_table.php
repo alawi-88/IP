@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('projects')) {
+                if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
             try {                 if (Schema::hasColumn('projects', 'name')) { $table->dropColumn('name'); }
                 if (Schema::hasColumn('projects', 'summary')) { $table->dropColumn('summary'); }
@@ -23,7 +22,6 @@ return new class extends Migration
                 if (Schema::hasColumn('projects', 'documents')) { $table->dropColumn('documents'); } } catch (\Exception $e) {}
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     public function down(): void

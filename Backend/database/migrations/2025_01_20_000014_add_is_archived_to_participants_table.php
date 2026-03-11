@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('participants')) {
+                if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
             $table->boolean('is_archived')->default(false);
             $table->timestamp('archived_at')->nullable();
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

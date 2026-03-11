@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('branding_settings')) {
+                if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
             $table->string('white_logo')->nullable();
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

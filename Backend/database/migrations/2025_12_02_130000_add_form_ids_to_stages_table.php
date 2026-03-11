@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('stages')) {
+                if (Schema::hasTable('stages')) {
             Schema::table('stages', function (Blueprint $table) {
             // Add JSON column to store multiple form IDs
             $table->json('form_ids')->nullable()->comment('Array of form IDs associated with this stage');
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('events')) {
+                if (Schema::hasTable('events')) {
             Schema::table('events', function (Blueprint $table) {
             // Add speakers column to store JSON data
             $table->json('speakers')->nullable();
@@ -24,7 +23,6 @@ return new class extends Migration
                 if (Schema::hasColumn('events', 'speaker_brief')) { $table->dropColumn('speaker_brief'); } } catch (\Exception $e) {}
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

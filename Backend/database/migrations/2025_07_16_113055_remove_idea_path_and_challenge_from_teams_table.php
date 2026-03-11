@@ -12,21 +12,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
         if (Schema::hasTable('teams')) {
-            // Drop foreign keys using raw SQL with IF EXISTS pattern
-            $foreignKeys = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'teams' AND CONSTRAINT_TYPE = 'FOREIGN KEY'");
-            $fkNames = array_map(fn($fk) => $fk->CONSTRAINT_NAME, $foreignKeys);
+            // Drop foreign keys before dropping columns
+            $fks = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'teams' AND CONSTRAINT_TYPE = 'FOREIGN KEY'");
+            $fkNames = array_map(fn($fk) => $fk->CONSTRAINT_NAME, $fks);
 
             if (in_array('teams_idea_path_id_foreign', $fkNames)) {
-                Schema::table('teams', function (Blueprint $table) {
-                    $table->dropForeign(['idea_path_id']);
-                });
+                Schema::table('teams', fn(Blueprint $t) => $t->dropForeign(['idea_path_id']));
             }
             if (in_array('teams_idea_challenge_id_foreign', $fkNames)) {
-                Schema::table('teams', function (Blueprint $table) {
-                    $table->dropForeign(['idea_challenge_id']);
-                });
+                Schema::table('teams', fn(Blueprint $t) => $t->dropForeign(['idea_challenge_id']));
             }
 
             // Drop columns if they exist
@@ -41,7 +36,6 @@ return new class extends Migration
                 }
             });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

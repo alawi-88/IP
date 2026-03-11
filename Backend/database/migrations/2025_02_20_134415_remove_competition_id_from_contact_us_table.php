@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,13 +12,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('contact_us')) {
+                if (Schema::hasTable('contact_us')) {
+
+        // Drop foreign keys before dropping columns
+        $__fks = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'contact_us' AND CONSTRAINT_TYPE = 'FOREIGN KEY'");
+        $__fkNames = array_map(fn($fk) => $fk->CONSTRAINT_NAME, $__fks);
+        if (in_array('contact_us_competition_id_foreign', $__fkNames)) {
+            Schema::table('contact_us', fn(Blueprint $t) => $t->dropForeign(['competition_id']));
+        }
+
             Schema::table('contact_us', function (Blueprint $table) {
 if (Schema::hasColumn('contact_us', 'competition_id')) { $table->dropColumn('competition_id'); }
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

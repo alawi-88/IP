@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('branding_settings')) {
+                if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
             $table->string('email_bg_color')->nullable();
             $table->string('email_text_color')->nullable();
@@ -21,7 +20,6 @@ return new class extends Migration
             $table->string('email_footer')->nullable();
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

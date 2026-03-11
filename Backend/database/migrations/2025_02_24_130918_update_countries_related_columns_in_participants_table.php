@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,8 +12,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('participants')) {
+                if (Schema::hasTable('participants')) {
+
+        // Drop foreign keys before dropping columns
+        $__fks = DB::select("SELECT CONSTRAINT_NAME FROM information_schema.TABLE_CONSTRAINTS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'participants' AND CONSTRAINT_TYPE = 'FOREIGN KEY'");
+        $__fkNames = array_map(fn($fk) => $fk->CONSTRAINT_NAME, $__fks);
+        if (in_array('participants_country_id_foreign', $__fkNames)) {
+            Schema::table('participants', fn(Blueprint $t) => $t->dropForeign(['country_id']));
+        }
+        if (in_array('participants_nationality_id_foreign', $__fkNames)) {
+            Schema::table('participants', fn(Blueprint $t) => $t->dropForeign(['nationality_id']));
+        }
+        if (in_array('participants_residence_city_id_foreign', $__fkNames)) {
+            Schema::table('participants', fn(Blueprint $t) => $t->dropForeign(['residence_city_id']));
+        }
+
             Schema::table('participants', function (Blueprint $table) {
             $table->foreignId('nationality_id')
                 ->nullable()
@@ -28,7 +42,6 @@ return new class extends Migration
                 ->constrained('cities');
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

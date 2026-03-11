@@ -12,8 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('judges')) {
+                if (Schema::hasTable('judges')) {
             Schema::table('judges', function (Blueprint $table) {
             $table->enum('registration_method', [
                 Judge::REGISTRATION_METHOD_SELF,
@@ -21,7 +20,6 @@ return new class extends Migration
             ])->default(Judge::REGISTRATION_METHOD_ADMIN);
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

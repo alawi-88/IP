@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-
+        
         if (!Schema::hasColumn('tracks', 'slug')) {
             if (Schema::hasTable('tracks')) {
                 Schema::table('tracks', function (Blueprint $table) {
@@ -28,7 +27,6 @@ return new class extends Migration
         });
         }
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

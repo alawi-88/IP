@@ -8,15 +8,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('mentor_sessions')) {
+                if (Schema::hasTable('mentor_sessions')) {
             Schema::table('mentor_sessions', function (Blueprint $table) {
             $table->text('feedback_comments')->nullable();
             $table->text('feedback_strengths')->nullable();
             $table->text('feedback_improvements')->nullable();
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     public function down(): void

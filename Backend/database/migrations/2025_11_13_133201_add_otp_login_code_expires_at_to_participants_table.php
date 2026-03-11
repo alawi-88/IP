@@ -11,15 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('participants')) {
+                if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
             if (!Schema::hasColumn('participants', 'otp_login_code_expires_at')) {
                 $table->timestamp('otp_login_code_expires_at')->nullable();
             }
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

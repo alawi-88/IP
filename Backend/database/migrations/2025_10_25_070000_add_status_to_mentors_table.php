@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('mentors')) {
+                if (Schema::hasTable('mentors')) {
             Schema::table('mentors', function (Blueprint $table) {
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamp('approved_at')->nullable();
@@ -21,7 +20,6 @@ return new class extends Migration
             $table->text('rejection_reason')->nullable();
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

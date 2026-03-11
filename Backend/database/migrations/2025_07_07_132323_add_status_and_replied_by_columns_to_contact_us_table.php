@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('contact_us')) {
+                if (Schema::hasTable('contact_us')) {
             Schema::table('contact_us', function (Blueprint $table) {
             $table->enum('status', ['pending', 'resolved'])->default('pending');
             $table->unsignedBigInteger('replied_by')->nullable();
@@ -22,7 +21,6 @@ return new class extends Migration
 
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

@@ -11,8 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('form_ai_scoring_configs')) {
+                if (Schema::hasTable('form_ai_scoring_configs')) {
             Schema::table('form_ai_scoring_configs', function (Blueprint $table) {
             $table->boolean('ai_enhancement_enabled')->default(false)->comment('Enable AI enhancement for form submissions');
             $table->text('ai_enhancement_context')->nullable()->comment('Form-level context for AI enhancement');
@@ -20,7 +19,6 @@ return new class extends Migration
             $table->json('ai_enhancement_fields')->nullable()->comment('Array of field slugs that should be enhanced');
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**

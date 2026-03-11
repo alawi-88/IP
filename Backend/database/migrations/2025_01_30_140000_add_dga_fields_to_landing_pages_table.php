@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::disableForeignKeyConstraints();
-        if (Schema::hasTable('landing_pages')) {
+                if (Schema::hasTable('landing_pages')) {
             Schema::table('landing_pages', function (Blueprint $table) {
             $table->string('dga_registration_number')->nullable();
             $table->string('dga_certificate_url')->nullable();
         });
         }
-    Schema::enableForeignKeyConstraints();
     }
 
     /**
