@@ -16,9 +16,13 @@ import {
   FiChevronLeft,
   FiChevronRight,
   FiAlertCircle,
+  FiEye,
+  FiEyeOff,
 } from "react-icons/fi";
 import { HiOutlineSparkles } from "react-icons/hi2";
 import SectionRenderer from "@/components/startup-builder/SectionRenderer";
+import SectionEditModal from "@/components/startup-builder/SectionEditModal";
+import AiRegenerateModal from "@/components/startup-builder/AiRegenerateModal";
 
 export default function VentureDetailPage() {
   const { id } = useParams();
@@ -26,6 +30,15 @@ export default function VentureDetailPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [showHidden, setShowHidden] = useState(false);
+
+  // Edit modal state
+  const [editingSection, setEditingSection] = useState<any>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+
+  // AI regenerate modal state
+  const [regeneratingSection, setRegeneratingSection] = useState<any>(null);
+  const [aiModalOpen, setAiModalOpen] = useState(false);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["venture", id, locale],
@@ -58,14 +71,13 @@ export default function VentureDetailPage() {
     },
   });
 
-  const regenerateMutation = useMutation({
+  const toggleVisibilityMutation = useMutation({
     mutationFn: async (sectionId: number) => {
       return axiosInstance.post(
-        `/participants/ventures/${id}/sections/${sectionId}/regenerate`
+        `/participants/ventures/${id}/sections/${sectionId}/toggle-visibility`
       );
     },
     onSuccess: () => {
-      message.success("Regenerating section...");
       queryClient.invalidateQueries({ queryKey: ["venture", id] });
     },
   });
@@ -73,7 +85,17 @@ export default function VentureDetailPage() {
   const venture = data?.data;
   const tabs = venture?.tabs || [];
   const activeTab = tabs[activeTabIndex];
-  const sections = activeTab?.sections || [];
+  const allSections = activeTab?.sections || [];
+
+  // Filter sections based on visibility
+  const sections = showHidden
+    ? allSections
+    : allSections.filter((s: any) => s.is_visible !== false);
+
+  const hiddenCount = allSections.filter(
+    (s: any) => s.is_visible === false
+  ).length;
+
   const failedCount = useMemo(() => {
     if (!tabs.length) return 0;
     return tabs.reduce(
@@ -122,6 +144,24 @@ export default function VentureDetailPage() {
     const text = JSON.stringify(section.content, null, 2);
     navigator.clipboard.writeText(text);
     message.success("Content copied to clipboard");
+  };
+
+  const openEditModal = (section: any) => {
+    setEditingSection(section);
+    setEditModalOpen(true);
+  };
+
+  const openAiModal = (section: any) => {
+    setRegeneratingSection(section);
+    setAiModalOpen(true);
+  };
+
+  const handleToggleVisibility = (section: any) => {
+    toggleVisibilityMutation.mutate(section.id);
+    const willBeHidden = section.is_visible !== false;
+    message.success(
+      willBeHidden ? "Section hidden" : "Section is now visible"
+    );
   };
 
   // Tab icon map based on slug
@@ -263,7 +303,21 @@ export default function VentureDetailPage() {
           <h2 className="text-xl lg:text-2xl font-bold text-[#25935F]">
             {activeTab?.label_en || activeTab?.slug?.replace(/-/g, " ")}
           </h2>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-3 text-sm text-gray-500">
+            {/* Show/hide hidden sections toggle */}
+            {hiddenCount > 0 && (
+              <button
+                onClick={() => setShowHidden(!showHidden)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  showHidden
+                    ? "bg-gray-200 text-gray-700"
+                    : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                }`}
+              >
+                {showHidden ? <FiEye size={14} /> : <FiEyeOff size={14} />}
+                {showHidden ? "Showing all" : `${hiddenCount} hidden`}
+              </button>
+            )}
             <button
               onClick={() => setActiveTabIndex(Math.max(0, activeTabIndex - 1))}
               disabled={activeTabIndex === 0}
@@ -328,17 +382,24 @@ export default function VentureDetailPage() {
       <div className="flex flex-col gap-6 px-6 lg:px-10 pb-10">
         {sections.length === 0 && (
           <div className="bg-white rounded-xl shadow-sm p-10 text-center text-gray-400">
-            No sections in this tab
+            {hiddenCount > 0
+              ? `All sections are hidden. Click "Show hidden" to reveal them.`
+              : "No sections in this tab"}
           </div>
         )}
         {sections.map((section: any) => {
           const isFailed = section.status === "failed";
           const isCompleted = section.status === "completed";
+          const isHidden = section.is_visible === false;
 
           return (
             <div
               key={section.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
+              className={`bg-white rounded-xl shadow-sm border overflow-hidden transition-all ${
+                isHidden
+                  ? "border-dashed border-gray-300 opacity-60"
+                  : "border-gray-100"
+              }`}
             >
               {/* Section Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-gray-50">
@@ -371,27 +432,52 @@ export default function VentureDetailPage() {
                       Generating...
                     </span>
                   )}
+                  {isHidden && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500 border border-gray-200">
+                      <FiEyeOff size={10} />
+                      Hidden
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-1">
-                  <Tooltip title="Edit">
-                    <button className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors">
+                  <Tooltip title="Edit Section">
+                    <button
+                      onClick={() => openEditModal(section)}
+                      className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-[#25935F] transition-colors"
+                    >
                       <FiEdit2 size={16} />
                     </button>
                   </Tooltip>
-                  <Tooltip title="Regenerate">
+                  <Tooltip title="Regenerate with AI">
                     <button
-                      onClick={() => regenerateMutation.mutate(section.id)}
-                      className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
+                      onClick={() => openAiModal(section)}
+                      className="p-2 rounded-lg hover:bg-purple-50 text-gray-400 hover:text-purple-600 transition-colors"
                     >
                       <HiOutlineSparkles size={16} />
                     </button>
                   </Tooltip>
-                  <Tooltip title="Copy">
+                  <Tooltip title="Copy Content">
                     <button
                       onClick={() => copyContent(section)}
                       className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       <FiCopy size={16} />
+                    </button>
+                  </Tooltip>
+                  <Tooltip title={isHidden ? "Show Section" : "Hide Section"}>
+                    <button
+                      onClick={() => handleToggleVisibility(section)}
+                      className={`p-2 rounded-lg transition-colors ${
+                        isHidden
+                          ? "hover:bg-green-50 text-gray-400 hover:text-green-600"
+                          : "hover:bg-gray-100 text-gray-400 hover:text-gray-600"
+                      }`}
+                    >
+                      {isHidden ? (
+                        <FiEye size={16} />
+                      ) : (
+                        <FiEyeOff size={16} />
+                      )}
                     </button>
                   </Tooltip>
                 </div>
@@ -430,6 +516,38 @@ export default function VentureDetailPage() {
           );
         })}
       </div>
+
+      {/* Edit Modal */}
+      {editingSection && (
+        <SectionEditModal
+          open={editModalOpen}
+          onClose={() => {
+            setEditModalOpen(false);
+            setEditingSection(null);
+          }}
+          section={editingSection}
+          ventureId={id as string}
+          onSaved={() => {
+            queryClient.invalidateQueries({ queryKey: ["venture", id] });
+          }}
+        />
+      )}
+
+      {/* AI Regenerate Modal */}
+      {regeneratingSection && (
+        <AiRegenerateModal
+          open={aiModalOpen}
+          onClose={() => {
+            setAiModalOpen(false);
+            setRegeneratingSection(null);
+          }}
+          section={regeneratingSection}
+          ventureId={id as string}
+          onRegenerated={() => {
+            queryClient.invalidateQueries({ queryKey: ["venture", id] });
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -47,6 +47,10 @@ Route::prefix('ventures')->name('ventures.')->group(function () {
     Route::put('{venture}/sections/{section}', [VentureController::class, 'updateSection'])
         ->name('sections.update');
 
+    // Toggle section visibility
+    Route::post('{venture}/sections/{section}/toggle-visibility', [VentureController::class, 'toggleSectionVisibility'])
+        ->name('sections.toggle-visibility');
+
     // Toggle archive status of a venture
     Route::post('{venture}/toggle-archive', [VentureController::class, 'toggleArchive'])
         ->name('toggle-archive');

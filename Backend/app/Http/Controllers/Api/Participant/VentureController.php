@@ -207,6 +207,28 @@ class VentureController extends Controller
     }
 
     /**
+     * Toggle visibility of a section.
+     */
+    public function toggleSectionVisibility(Venture $venture, VentureSection $section): JsonResponse
+    {
+        if ($venture->created_by !== auth()->id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        if ($section->tab->venture_id !== $venture->id) {
+            return response()->json(['error' => 'Section does not belong to this venture'], 422);
+        }
+
+        $section->update([
+            'is_visible' => !$section->is_visible,
+        ]);
+
+        return response()->json([
+            'data' => $section,
+        ]);
+    }
+
+    /**
      * Toggle archive status of a venture.
      */
     public function toggleArchive(Venture $venture): JsonResponse
