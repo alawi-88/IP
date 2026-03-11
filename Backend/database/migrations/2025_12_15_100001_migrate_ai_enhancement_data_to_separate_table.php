@@ -33,12 +33,12 @@ return new class extends Migration
         // Remove AI enhancement fields from form_ai_scoring_configs table
         if (Schema::hasTable('form_ai_scoring_configs')) {
             Schema::table('form_ai_scoring_configs', function (Blueprint $table) {
-            $table->dropColumn([
+            try { $table->dropColumn([
                 'ai_enhancement_enabled',
                 'ai_enhancement_context',
                 'ai_enhancement_instructions',
                 'ai_enhancement_fields',
-            ]);
+            ]); } catch (\Exception $e) {}
         });
         }
     }

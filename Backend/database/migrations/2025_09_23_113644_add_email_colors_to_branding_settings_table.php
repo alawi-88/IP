@@ -29,11 +29,11 @@ return new class extends Migration
     {
         if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
-            $table->dropColumn('email_bg_color');
-            $table->dropColumn('email_text_color');
-            $table->dropColumn('email_link_color');
-            $table->dropColumn('email_border_color');
-            $table->dropColumn('email_footer');
+            try { $table->dropColumn('email_bg_color'); } catch (\Exception $e) {}
+            try { $table->dropColumn('email_text_color'); } catch (\Exception $e) {}
+            try { $table->dropColumn('email_link_color'); } catch (\Exception $e) {}
+            try { $table->dropColumn('email_border_color'); } catch (\Exception $e) {}
+            try { $table->dropColumn('email_footer'); } catch (\Exception $e) {}
         });
         }
     }

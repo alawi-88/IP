@@ -26,7 +26,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('form_fields')) {
             Schema::table('form_fields', function (Blueprint $table) {
-            $table->dropColumn('conditional_logic');
+            try { $table->dropColumn('conditional_logic'); } catch (\Exception $e) {}
         });
         }
     }

@@ -30,9 +30,9 @@ return new class extends Migration
     {
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
-            $table->dropForeign(['track_id']);
-            $table->dropForeign(['sub_track_id']);
-            $table->dropColumn(['track_id', 'sub_track_id']);
+            try { $table->dropForeign(['track_id']); } catch (\Exception $e) {}
+            try { $table->dropForeign(['sub_track_id']); } catch (\Exception $e) {}
+            try { $table->dropColumn(['track_id', 'sub_track_id']); } catch (\Exception $e) {}
         });
         }
     }

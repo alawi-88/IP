@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('judges')) {
             Schema::table('judges', function (Blueprint $table) {
-            $table->dropColumn('serial_number');
+            try { $table->dropColumn('serial_number'); } catch (\Exception $e) {}
         });
         }
     }

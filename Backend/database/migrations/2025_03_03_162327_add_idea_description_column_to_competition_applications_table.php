@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->dropColumn('idea_description');
+            try { $table->dropColumn('idea_description'); } catch (\Exception $e) {}
         });
         }
     }

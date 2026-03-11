@@ -11,7 +11,7 @@ return new class extends Migration
         if (Schema::hasTable('project_comments')) {
             Schema::table('project_comments', function (Blueprint $table) {
             // Drop the existing foreign key to alter nullability
-            $table->dropForeign(['user_id']);
+            try { $table->dropForeign(['user_id']); } catch (\Exception $e) {}
         });
         }
 
@@ -27,7 +27,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('project_comments')) {
             Schema::table('project_comments', function (Blueprint $table) {
-            $table->dropForeign(['user_id']);
+            try { $table->dropForeign(['user_id']); } catch (\Exception $e) {}
         });
         }
 

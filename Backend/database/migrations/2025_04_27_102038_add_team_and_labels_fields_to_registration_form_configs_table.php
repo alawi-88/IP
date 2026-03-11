@@ -36,7 +36,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
-                $table->dropColumn([
+                try { $table->dropColumn([
                     'min_team_members',
                     'max_team_members',
                     'team_fields_enabled',
@@ -47,7 +47,7 @@ return new class extends Migration
                     'label_team_logo',
                     'label_team_serial',
                     'help_team_serial',
-                ]);
+                ]); } catch (\Exception $e) {}
             });
         }
     }

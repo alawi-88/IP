@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-            $table->dropColumn('type');
+            try { $table->dropColumn('type'); } catch (\Exception $e) {}
         });
         }
     }

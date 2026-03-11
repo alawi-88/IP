@@ -13,8 +13,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('project_form_configs')) {
             Schema::table('project_form_configs', function (Blueprint $table) {
-            $table->dropForeign(['competition_id']);
-            $table->dropColumn('competition_id');
+            try { $table->dropForeign(['competition_id']); } catch (\Exception $e) {}
+            try { $table->dropColumn('competition_id'); } catch (\Exception $e) {}
         });
         }
     }

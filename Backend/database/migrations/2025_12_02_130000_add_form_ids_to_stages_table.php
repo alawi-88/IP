@@ -26,7 +26,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('stages')) {
             Schema::table('stages', function (Blueprint $table) {
-            $table->dropColumn('form_ids');
+            try { $table->dropColumn('form_ids'); } catch (\Exception $e) {}
         });
         }
     }

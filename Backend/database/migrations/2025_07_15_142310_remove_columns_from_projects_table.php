@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('projects')) {
             Schema::table('projects', function (Blueprint $table) {
-            $table->dropColumn([
+            try { $table->dropColumn([
                 'name',
                 'summary',
                 'description',
@@ -21,7 +21,7 @@ return new class extends Migration
                 'link',
                 'references',
                 'documents',
-            ]);
+            ]); } catch (\Exception $e) {}
         });
         }
     }

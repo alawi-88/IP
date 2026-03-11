@@ -59,8 +59,8 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->dropForeign(['reviewed_by']);
-            $table->dropColumn([
+            try { $table->dropForeign(['reviewed_by']); } catch (\Exception $e) {}
+            try { $table->dropColumn([
                 'final_evaluation_score',
                 'minimum_score_threshold',
                 'decision_reason',
@@ -70,13 +70,13 @@ return new class extends Migration
                 'resubmitted_at',
                 'reviewed_by',
                 'reviewed_at',
-            ]);
+            ]); } catch (\Exception $e) {}
         });
         }
 
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
-            $table->dropColumn('minimum_score_threshold');
+            try { $table->dropColumn('minimum_score_threshold'); } catch (\Exception $e) {}
         });
         }
     }

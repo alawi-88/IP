@@ -19,7 +19,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('judges')) {
             Schema::table('judges', function (Blueprint $table) {
-            $table->dropColumn('activation_code');
+            try { $table->dropColumn('activation_code'); } catch (\Exception $e) {}
         });
         }
     }

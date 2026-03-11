@@ -25,7 +25,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('branding_settings')) {
             Schema::table('branding_settings', function (Blueprint $table) {
-            $table->dropColumn('white_logo');
+            try { $table->dropColumn('white_logo'); } catch (\Exception $e) {}
         });
         }
     }

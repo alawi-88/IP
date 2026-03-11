@@ -13,9 +13,9 @@ return new class extends Migration
     {
         if (Schema::hasTable('participants')) {
             Schema::table('participants', function (Blueprint $table) {
-            $table->dropColumn('nationality');
-            $table->dropColumn('country');
-            $table->dropColumn('residence_city');
+            try { $table->dropColumn('nationality'); } catch (\Exception $e) {}
+            try { $table->dropColumn('country'); } catch (\Exception $e) {}
+            try { $table->dropColumn('residence_city'); } catch (\Exception $e) {}
         });
         }
     }

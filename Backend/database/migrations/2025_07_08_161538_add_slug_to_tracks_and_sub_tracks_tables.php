@@ -36,13 +36,13 @@ return new class extends Migration
     {
         if (Schema::hasTable('tracks')) {
             Schema::table('tracks', function (Blueprint $table) {
-            $table->dropColumn('slug');
+            try { $table->dropColumn('slug'); } catch (\Exception $e) {}
         });
         }
 
         if (Schema::hasTable('sub_tracks')) {
             Schema::table('sub_tracks', function (Blueprint $table) {
-            $table->dropColumn('slug');
+            try { $table->dropColumn('slug'); } catch (\Exception $e) {}
         });
         }
     }

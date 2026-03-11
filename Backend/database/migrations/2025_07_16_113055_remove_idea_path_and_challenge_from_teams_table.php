@@ -13,11 +13,19 @@ return new class extends Migration
     {
         if (Schema::hasTable('teams')) {
             Schema::table('teams', function (Blueprint $table) {
-            $table->dropForeign(['idea_path_id']);      // if there's a foreign key
-            $table->dropForeign(['idea_challenge_id']); // if there's a foreign key
+                // Drop foreign keys if they exist
+                try { $table->dropForeign(['idea_path_id']); } catch (\Exception $e) {}
+                try { $table->dropForeign(['idea_challenge_id']); } catch (\Exception $e) {}
+            });
 
-            $table->dropColumn(['idea_path_id', 'idea_challenge_id']);
-        });
+            Schema::table('teams', function (Blueprint $table) {
+                if (Schema::hasColumn('teams', 'idea_path_id')) {
+                    $table->dropColumn('idea_path_id');
+                }
+                if (Schema::hasColumn('teams', 'idea_challenge_id')) {
+                    $table->dropColumn('idea_challenge_id');
+                }
+            });
         }
     }
 
@@ -26,10 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::hasTable('teams')) {
-            Schema::table('teams', function (Blueprint $table) {
-            //
-        });
-        }
+        //
     }
 };

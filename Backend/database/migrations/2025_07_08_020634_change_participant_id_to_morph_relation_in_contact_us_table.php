@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('contact_us')) {
             Schema::table('contact_us', function (Blueprint $table) {
-            $table->dropForeign('contact_us_participant_id_foreign');
+            try { $table->dropForeign('contact_us_participant_id_foreign'); } catch (\Exception $e) {}
 
             $table->renameColumn('participant_id', 'model_id');
 
@@ -31,7 +31,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('contact_us')) {
             Schema::table('contact_us', function (Blueprint $table) {
-            $table->dropColumn('model_type');
+            try { $table->dropColumn('model_type'); } catch (\Exception $e) {}
 
             $table->renameColumn('model_id', 'participant_id');
 

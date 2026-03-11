@@ -13,7 +13,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
-            $table->dropColumn('status');
+            try { $table->dropColumn('status'); } catch (\Exception $e) {}
         });
         }
     }

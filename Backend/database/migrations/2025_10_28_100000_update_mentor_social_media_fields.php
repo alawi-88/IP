@@ -15,7 +15,7 @@ return new class extends Migration
             Schema::table('mentors', function (Blueprint $table) {
             // Drop the old 'link' column
             if (Schema::hasColumn('mentors', 'link')) {
-                $table->dropColumn('link');
+                try { $table->dropColumn('link'); } catch (\Exception $e) {}
             }
         });
         }
@@ -45,13 +45,13 @@ return new class extends Migration
             Schema::table('mentors', function (Blueprint $table) {
             // Drop the new social media fields
             if (Schema::hasColumn('mentors', 'linkedin')) {
-                $table->dropColumn('linkedin');
+                try { $table->dropColumn('linkedin'); } catch (\Exception $e) {}
             }
             if (Schema::hasColumn('mentors', 'facebook')) {
-                $table->dropColumn('facebook');
+                try { $table->dropColumn('facebook'); } catch (\Exception $e) {}
             }
             if (Schema::hasColumn('mentors', 'instagram')) {
-                $table->dropColumn('instagram');
+                try { $table->dropColumn('instagram'); } catch (\Exception $e) {}
             }
         });
         }

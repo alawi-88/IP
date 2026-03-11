@@ -26,7 +26,7 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->dropColumn(['assessment_scores', 'total_score']);
+            try { $table->dropColumn(['assessment_scores', 'total_score']); } catch (\Exception $e) {}
         });
         }
     }

@@ -37,9 +37,9 @@ return new class extends Migration
     {
         if (Schema::hasTable('competition_applications')) {
             Schema::table('competition_applications', function (Blueprint $table) {
-            $table->dropForeign(['ai_scored_by']);
-            $table->dropForeign(['ai_overridden_by']);
-            $table->dropColumn([
+            try { $table->dropForeign(['ai_scored_by']); } catch (\Exception $e) {}
+            try { $table->dropForeign(['ai_overridden_by']); } catch (\Exception $e) {}
+            try { $table->dropColumn([
                 'ai_scored',
                 'ai_scores',
                 'ai_confidence',
@@ -50,7 +50,7 @@ return new class extends Migration
                 'ai_overridden_by',
                 'ai_overridden_at',
                 'ai_metadata',
-            ]);
+            ]); } catch (\Exception $e) {}
         });
         }
     }

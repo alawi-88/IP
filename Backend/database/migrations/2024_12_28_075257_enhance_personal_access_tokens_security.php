@@ -40,15 +40,15 @@ return new class extends Migration
     {
         if (Schema::hasTable('personal_access_tokens')) {
             Schema::table('personal_access_tokens', function (Blueprint $table) {
-            $table->dropIndex('idx_tokenable');
-            $table->dropIndex('idx_expires_at');
-            $table->dropIndex('idx_last_used_at');
-            $table->dropColumn([
+            try { $table->dropIndex('idx_tokenable'); } catch (\Exception $e) {}
+            try { $table->dropIndex('idx_expires_at'); } catch (\Exception $e) {}
+            try { $table->dropIndex('idx_last_used_at'); } catch (\Exception $e) {}
+            try { $table->dropColumn([
                 'created_from_ip',
                 'last_used_from_ip',
                 'last_used_user_agent',
                 'revoked_reason'
-            ]);
+            ]); } catch (\Exception $e) {}
         });
         }
     }
