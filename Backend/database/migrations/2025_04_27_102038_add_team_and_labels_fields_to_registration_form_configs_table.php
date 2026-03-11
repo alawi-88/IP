@@ -13,20 +13,19 @@ return new class extends Migration
     {
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
-            // Now add the new fields
-            $table->unsignedTinyInteger('min_team_members')->default(2);
-            $table->unsignedTinyInteger('max_team_members')->nullable();
-            $table->boolean('team_fields_enabled')->default(true);
+                $table->unsignedTinyInteger('min_team_members')->default(2);
+                $table->unsignedTinyInteger('max_team_members')->nullable();
+                $table->boolean('team_fields_enabled')->default(true);
 
-            $table->json('label_register_as')->nullable();
-            $table->json('option_register_individual')->nullable();
-            $table->json('option_register_team')->nullable();
+                $table->json('label_register_as')->nullable();
+                $table->json('option_register_individual')->nullable();
+                $table->json('option_register_team')->nullable();
 
-            $table->json('label_team_name')->nullable();
-            $table->json('label_team_logo')->nullable();
-            $table->json('label_team_serial')->nullable();
-            $table->json('help_team_serial')->nullable();
-        });
+                $table->json('label_team_name')->nullable();
+                $table->json('label_team_logo')->nullable();
+                $table->json('label_team_serial')->nullable();
+                $table->json('help_team_serial')->nullable();
+            });
         }
     }
 
@@ -37,8 +36,6 @@ return new class extends Migration
     {
         if (Schema::hasTable('registration_form_configs')) {
             Schema::table('registration_form_configs', function (Blueprint $table) {
-            if (Schema::hasTable('registration_form_configs')) {
-                Schema::table('registration_form_configs', function (Blueprint $table) {
                 $table->dropColumn([
                     'min_team_members',
                     'max_team_members',
@@ -49,11 +46,9 @@ return new class extends Migration
                     'label_team_name',
                     'label_team_logo',
                     'label_team_serial',
-                  
-        }  'help_team_serial',
+                    'help_team_serial',
                 ]);
             });
-            }
-        });
+        }
     }
 };
