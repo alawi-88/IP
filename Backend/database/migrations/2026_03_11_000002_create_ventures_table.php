@@ -13,23 +13,29 @@ return new class extends Migration
     {
         Schema::create('ventures', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('competition_id')->constrained('competitions')->cascadeOnDelete();
-            $table->foreignId('participant_id')->constrained('users')->cascadeOnDelete();
             $table->string('title');
-            $table->string('slug')->unique();
-            $table->text('idea_prompt');
+            $table->text('idea_prompt')->nullable();
             $table->enum('status', ['draft', 'generating', 'completed', 'failed'])->default('draft');
             $table->integer('viability_score')->nullable();
+            $table->json('viability_breakdown')->nullable();
             $table->string('industry')->nullable();
             $table->string('target_market')->nullable();
             $table->string('business_model')->nullable();
-            $table->json('metadata')->nullable();
+            $table->integer('sections_total')->default(0);
+            $table->integer('sections_completed')->default(0);
+            $table->integer('sections_failed')->default(0);
+            $table->unsignedBigInteger('competition_id')->nullable();
+            $table->unsignedBigInteger('team_id')->nullable();
+            $table->unsignedBigInteger('created_by');
+            $table->timestamp('generation_started_at')->nullable();
+            $table->timestamp('generation_completed_at')->nullable();
             $table->boolean('is_archived')->default(false);
-            $table->integer('version')->default(1);
+            $table->timestamp('archived_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
 
-            $table->index(['competition_id', 'participant_id']);
+            $table->index(['created_by']);
+            $table->index(['competition_id']);
+            $table->index(['status']);
         });
     }
 

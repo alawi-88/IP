@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('venture_sections', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('venture_id');
             $table->foreignId('venture_tab_id')->constrained('venture_tabs')->cascadeOnDelete();
-            $table->string('section_key');
+            $table->string('slug');
             $table->string('label_en');
             $table->string('label_ar')->nullable();
             $table->json('content')->nullable();
@@ -24,11 +25,15 @@ return new class extends Migration
             $table->integer('generation_attempts')->default(0);
             $table->integer('sort_order')->default(0);
             $table->boolean('is_visible')->default(true);
+            $table->string('component_type')->nullable();
             $table->foreignId('ai_provider_id')->nullable()->constrained('ai_providers')->nullOnDelete();
-            $table->integer('prompt_tokens')->nullable();
-            $table->integer('completion_tokens')->nullable();
+            $table->integer('tokens_used')->nullable();
+            $table->decimal('estimated_cost', 10, 6)->nullable();
             $table->timestamp('generated_at')->nullable();
             $table->timestamps();
+
+            $table->index(['venture_id']);
+            $table->index(['venture_tab_id', 'sort_order']);
         });
     }
 
