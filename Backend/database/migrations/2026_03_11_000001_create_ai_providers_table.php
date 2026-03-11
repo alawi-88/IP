@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('ai_providers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->enum('provider', ['claude', 'openai', 'gemini']);
-            $table->text('api_key')->encrypted();
+            $table->string('provider_type');
+            $table->text('api_key');
             $table->string('model_name');
             $table->boolean('is_active')->default(true);
             $table->integer('priority')->default(0);
