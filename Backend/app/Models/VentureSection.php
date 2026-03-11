@@ -10,20 +10,22 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class VentureSection extends Model
 {
     protected $fillable = [
+        'venture_id',
         'venture_tab_id',
-        'section_key',
+        'slug',
         'label_en',
         'label_ar',
         'content',
         'content_ar',
         'status',
         'error_message',
-        'generation_attempts',
         'sort_order',
         'is_visible',
+        'component_type',
         'ai_provider_id',
-        'prompt_tokens',
-        'completion_tokens',
+        'tokens_used',
+        'estimated_cost',
+        'generation_attempts',
         'generated_at',
     ];
 
@@ -63,7 +65,7 @@ class VentureSection extends Model
      */
     public function getDisplayConfigAttribute()
     {
-        return VentureSectionConfig::where('section_key', $this->section_key)->first();
+        return VentureSectionConfig::where('section_slug', $this->slug)->first();
     }
 
     /**

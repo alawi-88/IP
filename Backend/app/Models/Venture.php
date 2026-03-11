@@ -6,47 +6,37 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 class Venture extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = [
-        'competition_id',
-        'participant_id',
         'title',
-        'slug',
         'idea_prompt',
         'status',
         'viability_score',
+        'viability_breakdown',
         'industry',
         'target_market',
         'business_model',
-        'metadata',
+        'sections_total',
+        'sections_completed',
+        'sections_failed',
+        'competition_id',
+        'team_id',
+        'created_by',
+        'generation_started_at',
+        'generation_completed_at',
         'is_archived',
-        'version',
+        'archived_at',
     ];
 
     protected $casts = [
-        'metadata' => 'array',
+        'viability_breakdown' => 'array',
         'is_archived' => 'boolean',
+        'generation_started_at' => 'datetime',
+        'generation_completed_at' => 'datetime',
+        'archived_at' => 'datetime',
     ];
-
-    /**
-     * Boot the model.
-     */
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($model) {
-            if (empty($model->slug)) {
-                $model->slug = Str::slug($model->title);
-            }
-        });
-    }
 
     /**
      * Get the competition this venture belongs to.
@@ -61,7 +51,7 @@ class Venture extends Model
      */
     public function participant(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'participant_id');
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**

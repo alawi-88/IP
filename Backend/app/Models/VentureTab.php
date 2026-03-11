@@ -10,7 +10,7 @@ class VentureTab extends Model
 {
     protected $fillable = [
         'venture_id',
-        'tab_key',
+        'slug',
         'label_en',
         'label_ar',
         'icon',
