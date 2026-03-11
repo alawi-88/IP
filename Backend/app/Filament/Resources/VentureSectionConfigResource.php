@@ -30,21 +30,21 @@ class VentureSectionConfigResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->hasRole('super_admin') ?? false;
+        return auth()->user()?->hasRole('super-admin') ?? false;
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()?->hasRole('super_admin') ?? false;
+        return auth()->user()?->hasRole('super-admin') ?? false;
     }
 
     public static function canEdit(Model $record): bool
     {
-        return auth()->user()?->hasRole('super_admin') ?? false;
+        return auth()->user()?->hasRole('super-admin') ?? false;
     }
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()?->hasRole('super_admin') ?? false;
+        return auth()->user()?->hasRole('super-admin') ?? false;
     }
 }

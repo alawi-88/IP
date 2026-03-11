@@ -27,16 +27,16 @@ class VentureResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->hasRole(['super_admin', 'admin', 'judge']) ?? false;
+        return auth()->user()?->hasRole(['super-admin', 'admin', 'judge']) ?? false;
     }
 
     public static function canView(Model $record): bool
     {
-        return auth()->user()?->hasRole(['super_admin', 'admin', 'judge']) ?? false;
+        return auth()->user()?->hasRole(['super-admin', 'admin', 'judge']) ?? false;
     }
 
     public static function canDelete(Model $record): bool
     {
-        return auth()->user()?->hasRole('super_admin') ?? false;
+        return auth()->user()?->hasRole('super-admin') ?? false;
     }
 }
