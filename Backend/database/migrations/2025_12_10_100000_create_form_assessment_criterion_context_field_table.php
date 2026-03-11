@@ -17,11 +17,13 @@ return new class extends Migration
 
         Schema::create('form_assessment_criterion_context_field', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('form_assessment_criterion_id')
-                ->constrained('form_assessment_criteria')
+            $table->unsignedBigInteger('form_assessment_criterion_id');
+            $table->foreign('form_assessment_criterion_id', 'fac_cf_criterion_id_fk')
+                ->references('id')->on('form_assessment_criteria')
                 ->onDelete('cascade');
-            $table->foreignId('form_field_id')
-                ->constrained('form_fields')
+            $table->unsignedBigInteger('form_field_id');
+            $table->foreign('form_field_id', 'fac_cf_field_id_fk')
+                ->references('id')->on('form_fields')
                 ->onDelete('cascade');
             $table->timestamps();
 
@@ -29,8 +31,8 @@ return new class extends Migration
             $table->unique(['form_assessment_criterion_id', 'form_field_id'], 'unique_criterion_context_field_mapping');
 
             // Indexes for performance
-            $table->index('form_assessment_criterion_id');
-            $table->index('form_field_id');
+            $table->index('form_assessment_criterion_id', 'fac_cf_criterion_idx');
+            $table->index('form_field_id', 'fac_cf_field_idx');
         });
     }
 
