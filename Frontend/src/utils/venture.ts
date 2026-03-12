@@ -1,0 +1,21 @@
+// Re-export from canonical location
+export {
+  resolveBilingual,
+  resolveLabel,
+  getStatusColor,
+  getStatusBadge,
+  getSectionIcon,
+  getSectionColor,
+  getSectionComponentType,
+  getTabDotColor,
+  flattenContentToText,
+  INDUSTRY_OPTIONS,
+  TARGET_MARKET_OPTIONS,
+  BUSINESS_MODEL_OPTIONS,
+  calculateProgressPercentage,
+  getStatusBadgeStyle,
+  shouldShowGenerationControls,
+  isLoadingState,
+  hasErrors,
+  formatDate,
+} from '@/lib/utils/ventureHelpers';

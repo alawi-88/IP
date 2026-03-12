@@ -12,7 +12,6 @@ function getUser(request: NextRequest) {
   try {
     const decoded = jwt.decode(accessToken) as AccessTokenPayload | null;
     if (!decoded || !decoded.user_type) return null;
-
     return { role: decoded.user_type, isAuthenticated: true };
   } catch (err) {
     console.error("Error decoding accessToken:", err);
@@ -25,7 +24,13 @@ export default async function middleware(request: NextRequest) {
   const user = getUser(request);
   const isAuthenticated = user?.isAuthenticated;
   const role = user?.role;
+
   console.log(role);
+
+  // Allow preview routes to pass through without any auth redirects
+  if (segments[0] === "preview") {
+    return handleI18nRouting(request);
+  }
 
   // Not Authenticated → Redirect to login page depending on the URL
   if (!isAuthenticated) {
@@ -34,19 +39,16 @@ export default async function middleware(request: NextRequest) {
       request.nextUrl.pathname = `/login`;
       return handleI18nRouting(request);
     }
-
     if (segments.includes("judge-dashboard")) {
       console.debug("Unauthenticated → redirecting to judge login");
       request.nextUrl.pathname = `/judge/login`;
       return handleI18nRouting(request);
     }
-
     if (segments.includes("mentor-dashboard")) {
       console.debug("Unauthenticated → redirecting to mentor login");
       request.nextUrl.pathname = `/mentor/login`;
       return handleI18nRouting(request);
     }
-
     if (segments.length === 0) {
       console.debug("No path → redirecting to login");
       request.nextUrl.pathname = `/login`;
@@ -65,7 +67,6 @@ export default async function middleware(request: NextRequest) {
       request.nextUrl.pathname = `/participant-dashboard`;
       return handleI18nRouting(request);
     }
-
     if (
       role === "judge" &&
       !segments.includes("judge-dashboard") &&
@@ -75,7 +76,6 @@ export default async function middleware(request: NextRequest) {
       request.nextUrl.pathname = `/judge/judge-dashboard`;
       return handleI18nRouting(request);
     }
-
     if (
       role === "mentor" &&
       !segments.includes("mentor-dashboard") &&

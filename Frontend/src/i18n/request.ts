@@ -10,8 +10,22 @@ export default getRequestConfig(async ({ requestLocale }) => {
     locale = routing.defaultLocale;
   }
 
+  // Load main messages
+  const mainMessages = (await import(`../../messages/${locale}.json`)).default;
+
+  // Load venture-specific messages and merge them in
+  let ventureMessages = {};
+  try {
+    ventureMessages = (await import(`./venture-${locale}.json`)).default;
+  } catch (e) {
+    // Venture translations not available for this locale — skip
+  }
+
   return {
     locale,
-    messages: (await import(`../../messages/${locale}.json`)).default,
+    messages: {
+      ...mainMessages,
+      ...ventureMessages,
+    },
   };
 });

@@ -3,6 +3,10 @@
 namespace App\Filament\Resources\VenturePromptTemplateResource\Pages;
 
 use App\Filament\Resources\VenturePromptTemplateResource;
+use App\Models\VentureTabConfig;
+use App\Models\VentureSectionConfig;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -14,31 +18,78 @@ class CreateVenturePromptTemplate extends CreateRecord
 
     protected function getFormSchema(): array
     {
+        // Build section options grouped by tab
+        $sectionOptions = [];
+        $tabConfigs = VentureTabConfig::ordered()->get();
+        foreach ($tabConfigs as $tab) {
+            $sections = VentureSectionConfig::where('tab_slug', $tab->tab_slug)
+                ->orderBy('sort_order')
+                ->get();
+            foreach ($sections as $sec) {
+                $sectionOptions[$tab->label_en][$sec->section_slug] = $sec->label_en . ' (' . $sec->section_slug . ')';
+            }
+        }
+
         return [
-            TextInput::make('section_slug')
-                ->required()
-                ->maxLength(255),
-            TextInput::make('label')
-                ->required()
-                ->maxLength(255),
-            Textarea::make('system_prompt')
-                ->required()
-                ->rows(6),
-            Textarea::make('user_prompt')
-                ->required()
-                ->rows(6),
-            Textarea::make('json_schema')
-                ->rows(4)
-                ->helperText('JSON schema for structured output'),
-            Toggle::make('is_active')
-                ->default(true),
-            TextInput::make('max_tokens')
-                ->numeric()
-                ->default(4096),
-            TextInput::make('temperature')
-                ->numeric()
-                ->step(0.01)
-                ->default(0.70),
+            Section::make('Section Mapping')
+                ->description('Link this prompt template to a section')
+                ->schema([
+                    Select::make('section_slug')
+                        ->label('Section')
+                        ->required()
+                        ->searchable()
+                        ->options($sectionOptions)
+                        ->helperText('The section this prompt template will be used for')
+                        ->columnSpan(1),
+                    TextInput::make('label')
+                        ->required()
+                        ->maxLength(255)
+                        ->columnSpan(1),
+                    Toggle::make('is_active')
+                        ->label('Active')
+                        ->default(true)
+                        ->helperText('Only active templates override the default prompt')
+                        ->columnSpan(1),
+                ])->columns(3),
+
+            Section::make('System Prompt')
+                ->description('Instructions that define the AI\'s role and behavior')
+                ->schema([
+                    Textarea::make('system_prompt')
+                        ->label('')
+                        ->required()
+                        ->default('You are an expert startup advisor and business analyst. Respond with valid JSON only. No markdown, no explanation, no code fences.')
+                        ->rows(8)
+                        ->columnSpanFull(),
+                ]),
+
+            Section::make('User Prompt')
+                ->description('The actual prompt sent to the AI. Use {venture_title}, {venture_idea}, {industry}, {target_market}, {business_model} as variables.')
+                ->schema([
+                    Textarea::make('user_prompt')
+                        ->label('')
+                        ->required()
+                        ->rows(16)
+                        ->columnSpanFull()
+                        ->helperText('The main prompt. Variables: {venture_title}, {venture_idea}, {industry}, {target_market}, {business_model}'),
+                ]),
+
+            Section::make('AI Settings')
+                ->schema([
+                    TextInput::make('max_tokens')
+                        ->numeric()
+                        ->default(4096)
+                        ->columnSpan(1),
+                    TextInput::make('temperature')
+                        ->numeric()
+                        ->step(0.01)
+                        ->default(0.70)
+                        ->columnSpan(1),
+                    Textarea::make('json_schema')
+                        ->rows(4)
+                        ->helperText('Optional JSON schema for structured output validation')
+                        ->columnSpan(2),
+                ])->columns(2),
         ];
     }
 }

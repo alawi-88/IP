@@ -19,6 +19,8 @@ class VentureSection extends Model
         'label_ar',
         'content',
         'content_ar',
+        'prompt_sent',
+        'raw_response',
         'status',
         'error_message',
         'sort_order',

@@ -7,6 +7,7 @@ use App\Models\Venture;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\URL;
 
 class ListVentures extends ListRecords
 {
@@ -53,6 +54,12 @@ class ListVentures extends ListRecords
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('preview')
+                    ->label('Preview')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->url(fn (Venture $record): string => $this->generatePreviewUrl($record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
@@ -60,5 +67,24 @@ class ListVentures extends ListRecords
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected function generatePreviewUrl(Venture $venture): string
+    {
+        $signedApiUrl = URL::temporarySignedRoute(
+            'admin.venture.preview',
+            now()->addHour(),
+            ['venture' => $venture->id]
+        );
+
+        $parsed = parse_url($signedApiUrl);
+        parse_str($parsed['query'] ?? '', $queryParams);
+
+        $frontendBase = config('app.frontend_url', 'http://localhost:3000');
+
+        return "{$frontendBase}/en/preview/venture/{$venture->id}?" . http_build_query([
+            'expires' => $queryParams['expires'] ?? '',
+            'signature' => $queryParams['signature'] ?? '',
+        ]);
     }
 }

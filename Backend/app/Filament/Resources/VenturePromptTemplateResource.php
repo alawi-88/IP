@@ -15,7 +15,13 @@ class VenturePromptTemplateResource extends Resource
 
     protected static ?string $navigationGroup = 'Startup Builder';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationLabel = 'Prompt Templates';
+
+    protected static ?string $modelLabel = 'Prompt Template';
+
+    protected static ?string $pluralModelLabel = 'Prompt Templates';
 
     public static function getPages(): array
     {
@@ -28,17 +34,17 @@ class VenturePromptTemplateResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return auth()->user()?->hasRole('super-admin') ?? false;
+        return auth()->user()?->hasRole(['super-admin', 'admin']) ?? false;
     }
 
     public static function canCreate(): bool
     {
-        return auth()->user()?->hasRole('super-admin') ?? false;
+        return auth()->user()?->hasRole(['super-admin', 'admin']) ?? false;
     }
 
     public static function canEdit(Model $record): bool
     {
-        return auth()->user()?->hasRole('super-admin') ?? false;
+        return auth()->user()?->hasRole(['super-admin', 'admin']) ?? false;
     }
 
     public static function canDelete(Model $record): bool

@@ -364,3 +364,7 @@ Route::prefix('nafath-iam')->group(function () {
 
 // Branding API endpoint
 Route::get('/branding', [\App\Http\Controllers\Api\BrandingController::class, 'index']);
+
+// Admin Venture Preview (signed URL, no auth required - signature validates admin origin)
+Route::get('ventures/{venture}/admin-preview', [\App\Http\Controllers\Api\Admin\AdminVenturePreviewController::class, 'show'])
+    ->name('admin.venture.preview');

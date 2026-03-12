@@ -33,12 +33,12 @@ class GeminiVentureAiProvider implements VentureAiProviderInterface
         $maxTokens = $options['max_tokens'] ?? $this->provider->max_tokens ?? 2048;
         $temperature = $options['temperature'] ?? $this->provider->temperature ?? 0.7;
         $modelName = $this->provider->model_name ?? 'gemini-pro';
-        $apiKey = config('services.gemini.api_key');
+        $apiKey = $this->provider->api_key ?: config('services.gemini.api_key');
 
         try {
             $response = Http::timeout(60)
             ->post(
-                "https://generativelanguage.googleapis.com/v1beta/models/{$modelName}:generateContent",
+                "https://generativelanguage.googleapis.com/v1beta/models/{$modelName}:generateContent?key={$apiKey}",
                 [
                     'contents' => [
                         [
@@ -53,9 +53,6 @@ class GeminiVentureAiProvider implements VentureAiProviderInterface
                         'maxOutputTokens' => $maxTokens,
                         'temperature' => $temperature,
                     ],
-                ],
-                [
-                    'key' => $apiKey,
                 ]
             );
 
@@ -77,10 +74,16 @@ class GeminiVentureAiProvider implements VentureAiProviderInterface
                 throw new RuntimeException('Empty response from Gemini API');
             }
 
+            // Strip markdown code fences if present (e.g., ```json\n...\n```)
+            $content = trim($content);
+            if (preg_match('/^```(?:json)?\s*\n?(.*?)\n?\s*```$/s', $content, $matches)) {
+                $content = trim($matches[1]);
+            }
+
             $parsed = json_decode($content, true);
 
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new RuntimeException('Failed to parse JSON from Gemini response: ' . json_last_error_msg());
+                throw new RuntimeException('Failed to parse JSON from Gemini response: ' . json_last_error_msg() . ' | Raw: ' . substr($content, 0, 200));
             }
 
             $promptTokens = $data['usageMetadata']['promptTokenCount'] ?? 0;
@@ -113,6 +116,6 @@ class GeminiVentureAiProvider implements VentureAiProviderInterface
      */
     public function isAvailable(): bool
     {
-        return !empty(config('services.gemini.api_key'));
+        return !empty($this->provider->api_key) || !empty(config('services.gemini.api_key'));
     }
 }

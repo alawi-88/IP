@@ -74,6 +74,34 @@ class AdminPanelProvider extends PanelProvider
                         from { transform: rotate(0deg); }
                         to   { transform: rotate(360deg); }
                     }
+
+                    /* Fix Filament modal positioning in relation managers on View pages */
+                    .fi-modal.fi-modal-open {
+                        position: fixed !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                        right: 0 !important;
+                        bottom: 0 !important;
+                        width: 100vw !important;
+                        height: 100vh !important;
+                        z-index: 50 !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                        overflow-y: auto !important;
+                    }
+                    .fi-modal.fi-modal-open > div:first-child {
+                        position: fixed !important;
+                        inset: 0 !important;
+                        background: rgba(0, 0, 0, 0.4) !important;
+                        z-index: 49 !important;
+                    }
+                    .fi-modal.fi-modal-open .fi-modal-window {
+                        max-height: 90vh !important;
+                        overflow-y: auto !important;
+                        z-index: 51 !important;
+                        position: relative !important;
+                    }
                 </style>
                 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
                 HTML;

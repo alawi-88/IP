@@ -37,8 +37,15 @@ class GenerateVentureSectionJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(AiProviderManager $manager, VenturePromptBuilder $promptBuilder): void
+    public function handle(AiProviderManager $manager): void
     {
+        // Refresh from DB and skip if already completed or currently generating
+        $this->section->refresh();
+
+        if (in_array($this->section->status, ['completed', 'generating'])) {
+            return;
+        }
+
         // Set section status to 'generating'
         $this->section->update(['status' => 'generating']);
 
@@ -47,40 +54,60 @@ class GenerateVentureSectionJob implements ShouldQueue
 
         try {
             // Build prompt
+            $promptBuilder = new VenturePromptBuilder();
             $promptData = $promptBuilder->buildPrompt($venture, $this->section->slug);
 
-            // Call AI provider to generate content
-            $result = $manager->generate($promptData);
+            // Combine system and user prompts into a single string for providers
+            $prompt = $promptData['system_prompt'] . "\n\n" . $promptData['user_prompt'];
+
+            // Store the prompt that was sent
+            $this->section->update([
+                'prompt_sent' => $prompt,
+            ]);
+
+            // Call AI provider to generate content with prompt options
+            $result = $manager->generate($prompt, [
+                'max_tokens' => $promptData['max_tokens'] ?? 4096,
+                'temperature' => $promptData['temperature'] ?? 0.7,
+            ]);
 
             // Parse result
             $content = $result['content'] ?? null;
             $contentAr = $result['content_ar'] ?? null;
-            $aiProviderId = $result['ai_provider_id'] ?? null;
-            $tokensUsed = ($result['prompt_tokens'] ?? 0) + ($result['completion_tokens'] ?? 0);
-            $estimatedCost = $result['estimated_cost'] ?? null;
+            $aiProviderId = $result['provider_id'] ?? $result['ai_provider_id'] ?? null;
+            $promptTokens = $result['prompt_tokens'] ?? null;
+            $completionTokens = $result['completion_tokens'] ?? null;
+
+            // Build raw response string for admin inspection
+            $rawResponse = json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 
             // Update section with generated content
             $this->section->update([
                 'status' => 'completed',
                 'content' => $content,
                 'content_ar' => $contentAr,
+                'raw_response' => $rawResponse,
                 'ai_provider_id' => $aiProviderId,
-                'tokens_used' => $tokensUsed,
-                'estimated_cost' => $estimatedCost,
+                'tokens_used' => ($promptTokens ?? 0) + ($completionTokens ?? 0),
                 'generated_at' => now(),
             ]);
 
             // Create VentureVersion record
+            $latestVersion = VentureVersion::where('venture_section_id', $this->section->id)
+                ->max('version_number') ?? 0;
+
             VentureVersion::create([
                 'venture_section_id' => $this->section->id,
                 'content' => $content,
                 'content_ar' => $contentAr,
-                'change_note' => 'AI generated',
+                'version_number' => $latestVersion + 1,
+                'change_note' => 'AI generated via ' . ($aiProviderId ? "provider #{$aiProviderId}" : 'unknown'),
             ]);
 
             // Check if venture generation is complete
             $generationService = app(VentureGenerationService::class);
             $generationService->checkCompletion($venture);
+
         } catch (Throwable $e) {
             // Let the failed method handle the error
             throw $e;
